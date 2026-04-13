@@ -18,11 +18,11 @@ const pool = mysql.createPool({
 // Test koneksi saat aplikasi pertama kali jalan
 pool.getConnection()
     .then(connection => {
-        console.log('✅ Database MySQL berhasil terkoneksi (Pool created)!');
+        console.log('Database MySQL berhasil terkoneksi (Pool created)!');
         connection.release(); // Selalu release koneksi kembali ke pool
     })
     .catch(err => {
-        console.error('❌ Gagal koneksi ke database:', err.message);
+        console.error('Gagal koneksi ke database:', err.message);
     });
 
 module.exports = pool;
