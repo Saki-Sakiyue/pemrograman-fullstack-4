@@ -1,29 +1,43 @@
-class TemplateController {
-  index(req, res) {
-    const templates = Array.from({ length: 10 }, (_, i) => ({ id: i + 1, name: `Template ${i + 1}` }));
-    res.json({
-      message: 'List of templates', data: {
-        data: templates,
-        meta: { total: templates.length }
-      }
-    });
-  }
+const db = require('../config/database'); 
 
-  store(req, res) {
-    const { name } = req.body;
-    res.json({ message: 'Created a new template', data: { name } });
-  }
+// 1. Ubah nama fungsinya dari TemplateController jadi getActiveTemplates
+const getActiveTemplates = async (req, res) => {
+    try {
+        const sql = `
+            SELECT id, title, description, created_at 
+            FROM templates 
+            WHERE deleted_at IS NULL AND is_active = ?
+        `;
+        
+        const [rows] = await db.query(sql, [true]);
 
-  update(req, res) {
-    const { name } = req.body;
-    res.json({ message: `Updated template with ID ${req.params.id}`, data: { name } });
-  }
+        res.status(200).json({
+            success: true,
+            data: rows
+        });
+        
+    } catch (error) {
+        console.error('Database Error:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Terjadi kesalahan pada server.' 
+        });
+    }
+};
 
-  destroy(req, res) {
-    res.json({ message: `Delete template with ID ${req.params.id}` });
-  }
-}
+const createTemplate = async (req, res) => {
+    try {
+        res.status(201).json({
+            success: true,
+            message: 'Template berhasil ditambahkan (ini cuma test)'
+        });
+    } catch (error) {
+        res.status(500).json({ success: false, message: 'Server error' });
+    }
+};
 
-const object = new TemplateController();
-
-module.exports = object;
+// 2. Jangan lupa update nama yang di-export
+module.exports = {
+    getActiveTemplates, 
+    createTemplate
+};

@@ -1,10 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const TemplateController = require('../controllers/TemplateController');
+const { 
+    getActiveTemplates, 
+    createTemplate 
+} = require('../controllers/TemplateController');
 
-router.get('/templates', TemplateController.index);
-router.post('/templates', TemplateController.store);
-router.put('/templates/:id', TemplateController.update);
-router.delete('/templates/:id', TemplateController.destroy);
+router.get('/', getActiveTemplates);
+router.post('/', createTemplate);
+// router.put('/templates/:id', TemplateController.update);
+// router.delete('/templates/:id', TemplateController.destroy);
 
 module.exports = router;
