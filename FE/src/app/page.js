@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import Image from "next/image";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import { clearToken, getToken, logoutRequest } from "@/lib/auth";
+import Image from 'next/image';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { clearToken, getToken, logoutRequest } from '@/lib/auth';
 import { ArrowRight, Layout, ShieldCheck, Users, Zap } from 'lucide-react';
 
 export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [statusMessage, setStatusMessage] = useState("");
+  const [statusMessage, setStatusMessage] = useState('');
 
   useEffect(() => {
     setIsLoggedIn(Boolean(getToken()));
@@ -22,7 +22,7 @@ export default function Home() {
     } finally {
       clearToken();
       setIsLoggedIn(false);
-      setStatusMessage("Kamu sudah logout.");
+      setStatusMessage('Kamu sudah logout.');
     }
   };
 

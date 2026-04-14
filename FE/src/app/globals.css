@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 /* Di Tailwind 4, custom theme (warna, font) 
   langsung ditulis di dalam blok @theme di file CSS ini.

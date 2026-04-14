@@ -1,4 +1,5 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+const API_BASE_URL =
+  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
 const TOKEN_KEY = 'auth_token';
 
 export const getToken = () => {
@@ -6,7 +7,7 @@ export const getToken = () => {
   return window.localStorage.getItem(TOKEN_KEY);
 };
 
-export const setToken = (token) => {
+export const setToken = token => {
   if (typeof window === 'undefined') return;
   window.localStorage.setItem(TOKEN_KEY, token);
 };
@@ -22,9 +23,9 @@ export const loginRequest = async ({ identifier, password }) => {
   const response = await fetch(`${API_BASE_URL}/auth/login`, {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ identifier, password })
+    body: JSON.stringify({ identifier, password }),
   });
 
   const json = await response.json();
@@ -43,8 +44,8 @@ export const logoutRequest = async () => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {})
-    }
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
   });
 
   const json = await response.json();
