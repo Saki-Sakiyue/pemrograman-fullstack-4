@@ -7,6 +7,9 @@ const db = require('./src/config/database'); // Manggil file koneksi DB lu
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+app.use(express.json()); 
+app.use(express.urlencoded({ extended: true }));
+
 // Middleware untuk parsing JSON
 app.use(express.json());
 app.use(cors());
