@@ -17,11 +17,13 @@ app.use(cors());
 // Import Router yang udah kita buat
 const templateRouter = require('./src/routes/templateRouter');
 const authRouter = require('./src/routes/authRouter');
+const profileRouter = require('./src/routes/profileRouter');
 
 // Gunakan router tersebut di endpoint /templates
 app.use('/templates', templateRouter);
 app.use('/api/templates', templateRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/profile', profileRouter);
 
 // Start Server
 app.listen(PORT, () => {
