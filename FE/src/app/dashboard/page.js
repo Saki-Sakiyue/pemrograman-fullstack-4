@@ -52,10 +52,14 @@ export default function DashboardPage() {
         </div>
 
         <p className="text-zinc-700">
-          Halaman ini hanya bisa dibuka jika token login tersedia di localStorage.
+          Halaman ini hanya bisa dibuka jika token login tersedia di
+          localStorage.
         </p>
 
-        <Link href="/" className="text-sm font-semibold text-zinc-900 underline">
+        <Link
+          href="/"
+          className="text-sm font-semibold text-zinc-900 underline"
+        >
           Kembali ke beranda
         </Link>
       </div>

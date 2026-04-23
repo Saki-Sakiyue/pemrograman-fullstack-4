@@ -1,0 +1,13 @@
+# Mengabaikan node_modules di folder manapun
+node_modules/
+**/node_modules/
+
+# Mengabaikan folder build Next.js dan Express
+fe/.next/
+fe/out/
+be/dist/
+
+# Mengabaikan file env (Sangat Rahasia!)
+.env
+.env.local
+*.log
