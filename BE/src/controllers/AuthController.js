@@ -1,6 +1,6 @@
-const db = require('../config/database');
-const { comparePassword, generateToken } = require('../services/AuthService');
-const { validateLoginPayload } = require('../validators/authValidator');
+const db = require("../config/database");
+const { hashPassword, comparePassword, generateToken } = require("../services/AuthService");
+const { validateLoginPayload, validateRegisterPayload } = require("../validators/authValidator");
 
 const login = async (req, res) => {
     try {
@@ -72,13 +72,61 @@ const login = async (req, res) => {
 };
 
 const logout = async (req, res) => {
-    return res.status(200).json({
-        success: true,
-        message: 'Logout berhasil.'
-    });
+  return res.status(200).json({
+    success: true,
+    message: "Logout berhasil.",
+  });
 };
+
+const register = async (req, res) => {
+  try {
+    const validation = validateRegisterPayload(req.body);
+
+    if (!validation.valid) {
+      return res.status(400).json({
+        success: false,
+        message: validation.message,
+      });
+    }
+
+    const { username, email, password } = req.body;
+    const trimmedUsername = username.trim();
+    const trimmedEmail = email.trim();
+
+    const checkSql = `SELECT id FROM users WHERE email = ? OR username = ? LIMIT 1`;
+    const [existingUser] = await db.query(checkSql, [trimmedEmail, trimmedUsername]);
+
+    if (existingUser.length > 0) {
+      return res.status(400).json({
+        success: false,
+        message: "Email atau Username sudah terdaftar.",
+      });
+    }
+
+    const passwordHash = await hashPassword(password);
+
+    const insertSql = `
+            INSERT INTO users (username, email, password_hash, role)
+            VALUES (?, ?, ?, ?)
+        `;
+    await db.query(insertSql, [trimmedUsername, trimmedEmail, passwordHash, "user"]);
+
+    return res.status(201).json({
+      success: true,
+      message: "Registrasi berhasil. Silakan login.",
+    });
+  } catch (error) {
+    console.error("Register Error:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Terjadi kesalahan pada server saat registrasi.",
+    });
+  }
+};
+
 
 module.exports = {
     login,
-    logout
+    logout,
+    register
 };
