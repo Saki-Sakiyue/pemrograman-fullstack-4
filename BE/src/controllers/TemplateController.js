@@ -1,4 +1,5 @@
 const db = require('../config/database'); 
+const { validateCreateTemplate } = require('../validators/templateValidator');
 
 const getActiveTemplates = async (req, res) => {
     try {
@@ -66,12 +67,74 @@ const getActiveTemplates = async (req, res) => {
 
 const createTemplate = async (req, res) => {
     try {
-        res.status(201).json({
+        const validation = validateCreateTemplate(req.body);
+
+        if (!validation.valid) {
+            return res.status(400).json({
+                success: false,
+                message: validation.message
+            });
+        }
+
+        // Check if user is authenticated
+        if (!req.user || !req.user.id) {
+            return res.status(401).json({
+                success: false,
+                message: 'Unauthorized. Anda harus login terlebih dahulu.'
+            });
+        }
+
+        // Check if category exists
+        const { category_id } = req.body;
+        const categorySql = `SELECT id FROM categories WHERE id = ? LIMIT 1`;
+        const [categoryRows] = await db.query(categorySql, [category_id]);
+
+        if (categoryRows.length === 0) {
+            return res.status(400).json({
+                success: false,
+                message: 'Kategori tidak ditemukan.'
+            });
+        }
+
+        const { title, description, upload_type, source_url, demo_url } = req.body;
+        const userId = req.user.id;
+
+        const insertSql = `
+            INSERT INTO templates (
+                title, 
+                description, 
+                upload_type, 
+                source_url, 
+                demo_url,
+                category_id, 
+                user_id, 
+                is_active, 
+                created_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
+        `;
+
+        await db.query(insertSql, [
+            title.trim(),
+            description.trim(),
+            upload_type,
+            source_url || null,
+            demo_url || null,
+            category_id,
+            userId,
+            true
+        ]);
+
+        return res.status(201).json({
             success: true,
-            message: 'Template berhasil ditambahkan (ini cuma test)'
+            message: 'Template berhasil ditambahkan.'
         });
     } catch (error) {
-        res.status(500).json({ success: false, message: 'Server error' });
+        console.error('Create Template Error:', error);
+        res.status(500).json({ 
+            success: false, 
+            message: 'Terjadi kesalahan pada server saat membuat template.' 
+        });
     }
 };
 

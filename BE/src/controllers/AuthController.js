@@ -1,6 +1,6 @@
 const db = require("../config/database");
 const { hashPassword, comparePassword, generateToken } = require("../services/AuthService");
-const { validateLoginPayload } = require("../validators/authValidator");
+const { validateLoginPayload, validateRegisterPayload } = require("../validators/authValidator");
 
 const login = async (req, res) => {
   try {
@@ -80,17 +80,21 @@ const logout = async (req, res) => {
 
 const register = async (req, res) => {
   try {
-    const { username, email, password } = req.body;
+    const validation = validateRegisterPayload(req.body);
 
-    if (!username || !email || !password) {
+    if (!validation.valid) {
       return res.status(400).json({
         success: false,
-        message: "Semua field harus diisi.",
+        message: validation.message,
       });
     }
 
+    const { username, email, password } = req.body;
+    const trimmedUsername = username.trim();
+    const trimmedEmail = email.trim();
+
     const checkSql = `SELECT id FROM users WHERE email = ? OR username = ? LIMIT 1`;
-    const [existingUser] = await db.query(checkSql, [email, username]);
+    const [existingUser] = await db.query(checkSql, [trimmedEmail, trimmedUsername]);
 
     if (existingUser.length > 0) {
       return res.status(400).json({
@@ -105,7 +109,7 @@ const register = async (req, res) => {
             INSERT INTO users (username, email, password_hash, role)
             VALUES (?, ?, ?, ?)
         `;
-    await db.query(insertSql, [username.trim(), email.trim(), passwordHash, "user"]);
+    await db.query(insertSql, [trimmedUsername, trimmedEmail, passwordHash, "user"]);
 
     return res.status(201).json({
       success: true,
@@ -120,8 +124,9 @@ const register = async (req, res) => {
   }
 };
 
+
 module.exports = {
-  login,
-  logout,
-  register,
+    login,
+    logout,
+    register
 };

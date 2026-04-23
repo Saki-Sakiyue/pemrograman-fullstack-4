@@ -1,14 +1,18 @@
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
-const JWT_SECRET = process.env.JWT_SECRET || "dev_jwt_secret_change_me";
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || "1d";
+const JWT_SECRET = process.env.JWT_SECRET || 'dev_jwt_secret_change_me';
+const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1d';
+const BCRYPT_ROUNDS = 10;
 
-const isBcryptHash = (value) => typeof value === "string" && value.startsWith("$2");
+const isBcryptHash = (value) => typeof value === 'string' && value.startsWith('$2');
 
-const hashPassword = async (password) => {
-  const salt = await bcrypt.genSalt(10);
-  return bcrypt.hash(password, salt);
+const hashPassword = async (rawPassword) => {
+  try {
+    return await bcrypt.hash(rawPassword, BCRYPT_ROUNDS);
+  } catch (error) {
+    throw new Error('Gagal hash password');
+  }
 };
 
 const comparePassword = async (rawPassword, storedHash) => {
@@ -23,7 +27,7 @@ const generateToken = (payload) => {
 };
 
 module.exports = {
-  hashPassword,
-  comparePassword,
-  generateToken,
+    hashPassword,
+    comparePassword,
+    generateToken
 };
