@@ -4,7 +4,7 @@ const logger = require("../utils/logger");
 const responseHandler = require("../utils/responseHandler");
 
 class TemplateController {
-  async index(req, res, next) {
+  async index(req, res) {
     try {
       const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
       const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 100);
@@ -52,11 +52,16 @@ class TemplateController {
       });
     } catch (error) {
       logger.error({ err: error.message, stack: error.stack }, "Error in getActiveTemplates");
-      next(error); // Lempar ke Global Error Handler
+      return responseHandler(res, {
+        status: 500,
+        code: "ERR_INTERNAL_SERVER",
+        messageDev: "An error occurred while fetching templates",
+        messageUser: "Terjadi kesalahan saat memuat template. Silakan coba lagi.",
+      });
     }
   }
 
-  async post(req, res, next) {
+  async post(req, res) {
     try {
       const validation = validateCreateTemplate(req.body);
 
@@ -121,7 +126,12 @@ class TemplateController {
       });
     } catch (error) {
       logger.error({ err: error.message, body: req.body }, "Error in createTemplate");
-      next(error);
+      return responseHandler(res, {
+        status: 500,
+        code: "ERR_INTERNAL_SERVER",
+        messageDev: "An error occurred while creating template",
+        messageUser: "Terjadi kesalahan saat membuat template. Silakan coba lagi.",
+      });
     }
   }
 }

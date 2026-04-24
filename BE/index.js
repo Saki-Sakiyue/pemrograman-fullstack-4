@@ -9,7 +9,6 @@ const db = require("./src/config/database");
 const requestId = require("./src/middleware/requestId");
 const logger = require("./src/utils/logger");
 const router = require("./src/routes/api");
-const { errorHandler } = require("./src/middleware/errorHandler");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -32,9 +31,6 @@ app.use(express.urlencoded({ extended: true }));
 
 // 4. ROUTES
 app.use(router);
-
-// 5. GLOBAL ERROR HANDLER
-app.use(errorHandler);
 
 // Start Server
 app.listen(PORT, () => {

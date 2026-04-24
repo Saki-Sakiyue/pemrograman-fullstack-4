@@ -75,11 +75,16 @@ class AuthController {
       });
     } catch (error) {
       logger.error({ err: error.message, stack: error.stack }, "Login Error");
-      next(error);
+      return responseHandler(res, {
+        status: 500,
+        code: "ERR_INTERNAL_SERVER",
+        messageDev: "An error occurred during login",
+        messageUser: "Terjadi kesalahan saat login. Silakan coba lagi.",
+      });
     }
   }
 
-  async logout(req, res) {
+  async logout(req, res, next) {
     return responseHandler(res, {
       status: 200,
       messageDev: "User logged out",
@@ -87,7 +92,7 @@ class AuthController {
     });
   }
 
-  async register(req, res) {
+  async register(req, res, next) {
     try {
       const validation = validateRegisterPayload(req.body);
 
@@ -131,7 +136,12 @@ class AuthController {
       });
     } catch (error) {
       logger.error({ err: error.message, stack: error.stack }, "Register Error");
-      next(error);
+      return responseHandler(res, {
+        status: 500,
+        code: "ERR_INTERNAL_SERVER",
+        messageDev: "An error occurred during registration",
+        messageUser: "Terjadi kesalahan saat registrasi. Silakan coba lagi.",
+      });
     }
   }
 }
