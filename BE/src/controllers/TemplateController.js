@@ -134,6 +134,45 @@ class TemplateController {
       });
     }
   }
+  
+  async download (req, res) {
+    const templateId = req.params.id;
+
+    try {
+      // Query Raw SQL dengan aturan soft delete dan visibilitas
+      const query = `
+        UPDATE templates 
+        SET download_count = download_count + 1 
+        WHERE id = ? 
+          AND deleted_at IS NULL 
+          AND is_active = TRUE
+      `;
+      
+      // Eksekusi query (contoh menggunakan mysql2 promise)
+      const [result] = await db.execute(query, [templateId]);
+
+      // Validasi: Jika tidak ada baris yang terpengaruh (ID salah/dihapus/tidak aktif)
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ 
+          success: false,
+          message: "Template tidak ditemukan, tidak aktif, atau sudah dihapus." 
+        });
+      }
+
+      // Berhasil ditambah
+      return res.status(200).json({ 
+        success: true,
+        message: "Download counter berhasil ditambahkan." 
+      });
+
+    } catch (error) {
+      console.error("Error updating download count:", error);
+      return res.status(500).json({ 
+        success: false,
+        message: "Terjadi kesalahan pada server saat menghitung download." 
+      });
+    }
+  }
 }
 
 const object = new TemplateController();
