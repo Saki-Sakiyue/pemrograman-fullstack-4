@@ -1,30 +1,28 @@
-const db = require('../config/database'); 
-const { validateCreateTemplate } = require('../validators/templateValidator');
+const db = require("../config/database");
+const { validateCreateTemplate } = require("../validators/templateValidator");
+const logger = require("../utils/logger");
+const responseHandler = require("../utils/responseHandler");
 
-const getActiveTemplates = async (req, res) => {
+class TemplateController {
+  async index(req, res) {
     try {
-        const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
-        const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 100);
-        const offset = (page - 1) * limit;
-        const search = (req.query.search || '').trim();
+      const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+      const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 100);
+      const offset = (page - 1) * limit;
+      const search = (req.query.search || "").trim();
 
-        const whereClause = search
-            ? 'WHERE t.deleted_at IS NULL AND t.is_active = ? AND t.title LIKE ?'
-            : 'WHERE t.deleted_at IS NULL AND t.is_active = ?';
-        const whereParams = search ? [true, `%${search}%`] : [true];
+      // Mengikuti standar Soft Delete & Visibility Agreement
+      const whereClause = search
+        ? "WHERE t.deleted_at IS NULL AND t.is_active = ? AND t.title LIKE ?"
+        : "WHERE t.deleted_at IS NULL AND t.is_active = ?";
+      const whereParams = search ? [true, `%${search}%`] : [true];
 
-        const sql = `
-            SELECT
-                t.id,
-                t.title,
-                t.description,
-                t.upload_type,
-                t.source_url,
-                t.demo_url,
-                t.download_count,
-                t.popularity_score,
-                t.created_at,
-                c.name AS category_name,
+      const sql = `
+            SELECT 
+                t.id, t.title, t.description, t.upload_type, 
+                t.source_url, t.demo_url, t.download_count, 
+                t.popularity_score, t.created_at,
+                c.name AS category_name, 
                 u.username AS author
             FROM templates t
             INNER JOIN categories c ON c.id = t.category_id
@@ -34,111 +32,109 @@ const getActiveTemplates = async (req, res) => {
             LIMIT ? OFFSET ?
         `;
 
-        const countSql = `
-            SELECT COUNT(*) AS total
-            FROM templates t
-            ${whereClause}
-        `;
+      const countSql = `SELECT COUNT(*) AS total FROM templates t ${whereClause}`;
 
-        const [rows] = await db.query(sql, [...whereParams, limit, offset]);
-        const [countRows] = await db.query(countSql, whereParams);
-        const total = countRows[0]?.total || 0;
-        const totalPages = Math.ceil(total / limit);
+      const [rows] = await db.query(sql, [...whereParams, limit, offset]);
+      const [countRows] = await db.query(countSql, whereParams);
 
-        res.status(200).json({
-            success: true,
-            data: rows,
-            pagination: {
-                page,
-                limit,
-                total,
-                totalPages
-            }
-        });
-        
+      const total = countRows[0]?.total || 0;
+      const totalPages = Math.ceil(total / limit);
+
+      // Gunakan responseHandler agar format JSON konsisten
+      return responseHandler(res, {
+        status: 200,
+        messageDev: "Templates fetched successfully",
+        messageUser: "Daftar template berhasil dimuat.",
+        data: {
+          templates: rows,
+          pagination: { page, limit, total, totalPages },
+        },
+      });
     } catch (error) {
-        console.error('Database Error:', error);
-        res.status(500).json({ 
-            success: false, 
-            message: 'Terjadi kesalahan pada server.' 
-        });
+      logger.error({ err: error.message, stack: error.stack }, "Error in getActiveTemplates");
+      return responseHandler(res, {
+        status: 500,
+        code: "ERR_INTERNAL_SERVER",
+        messageDev: "An error occurred while fetching templates",
+        messageUser: "Terjadi kesalahan saat memuat template. Silakan coba lagi.",
+      });
     }
-};
+  }
 
-const createTemplate = async (req, res) => {
+  async post(req, res) {
     try {
-        const validation = validateCreateTemplate(req.body);
+      const validation = validateCreateTemplate(req.body);
 
-        if (!validation.valid) {
-            return res.status(400).json({
-                success: false,
-                message: validation.message
-            });
-        }
+      if (!validation.valid) {
+        return responseHandler(res, {
+          status: 400,
+          code: "ERR_VALIDATION",
+          messageDev: "Validation failed",
+          messageUser: validation.message,
+        });
+      }
 
-        // Check if user is authenticated
-        if (!req.user || !req.user.id) {
-            return res.status(401).json({
-                success: false,
-                message: 'Unauthorized. Anda harus login terlebih dahulu.'
-            });
-        }
+      // Auth check (biasanya sudah ditangani middleware auth, tapi ini pengaman tambahan)
+      if (!req.user || !req.user.id) {
+        return responseHandler(res, {
+          status: 401,
+          code: "ERR_UNAUTHORIZED",
+          messageDev: "No user object in request",
+          messageUser: "Sesi Anda telah berakhir, silakan login kembali.",
+        });
+      }
 
-        // Check if category exists
-        const { category_id } = req.body;
-        const categorySql = `SELECT id FROM categories WHERE id = ? LIMIT 1`;
-        const [categoryRows] = await db.query(categorySql, [category_id]);
+      const { category_id, title, description, upload_type, source_url, demo_url } = req.body;
 
-        if (categoryRows.length === 0) {
-            return res.status(400).json({
-                success: false,
-                message: 'Kategori tidak ditemukan.'
-            });
-        }
+      // Check if category exists
+      const [categoryRows] = await db.query(`SELECT id FROM categories WHERE id = ? LIMIT 1`, [
+        category_id,
+      ]);
+      if (categoryRows.length === 0) {
+        return responseHandler(res, {
+          status: 400,
+          code: "ERR_CATEGORY_NOT_FOUND",
+          messageDev: "Provided category_id does not exist",
+          messageUser: "Kategori yang dipilih tidak valid.",
+        });
+      }
 
-        const { title, description, upload_type, source_url, demo_url } = req.body;
-        const userId = req.user.id;
-
-        const insertSql = `
+      const insertSql = `
             INSERT INTO templates (
-                title, 
-                description, 
-                upload_type, 
-                source_url, 
-                demo_url,
-                category_id, 
-                user_id, 
-                is_active, 
-                created_at
+                title, description, upload_type, source_url, demo_url,
+                category_id, user_id, is_active, created_at
             )
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
         `;
 
-        await db.query(insertSql, [
-            title.trim(),
-            description.trim(),
-            upload_type,
-            source_url || null,
-            demo_url || null,
-            category_id,
-            userId,
-            true
-        ]);
+      await db.query(insertSql, [
+        title.trim(),
+        description.trim(),
+        upload_type,
+        source_url || null,
+        demo_url || null,
+        category_id,
+        req.user.id,
+        true,
+      ]);
 
-        return res.status(201).json({
-            success: true,
-            message: 'Template berhasil ditambahkan.'
-        });
+      return responseHandler(res, {
+        status: 201,
+        messageDev: "Template created successfully",
+        messageUser: "Template baru berhasil ditambahkan ke komunitas!",
+        data: { title },
+      });
     } catch (error) {
-        console.error('Create Template Error:', error);
-        res.status(500).json({ 
-            success: false, 
-            message: 'Terjadi kesalahan pada server saat membuat template.' 
-        });
+      logger.error({ err: error.message, body: req.body }, "Error in createTemplate");
+      return responseHandler(res, {
+        status: 500,
+        code: "ERR_INTERNAL_SERVER",
+        messageDev: "An error occurred while creating template",
+        messageUser: "Terjadi kesalahan saat membuat template. Silakan coba lagi.",
+      });
     }
-};
+  }
+}
 
-module.exports = {
-    getActiveTemplates, 
-    createTemplate
-};
+const object = new TemplateController();
+module.exports = object;
