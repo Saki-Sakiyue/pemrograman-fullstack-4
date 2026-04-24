@@ -1,33 +1,42 @@
 // index.js
-require('dotenv').config();
-const express = require('express');
-const cors = require('cors');
-const db = require('./src/config/database'); // Manggil file koneksi DB lu
-const { errorHandler } = require('./src/middleware/errorHandler');
+require("dotenv").config();
+const express = require("express");
+const cors = require("cors");
+const pinoHttp = require("pino-http");
+
+// Import internal modules
+const db = require("./src/config/database");
+const requestId = require("./src/middleware/requestId");
+const logger = require("./src/utils/logger");
+const router = require("./src/routes/api");
+const { errorHandler } = require("./src/middleware/errorHandler");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-app.use(express.json()); 
+// 1. MIDDLEWARE REQUEST ID
+app.use(requestId);
+
+// 2. LOGGER
+app.use(
+  pinoHttp({
+    logger,
+    genReqId: req => req.id,
+  }),
+);
+
+// 3. BODY PARSER & CORS
+app.use(cors());
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Middleware untuk parsing JSON
-app.use(express.json());
-app.use(cors());
+// 4. ROUTES
+app.use(router);
 
-// Import Router yang udah kita buat
-const templateRouter = require('./src/routes/templateRouter');
-const authRouter = require('./src/routes/authRouter');
-
-// Gunakan router tersebut di endpoint /templates
-app.use('/templates', templateRouter);
-app.use('/api/templates', templateRouter);
-app.use('/api/auth', authRouter);
-
-// Error handling middleware (harus di paling akhir)
+// 5. GLOBAL ERROR HANDLER
 app.use(errorHandler);
 
 // Start Server
 app.listen(PORT, () => {
-    console.log(` Server jalan di port http://localhost:${PORT}`);
+  console.log(` Server jalan di port http://localhost:${PORT}`);
 });
