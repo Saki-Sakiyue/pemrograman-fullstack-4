@@ -68,12 +68,12 @@ class ReportController {
       });
 
     } catch (error) {
-      logger.error({ err: error.message, body: req.body }, "Error in ReportController.post");
       return responseHandler(res, {
         status: 500,
         code: "ERR_INTERNAL_SERVER",
         messageDev: "An error occurred while creating report",
         messageUser: "Terjadi kesalahan saat memproses laporan. Silakan coba lagi.",
+        error,
       });
     }
   }

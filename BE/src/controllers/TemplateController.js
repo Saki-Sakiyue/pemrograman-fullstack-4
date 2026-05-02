@@ -51,12 +51,12 @@ class TemplateController {
         },
       });
     } catch (error) {
-      logger.error({ err: error.message, stack: error.stack }, "Error in getActiveTemplates");
       return responseHandler(res, {
         status: 500,
         code: "ERR_INTERNAL_SERVER",
         messageDev: "An error occurred while fetching templates",
         messageUser: "Terjadi kesalahan saat memuat template. Silakan coba lagi.",
+        error,
       });
     }
   }
@@ -125,12 +125,12 @@ class TemplateController {
         data: { title },
       });
     } catch (error) {
-      logger.error({ err: error.message, body: req.body }, "Error in createTemplate");
       return responseHandler(res, {
         status: 500,
         code: "ERR_INTERNAL_SERVER",
         messageDev: "An error occurred while creating template",
         messageUser: "Terjadi kesalahan saat membuat template. Silakan coba lagi.",
+        error,
       });
     }
   }
