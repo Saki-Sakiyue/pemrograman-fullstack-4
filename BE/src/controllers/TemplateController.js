@@ -153,22 +153,22 @@ class TemplateController {
 
       // Validasi: Jika tidak ada baris yang terpengaruh (ID salah/dihapus/tidak aktif)
       if (result.affectedRows === 0) {
-        return res.status(404).json({
+        return res.status(404).json({ 
           success: false,
-          message: "Template tidak ditemukan, tidak aktif, atau sudah dihapus.",
+          message: "Template tidak ditemukan, tidak aktif, atau sudah dihapus." 
         });
       }
 
       // Berhasil ditambah
-      return res.status(200).json({
+      return res.status(200).json({ 
         success: true,
-        message: "Download counter berhasil ditambahkan.",
+        message: "Download counter berhasil ditambahkan." 
       });
     } catch (error) {
       console.error("Error updating download count:", error);
-      return res.status(500).json({
+      return res.status(500).json({ 
         success: false,
-        message: "Terjadi kesalahan pada server saat menghitung download.",
+        message: "Terjadi kesalahan pada server saat menghitung download." 
       });
     }
   }
@@ -183,7 +183,7 @@ class TemplateController {
       if (!title || !category_id) {
         return res.status(400).json({
           success: false,
-          message: "Title dan Category ID wajib diisi.",
+          message: "Title dan Category ID wajib diisi."
         });
       }
 
@@ -202,23 +202,24 @@ class TemplateController {
       const [result] = await db.execute(query, values);
 
       // 4. Cek apakah ada data yang berhasil di-update
+
       if (result.affectedRows === 0) {
         return res.status(404).json({
           success: false,
-          message: "Update gagal: Template tidak ditemukan, tidak aktif, atau sudah dihapus.",
+          message: "Update gagal: Template tidak ditemukan, tidak aktif, atau sudah dihapus."
         });
       }
 
       // 5. Kembalikan Respons Sukses
       return res.status(200).json({
         success: true,
-        message: "Data template berhasil diperbarui!",
+        message: "Data template berhasil diperbarui!"
       });
     } catch (error) {
       console.error("Error updating template:", error);
       return res.status(500).json({
         success: false,
-        message: "Terjadi kesalahan internal pada server saat melakukan update.",
+        message: "Terjadi kesalahan internal pada server saat melakukan update."
       });
     }
   }
@@ -235,9 +236,7 @@ class TemplateController {
       );
 
       if (template.length === 0) {
-        return res
-          .status(404)
-          .json({ success: false, message: "Template tidak ditemukan atau tidak aktif." });
+        return res.status(404).json({ success: false, message: "Template tidak ditemukan atau tidak aktif." });
       }
 
       // 2. Cek apakah user sudah pernah upvote template ini
@@ -247,9 +246,7 @@ class TemplateController {
       );
 
       if (existingUpvote.length > 0) {
-        return res
-          .status(400)
-          .json({ success: false, message: "Anda sudah memberikan upvote pada template ini." });
+        return res.status(400).json({ success: false, message: "Anda sudah memberikan upvote pada template ini." });
       }
 
       // 3. Masukkan data ke tabel upvotes
@@ -259,15 +256,24 @@ class TemplateController {
       ]);
 
       // 4. Update upvote_count di tabel templates (Atomic Update)
-      await db.execute("UPDATE templates SET upvotes = upvotes + 1 WHERE id = ?", [templateId]);
+      await db.execute(
+        "UPDATE templates SET upvotes = upvotes + 1 WHERE id = ?",
+        [templateId]
+      );
 
       return res.status(201).json({
         success: true,
-        message: "Upvote berhasil diberikan!",
+        message: "Upvote berhasil diberikan!"
       });
     } catch (error) {
-      console.error("Error pada fitur upvote:", error);
-      return res.status(500).json({ success: false, message: "Terjadi kesalahan server." });
+      logger.error({ err: error.message, stack: error.stack }, "Error on upvote feature");
+      return responseHandler(res, {
+        status: 500,
+        code: "ERR_INTERNAL_SERVER",
+        messageDev: "Error on upvote feature",
+        messageUser: "Terjadi kesalahan server.",
+        error,
+      });
     }
   }
 }
