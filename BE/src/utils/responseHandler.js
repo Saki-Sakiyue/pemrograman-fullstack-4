@@ -17,6 +17,7 @@ const responseHandler = (
     messageDev = "Operation successful",
     messageUser = "Permintaan berhasil diproses",
     data = null,
+    error,
   },
 ) => {
   const req = res.req; // Mengambil object request kembali
@@ -36,7 +37,7 @@ const responseHandler = (
 
   //  Log otomatis berdasarkan status code
   if (status >= 400) {
-    logger.error({ ...responseData, body: req.body }, `API Error: ${messageDev}`);
+    logger.error({ ...responseData, body: req.body, error }, `API Error: ${messageDev}`);
   } else {
     logger.info(responseData, `API Success: ${messageDev}`);
   }

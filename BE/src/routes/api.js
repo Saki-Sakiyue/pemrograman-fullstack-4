@@ -4,6 +4,7 @@ const { verifyToken } = require("../middleware/authMiddleware");
 const TemplateController = require("../controllers/TemplateController");
 const AuthController = require("../controllers/AuthController");
 const ReportController = require("../controllers/ReportController");
+const ProfileController = require("../controllers/ProfileController");
 
 const router = express.Router();
 
@@ -22,5 +23,9 @@ router.post("/api/templates", verifyToken, TemplateController.post);
 router.patch("/api/templates/:id/download", TemplateController.download);
 
 router.post("/api/reports", verifyToken, ReportController.post);
+
+// Profile route
+router.get("/api/profile", verifyToken, ProfileController.getProfile);
+router.patch("/api/profile", verifyToken, ProfileController.updateProfile);
 
 module.exports = router;

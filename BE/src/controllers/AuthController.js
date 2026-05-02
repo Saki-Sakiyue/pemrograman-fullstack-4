@@ -135,12 +135,12 @@ class AuthController {
         messageUser: "Registrasi berhasil. Silakan login.",
       });
     } catch (error) {
-      logger.error({ err: error.message, stack: error.stack }, "Register Error");
       return responseHandler(res, {
         status: 500,
         code: "ERR_INTERNAL_SERVER",
         messageDev: "An error occurred during registration",
         messageUser: "Terjadi kesalahan saat registrasi. Silakan coba lagi.",
+        error,
       });
     }
   }

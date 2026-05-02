@@ -5,8 +5,8 @@ const logger = pino({
   transport:
     process.env.NODE_ENV === "production"
       ? {
-        ignore: "data",
-      }
+          ignore: "data",
+        }
       : {
           target: "pino-pretty",
           options: {

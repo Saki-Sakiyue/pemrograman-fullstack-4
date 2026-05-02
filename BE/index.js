@@ -17,12 +17,12 @@ const PORT = process.env.PORT || 3000;
 app.use(requestId);
 
 // 2. LOGGER
-app.use(
-  pinoHttp({
-    logger,
-    genReqId: req => req.id,
-  }),
-);
+// app.use(
+//   pinoHttp({
+//     logger,
+//     genReqId: req => req.id,
+//   }),
+// );
 
 // 3. BODY PARSER & CORS
 app.use(cors());
