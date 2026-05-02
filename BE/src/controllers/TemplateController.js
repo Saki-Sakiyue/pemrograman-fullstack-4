@@ -134,8 +134,8 @@ class TemplateController {
       });
     }
   }
-  
-  async download (req, res) {
+
+  async download(req, res) {
     const templateId = req.params.id;
 
     try {
@@ -147,33 +147,33 @@ class TemplateController {
           AND deleted_at IS NULL 
           AND is_active = TRUE
       `;
-      
+
       // Eksekusi query (contoh menggunakan mysql2 promise)
       const [result] = await db.execute(query, [templateId]);
 
       // Validasi: Jika tidak ada baris yang terpengaruh (ID salah/dihapus/tidak aktif)
       if (result.affectedRows === 0) {
-        return res.status(404).json({ 
+        return res.status(404).json({
           success: false,
-          message: "Template tidak ditemukan, tidak aktif, atau sudah dihapus." 
+          message: "Template tidak ditemukan, tidak aktif, atau sudah dihapus.",
         });
       }
 
       // Berhasil ditambah
-      return res.status(200).json({ 
+      return res.status(200).json({
         success: true,
-        message: "Download counter berhasil ditambahkan." 
+        message: "Download counter berhasil ditambahkan.",
       });
-
     } catch (error) {
       console.error("Error updating download count:", error);
-      return res.status(500).json({ 
+      return res.status(500).json({
         success: false,
-        message: "Terjadi kesalahan pada server saat menghitung download." 
+        message: "Terjadi kesalahan pada server saat menghitung download.",
       });
     }
   }
-  async update (req, res) {
+
+  async update(req, res) {
     const templateId = req.params.id;
     // Mengambil data yang dikirim dari Postman/Frontend
     const { title, description, category_id, demo_url, source_url } = req.body;
@@ -183,7 +183,7 @@ class TemplateController {
       if (!title || !category_id) {
         return res.status(400).json({
           success: false,
-          message: "Title dan Category ID wajib diisi."
+          message: "Title dan Category ID wajib diisi.",
         });
       }
 
@@ -194,7 +194,7 @@ class TemplateController {
           AND deleted_at IS NULL 
           AND is_active = TRUE
       `;
-      
+
       // Urutan value ini HARUS SAMA dengan urutan tanda tanya (?) di query atas
       const values = [title, description, category_id, demo_url, source_url, templateId];
 
@@ -205,24 +205,24 @@ class TemplateController {
       if (result.affectedRows === 0) {
         return res.status(404).json({
           success: false,
-          message: "Update gagal: Template tidak ditemukan, tidak aktif, atau sudah dihapus."
+          message: "Update gagal: Template tidak ditemukan, tidak aktif, atau sudah dihapus.",
         });
       }
 
       // 5. Kembalikan Respons Sukses
       return res.status(200).json({
         success: true,
-        message: "Data template berhasil diperbarui!"
+        message: "Data template berhasil diperbarui!",
       });
-
     } catch (error) {
       console.error("Error updating template:", error);
       return res.status(500).json({
         success: false,
-        message: "Terjadi kesalahan internal pada server saat melakukan update."
+        message: "Terjadi kesalahan internal pada server saat melakukan update.",
       });
     }
   }
+
   async upvote(req, res) {
     const templateId = req.params.id;
     const userId = req.user.id; // Diambil dari middleware verifyToken
@@ -231,40 +231,40 @@ class TemplateController {
       // 1. Cek apakah template ada, aktif, dan belum dihapus
       const [template] = await db.execute(
         "SELECT id FROM templates WHERE id = ? AND deleted_at IS NULL AND is_active = TRUE",
-        [templateId]
+        [templateId],
       );
 
       if (template.length === 0) {
-        return res.status(404).json({ success: false, message: "Template tidak ditemukan atau tidak aktif." });
+        return res
+          .status(404)
+          .json({ success: false, message: "Template tidak ditemukan atau tidak aktif." });
       }
 
       // 2. Cek apakah user sudah pernah upvote template ini
       const [existingUpvote] = await db.execute(
         "SELECT id FROM upvotes WHERE user_id = ? AND template_id = ?",
-        [userId, templateId]
+        [userId, templateId],
       );
 
       if (existingUpvote.length > 0) {
-        return res.status(400).json({ success: false, message: "Anda sudah memberikan upvote pada template ini." });
+        return res
+          .status(400)
+          .json({ success: false, message: "Anda sudah memberikan upvote pada template ini." });
       }
 
       // 3. Masukkan data ke tabel upvotes
-      await db.execute(
-        "INSERT INTO upvotes (user_id, template_id) VALUES (?, ?)",
-        [userId, templateId]
-      );
+      await db.execute("INSERT INTO upvotes (user_id, template_id) VALUES (?, ?)", [
+        userId,
+        templateId,
+      ]);
 
       // 4. Update upvote_count di tabel templates (Atomic Update)
-      await db.execute(
-        "UPDATE templates SET upvotes = upvotes + 1 WHERE id = ?",
-        [templateId]
-      );
+      await db.execute("UPDATE templates SET upvotes = upvotes + 1 WHERE id = ?", [templateId]);
 
       return res.status(201).json({
         success: true,
-        message: "Upvote berhasil diberikan!"
+        message: "Upvote berhasil diberikan!",
       });
-
     } catch (error) {
       console.error("Error pada fitur upvote:", error);
       return res.status(500).json({ success: false, message: "Terjadi kesalahan server." });
