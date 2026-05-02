@@ -21,6 +21,7 @@ router.post("/api/auth/logout", AuthController.logout);
 router.get("/api/templates", TemplateController.index);
 router.post("/api/templates", verifyToken, TemplateController.post);
 router.patch("/api/templates/:id/download", TemplateController.download);
+router.put("/api/templates/:id", TemplateController.update);
 
 router.post("/api/reports", verifyToken, ReportController.post);
 
