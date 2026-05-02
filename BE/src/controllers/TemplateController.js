@@ -153,22 +153,29 @@ class TemplateController {
 
       // Validasi: Jika tidak ada baris yang terpengaruh (ID salah/dihapus/tidak aktif)
       if (result.affectedRows === 0) {
-        return res.status(404).json({ 
-          success: false,
-          message: "Template tidak ditemukan, tidak aktif, atau sudah dihapus." 
+        return responseHandler(res, {
+          status: 404,
+          code: "ERR_NOT_FOUND",
+          messageDev: "Template not found or inactive",
+          messageUser: "Template tidak ditemukan, tidak aktif, atau sudah dihapus.",
         });
       }
 
       // Berhasil ditambah
-      return res.status(200).json({ 
-        success: true,
-        message: "Download counter berhasil ditambahkan." 
+      return responseHandler(res, {
+        status: 200,
+        messageDev: "Download count incremented",
+        messageUser: "Download counter berhasil ditambahkan.",
+        data: { template_id: templateId },
       });
     } catch (error) {
-      console.error("Error updating download count:", error);
-      return res.status(500).json({ 
-        success: false,
-        message: "Terjadi kesalahan pada server saat menghitung download." 
+      logger.error({ err: error.message, stack: error.stack }, "Error updating download count");
+      return responseHandler(res, {
+        status: 500,
+        code: "ERR_INTERNAL_SERVER",
+        messageDev: "Error updating download count",
+        messageUser: "Terjadi kesalahan pada server saat menghitung download.",
+        error,
       });
     }
   }
@@ -181,9 +188,11 @@ class TemplateController {
     try {
       // 1. Validasi Dasar: Pastikan kolom wajib terisi
       if (!title || !category_id) {
-        return res.status(400).json({
-          success: false,
-          message: "Title dan Category ID wajib diisi."
+        return responseHandler(res, {
+          status: 400,
+          code: "ERR_VALIDATION",
+          messageDev: "Missing required fields: title or category_id",
+          messageUser: "Title dan Category ID wajib diisi.",
         });
       }
 
@@ -204,22 +213,28 @@ class TemplateController {
       // 4. Cek apakah ada data yang berhasil di-update
 
       if (result.affectedRows === 0) {
-        return res.status(404).json({
-          success: false,
-          message: "Update gagal: Template tidak ditemukan, tidak aktif, atau sudah dihapus."
+        return responseHandler(res, {
+          status: 404,
+          code: "ERR_NOT_FOUND",
+          messageDev: "Update failed: template not found or inactive",
+          messageUser: "Update gagal: Template tidak ditemukan, tidak aktif, atau sudah dihapus.",
         });
       }
 
       // 5. Kembalikan Respons Sukses
-      return res.status(200).json({
-        success: true,
-        message: "Data template berhasil diperbarui!"
+      return responseHandler(res, {
+        status: 200,
+        messageDev: "Template updated successfully",
+        messageUser: "Data template berhasil diperbarui!",
       });
     } catch (error) {
-      console.error("Error updating template:", error);
-      return res.status(500).json({
-        success: false,
-        message: "Terjadi kesalahan internal pada server saat melakukan update."
+      logger.error({ err: error.message, stack: error.stack }, "Error updating template");
+      return responseHandler(res, {
+        status: 500,
+        code: "ERR_INTERNAL_SERVER",
+        messageDev: "Error updating template",
+        messageUser: "Terjadi kesalahan internal pada server saat melakukan update.",
+        error,
       });
     }
   }
@@ -236,7 +251,12 @@ class TemplateController {
       );
 
       if (template.length === 0) {
-        return res.status(404).json({ success: false, message: "Template tidak ditemukan atau tidak aktif." });
+        return responseHandler(res, {
+          status: 404,
+          code: "ERR_NOT_FOUND",
+          messageDev: "Template not found or inactive",
+          messageUser: "Template tidak ditemukan atau tidak aktif.",
+        });
       }
 
       // 2. Cek apakah user sudah pernah upvote template ini
@@ -246,7 +266,12 @@ class TemplateController {
       );
 
       if (existingUpvote.length > 0) {
-        return res.status(400).json({ success: false, message: "Anda sudah memberikan upvote pada template ini." });
+        return responseHandler(res, {
+          status: 400,
+          code: "ERR_ALREADY_UPVOTED",
+          messageDev: "User already upvoted this template",
+          messageUser: "Anda sudah memberikan upvote pada template ini.",
+        });
       }
 
       // 3. Masukkan data ke tabel upvotes
@@ -255,15 +280,16 @@ class TemplateController {
         templateId,
       ]);
 
-      // 4. Update upvote_count di tabel templates (Atomic Update)
+      // 4. Update popularity_score di tabel templates (Atomic Update)
       await db.execute(
-        "UPDATE templates SET upvotes = upvotes + 1 WHERE id = ?",
-        [templateId]
+        "UPDATE templates SET popularity_score = popularity_score + 1 WHERE id = ?",
+        [templateId],
       );
 
-      return res.status(201).json({
-        success: true,
-        message: "Upvote berhasil diberikan!"
+      return responseHandler(res, {
+        status: 201,
+        messageDev: "Upvote created",
+        messageUser: "Upvote berhasil diberikan!",
       });
     } catch (error) {
       logger.error({ err: error.message, stack: error.stack }, "Error on upvote feature");
