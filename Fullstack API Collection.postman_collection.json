@@ -214,7 +214,7 @@
                 "exec": [
                   "const responseJson = pm.response.json();",
                   "if (responseJson.data && responseJson.data.token) {",
-                  "  pm.environment.set('auth_token', responseJson.data.token);",
+                  "  pm.collectionVariables.set('token', responseJson.data.token);",
                   "}"
                 ],
                 "type": "text/javascript",
