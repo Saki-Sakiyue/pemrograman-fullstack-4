@@ -1,13 +1,16 @@
 const jwt = require('jsonwebtoken');
+const responseHandler = require('../utils/responseHandler');
 
 const verifyToken = (req, res, next) => {
     const authHeader = req.headers.authorization || '';
     const [scheme, token] = authHeader.split(' ');
 
     if (scheme !== 'Bearer' || !token) {
-        return res.status(401).json({
-            success: false,
-            message: 'Unauthorized'
+        return responseHandler(res, {
+            status: 401,
+            code: 'ERR_UNAUTHORIZED',
+            messageDev: 'Missing or invalid authorization header',
+            messageUser: 'Unauthorized',
         });
     }
 
@@ -16,9 +19,12 @@ const verifyToken = (req, res, next) => {
         req.user = decoded;
         next();
     } catch (error) {
-        return res.status(401).json({
-            success: false,
-            message: 'Token tidak valid atau sudah expired.'
+        return responseHandler(res, {
+            status: 401,
+            code: 'ERR_INVALID_TOKEN',
+            messageDev: 'JWT verification failed',
+            messageUser: 'Token tidak valid atau sudah expired.',
+            error,
         });
     }
 };
