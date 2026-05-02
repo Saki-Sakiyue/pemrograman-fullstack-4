@@ -173,6 +173,56 @@ class TemplateController {
       });
     }
   }
+  async update (req, res) {
+    const templateId = req.params.id;
+    // Mengambil data yang dikirim dari Postman/Frontend
+    const { title, description, category_id, demo_url, source_url } = req.body;
+
+    try {
+      // 1. Validasi Dasar: Pastikan kolom wajib terisi
+      if (!title || !category_id) {
+        return res.status(400).json({
+          success: false,
+          message: "Title dan Category ID wajib diisi."
+        });
+      }
+
+      const query = `
+        UPDATE templates 
+        SET title = ?, description = ?, category_id = ?, demo_url = ?, source_url = ?
+        WHERE id = ? 
+          AND deleted_at IS NULL 
+          AND is_active = TRUE
+      `;
+      
+      // Urutan value ini HARUS SAMA dengan urutan tanda tanya (?) di query atas
+      const values = [title, description, category_id, demo_url, source_url, templateId];
+
+      // 3. Eksekusi Database
+      const [result] = await db.execute(query, values);
+
+      // 4. Cek apakah ada data yang berhasil di-update
+      if (result.affectedRows === 0) {
+        return res.status(404).json({
+          success: false,
+          message: "Update gagal: Template tidak ditemukan, tidak aktif, atau sudah dihapus."
+        });
+      }
+
+      // 5. Kembalikan Respons Sukses
+      return res.status(200).json({
+        success: true,
+        message: "Data template berhasil diperbarui!"
+      });
+
+    } catch (error) {
+      console.error("Error updating template:", error);
+      return res.status(500).json({
+        success: false,
+        message: "Terjadi kesalahan internal pada server saat melakukan update."
+      });
+    }
+  }
 }
 
 const object = new TemplateController();
