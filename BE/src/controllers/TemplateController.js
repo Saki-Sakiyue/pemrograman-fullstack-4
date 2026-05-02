@@ -2,6 +2,7 @@ const db = require("../config/database");
 const { validateCreateTemplate } = require("../validators/templateValidator");
 const logger = require("../utils/logger");
 const responseHandler = require("../utils/responseHandler");
+const TemplateService = require("../services/TemplateService");
 
 class TemplateController {
   async index(req, res) {
@@ -159,7 +160,7 @@ class TemplateController {
       ]);
 
       // 2. RE-CALCULATE SCORE
-      await updatePopularityScore(templateId);
+      await TemplateService.updatePopularityScore(templateId);
 
       // TODO: Logika mengirim file ke client
 
@@ -276,7 +277,7 @@ class TemplateController {
       }
 
       // RE-CALCULATE SCORE
-      await updatePopularityScore(templateId);
+      await TemplateService.updatePopularityScore(templateId);
 
       return responseHandler(res, {
         status: 200,
@@ -335,7 +336,7 @@ class TemplateController {
       }
 
       // RE-CALCULATE SCORE
-      await updatePopularityScore(templateId);
+      await TemplateService.updatePopularityScore(templateId);
 
       return responseHandler(res, {
         status: 200,
