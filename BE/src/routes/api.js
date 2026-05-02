@@ -22,6 +22,7 @@ router.get("/api/templates", TemplateController.index);
 router.post("/api/templates", verifyToken, TemplateController.post);
 router.patch("/api/templates/:id/download", TemplateController.download);
 router.put("/api/templates/:id", TemplateController.update);
+router.post("/api/templates/:id/upvote", verifyToken, TemplateController.upvote);
 
 router.post("/api/reports", verifyToken, ReportController.post);
 
