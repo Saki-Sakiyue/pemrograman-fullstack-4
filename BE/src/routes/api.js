@@ -5,6 +5,7 @@ const TemplateController = require("../controllers/TemplateController");
 const AuthController = require("../controllers/AuthController");
 const ReportController = require("../controllers/ReportController");
 const ProfileController = require("../controllers/ProfileController");
+const { uploadAvatar } = require("../middleware/uploadMiddleware");
 
 const router = express.Router();
 
@@ -28,6 +29,11 @@ router.post("/api/reports", verifyToken, ReportController.post);
 
 // Profile route
 router.get("/api/profile", verifyToken, ProfileController.getProfile);
-router.patch("/api/profile", verifyToken, ProfileController.updateProfile);
+router.patch(
+  "/api/profile",
+  verifyToken,
+  uploadAvatar.single("avatar"),
+  ProfileController.updateProfile,
+);
 
 module.exports = router;
