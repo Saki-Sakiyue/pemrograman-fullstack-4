@@ -27,6 +27,7 @@ app.use(requestId);
 // 3. BODY PARSER & CORS
 app.use(cors());
 app.use(express.json());
+app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 
 // 4. ROUTES
