@@ -6,11 +6,13 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { authService } from '@/services/auth.service';
 import { setCookie } from 'cookies-next';
 import { toast } from 'sonner';
+import { useAuthStore } from '@/store/useAuthStore';
 
 export default function LoginPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('redirect') || '/dashboard';
+  const setUser = useAuthStore(state => state.setUser);
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -21,13 +23,19 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      const response = await authService.login({ identifier: username, password });
+      const response = await authService.login({
+        identifier: username,
+        password,
+      });
 
       if (response.data) {
         setCookie('templas_token', response.data.token, {
           path: '/',
           maxAge: 60 * 60 * 5, // Simpan token di cookie selama 5 jam
         });
+
+        console.log(response);
+        setUser(response.data.user);
 
         toast.success('Login berhasil!');
         router.push(callbackUrl);

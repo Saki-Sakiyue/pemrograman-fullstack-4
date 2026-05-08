@@ -1,29 +1,19 @@
 import apiClient from '@/api/axiosInstance';
 import { BaseResponse } from '@/types/api';
-
-export interface LoginData {
-  token: string;
-  user: {
-    id: string;
-    username: string;
-    role: string;
-  };
-}
+import { LoginPayload, LoginResponseData, RegisterPayload } from '@/types/auth.types';
 
 export const authService = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  login: async (payload: any) => {
+  login: async (payload: LoginPayload) => {
     // TODO: Define the payload type
-    const response = await apiClient.post<BaseResponse<LoginData>>(
+    const response = await apiClient.post<BaseResponse<LoginResponseData>>(
       '/auth/login',
       payload
     );
     return response.data;
   },
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  register: async (payload: any) => {
+  register: async (payload: RegisterPayload) => {
     // TODO: Define the payload type
-    const response = await apiClient.post<BaseResponse<LoginData>>(
+    const response = await apiClient.post<BaseResponse<LoginResponseData>>(
       '/auth/register',
       payload
     );
