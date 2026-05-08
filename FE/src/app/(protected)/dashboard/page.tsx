@@ -1,53 +1,88 @@
 'use client';
-
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { useHydration } from '@/hooks/useHydration';
 import { useAuthStore } from '@/store/useAuthStore';
-import { deleteCookie } from 'cookies-next';
-import { useRouter } from 'next/navigation';
-import { toast } from 'sonner';
+import { Bookmark, Download, Heart, Layout } from 'lucide-react';
 
 export default function DashboardPage() {
-  const router = useRouter();
   const isHydrated = useHydration();
-  const { user, clearAuth } = useAuthStore();
+  const user = useAuthStore(state => state.user);
 
-  const handleLogout = () => {
-    deleteCookie('templas_token', { path: '/' });
-
-    clearAuth();
-    toast.success('Logout berhasil!');
-    router.push('/login');
-  };
-
-  if (!isHydrated) {
-    return (
-      <div className="flex min-h-screen items-center justify-center">
-        Memuat data...
-      </div>
-    );
-  }
+  if (!isHydrated) return null;
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-50 p-4">
-      <div className="w-full max-w-2xl rounded-xl bg-white p-8 text-center shadow-lg">
-        <h1 className="mb-4 text-3xl font-bold text-gray-800">
-          Selamat Datang, {user ? user.username : 'Praktikan'}!
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-2xl font-bold text-slate-900">
+          Halo, {user?.username || 'User'}! 👋
         </h1>
-        <p className="mb-8 text-gray-600">
-          Status:{' '}
-          <span className="font-semibold text-blue-600">
-            {user?.role || 'Guest'}
-          </span>
+        <p className="text-slate-500">
+          Berikut adalah ringkasan aset Templas kamu bulan ini.
         </p>
+      </div>
 
+      {/* Stats Grid */}
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Total Template
+            </CardTitle>
+            <Layout className="text-muted-foreground h-4 w-4" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">12</div>
+            <p className="text-muted-foreground text-xs">
+              Aset yang kamu publikasikan
+            </p>
+          </CardContent>
+        </Card>
 
-        {/* Tombol Logout */}
-        <button
-          onClick={handleLogout}
-          className="rounded bg-red-500 px-6 py-2 font-semibold text-white transition-colors hover:bg-red-600"
-        >
-          Keluar (Logout)
-        </button>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">
+              Total Download
+            </CardTitle>
+            <Download className="text-muted-foreground h-4 w-4" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">1,284</div>
+            <p className="text-muted-foreground text-xs">
+              +12% dari bulan lalu
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Upvotes</CardTitle>
+            <Heart className="h-4 w-4 text-red-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">450</div>
+            <p className="text-muted-foreground text-xs">
+              Orang menyukai karyamu
+            </p>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Bookmarks</CardTitle>
+            <Bookmark className="h-4 w-4 text-blue-500" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">89</div>
+            <p className="text-muted-foreground text-xs">
+              Disimpan untuk nanti
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Placeholder untuk Recent Activity atau Chart */}
+      <div className="flex min-h-[300px] items-center justify-center rounded-xl border-2 border-dashed border-slate-200 text-slate-400">
+        Grafik Statistik (Coming Soon)
       </div>
     </div>
   );
