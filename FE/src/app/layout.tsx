@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 import './globals.css';
 import { Toaster } from 'sonner';
+import NetworkBanner from '@/components/NetworkBanner';
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -18,7 +19,7 @@ export default function RootLayout({
   return (
     <html lang="id">
       <body className={inter.className}>
-        {/* 2. Letakkan Toaster di dalam body, di atas children */}
+        <NetworkBanner />
         <Toaster position="top-right" richColors expand={true} />
 
         <main>{children}</main>
