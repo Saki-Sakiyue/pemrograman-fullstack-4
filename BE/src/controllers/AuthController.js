@@ -1,8 +1,15 @@
-const db = require("../config/database");
-const { hashPassword, comparePassword, generateToken } = require("../services/AuthService");
-const { validateLoginPayload, validateRegisterPayload } = require("../validators/authValidator");
-const logger = require("../utils/logger");
-const responseHandler = require("../utils/responseHandler");
+const db = require('../config/database');
+const {
+  hashPassword,
+  comparePassword,
+  generateToken,
+} = require('../services/AuthService');
+const {
+  validateLoginPayload,
+  validateRegisterPayload,
+} = require('../validators/authValidator');
+const logger = require('../utils/logger');
+const responseHandler = require('../utils/responseHandler');
 
 class AuthController {
   async login(req, res) {
@@ -12,8 +19,8 @@ class AuthController {
       if (!validation.valid) {
         return responseHandler(res, {
           status: 400,
-          code: "ERR_VALIDATION",
-          messageDev: "Login payload validation failed",
+          code: 'ERR_VALIDATION',
+          messageDev: 'Login payload validation failed',
           messageUser: validation.message,
         });
       }
@@ -33,21 +40,24 @@ class AuthController {
       if (rows.length === 0) {
         return responseHandler(res, {
           status: 401,
-          code: "ERR_INVALID_CREDENTIALS",
-          messageDev: "User not found or deleted",
-          messageUser: "Username/email atau password salah.",
+          code: 'ERR_INVALID_CREDENTIALS',
+          messageDev: 'User not found or deleted',
+          messageUser: 'Username/email atau password salah.',
         });
       }
 
       const user = rows[0];
-      const isPasswordValid = await comparePassword(password, user.password_hash);
+      const isPasswordValid = await comparePassword(
+        password,
+        user.password_hash
+      );
 
       if (!isPasswordValid) {
         return responseHandler(res, {
           status: 401,
-          code: "ERR_INVALID_CREDENTIALS",
-          messageDev: "Password mismatch",
-          messageUser: "Username/email atau password salah.",
+          code: 'ERR_INVALID_CREDENTIALS',
+          messageDev: 'Password mismatch',
+          messageUser: 'Username/email atau password salah.',
         });
       }
 
@@ -60,8 +70,8 @@ class AuthController {
       // Response sukses dengan format standar [cite: 940, 962]
       return responseHandler(res, {
         status: 200,
-        messageDev: "Login successful",
-        messageUser: "Login berhasil.",
+        messageDev: 'Login successful',
+        messageUser: 'Login berhasil.',
         data: {
           token,
           user: {
@@ -74,12 +84,12 @@ class AuthController {
         },
       });
     } catch (error) {
-      logger.error({ err: error.message, stack: error.stack }, "Login Error");
+      logger.error({ err: error.message, stack: error.stack }, 'Login Error');
       return responseHandler(res, {
         status: 500,
-        code: "ERR_INTERNAL_SERVER",
-        messageDev: "An error occurred during login",
-        messageUser: "Terjadi kesalahan saat login. Silakan coba lagi.",
+        code: 'ERR_INTERNAL_SERVER',
+        messageDev: 'An error occurred during login',
+        messageUser: 'Terjadi kesalahan saat login. Silakan coba lagi.',
       });
     }
   }
@@ -87,8 +97,8 @@ class AuthController {
   async logout(req, res, next) {
     return responseHandler(res, {
       status: 200,
-      messageDev: "User logged out",
-      messageUser: "Logout berhasil.",
+      messageDev: 'User logged out',
+      messageUser: 'Logout berhasil.',
     });
   }
 
@@ -99,8 +109,8 @@ class AuthController {
       if (!validation.valid) {
         return responseHandler(res, {
           status: 400,
-          code: "ERR_VALIDATION",
-          messageDev: "Register payload validation failed",
+          code: 'ERR_VALIDATION',
+          messageDev: 'Register payload validation failed',
           messageUser: validation.message,
         });
       }
@@ -110,14 +120,17 @@ class AuthController {
       const trimmedEmail = email.trim();
 
       const checkSql = `SELECT id FROM users WHERE email = ? OR username = ? LIMIT 1`;
-      const [existingUser] = await db.query(checkSql, [trimmedEmail, trimmedUsername]);
+      const [existingUser] = await db.query(checkSql, [
+        trimmedEmail,
+        trimmedUsername,
+      ]);
 
       if (existingUser.length > 0) {
         return responseHandler(res, {
           status: 400,
-          code: "ERR_DUPLICATE_ENTRY",
-          messageDev: "Email or username already exists",
-          messageUser: "Email atau Username sudah terdaftar.",
+          code: 'ERR_DUPLICATE_ENTRY',
+          messageDev: 'Email or username already exists',
+          messageUser: 'Email atau Username sudah terdaftar.',
         });
       }
 
@@ -127,19 +140,24 @@ class AuthController {
             INSERT INTO users (username, email, password_hash, role)
             VALUES (?, ?, ?, ?)
         `;
-      await db.query(insertSql, [trimmedUsername, trimmedEmail, passwordHash, "user"]);
+      await db.query(insertSql, [
+        trimmedUsername,
+        trimmedEmail,
+        passwordHash,
+        'user',
+      ]);
 
       return responseHandler(res, {
         status: 201,
-        messageDev: "User registered successfully",
-        messageUser: "Registrasi berhasil. Silakan login.",
+        messageDev: 'User registered successfully',
+        messageUser: 'Registrasi berhasil. Silakan login.',
       });
     } catch (error) {
       return responseHandler(res, {
         status: 500,
-        code: "ERR_INTERNAL_SERVER",
-        messageDev: "An error occurred during registration",
-        messageUser: "Terjadi kesalahan saat registrasi. Silakan coba lagi.",
+        code: 'ERR_INTERNAL_SERVER',
+        messageDev: 'An error occurred during registration',
+        messageUser: 'Terjadi kesalahan saat registrasi. Silakan coba lagi.',
         error,
       });
     }

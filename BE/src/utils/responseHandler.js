@@ -1,4 +1,4 @@
-const logger = require("./logger");
+const logger = require('./logger');
 
 /* 
  RESPONSE HANDLER
@@ -13,28 +13,30 @@ const responseHandler = (
   res,
   {
     status = 200,
-    code = "SUCCESS",
-    messageDev = "Operation successful",
-    messageUser = "Permintaan berhasil diproses",
+    code = 'SUCCESS',
+    messageDev = 'Operation successful',
+    messageUser = 'Permintaan berhasil diproses',
     data = null,
     error,
-  },
+  }
 ) => {
   const req = res.req; // Mengambil object request kembali
 
   const responseData = {
     status,
     code,
-    message_dev: process.env.NODE_ENV !== "production" ? messageDev : "",
+    message_dev: process.env.NODE_ENV !== 'production' ? messageDev : '',
     message_user: messageUser,
     data,
-    request_id: req.id || "",
+    request_id: req.id || '',
     timestamp: new Date().toISOString(),
   };
 
   const logData = {
     ...responseData,
-    user: req.user ? { id: req.user.id, username: req.user.username, role: req.user.role } : null,
+    user: req.user
+      ? { id: req.user.id, username: req.user.username, role: req.user.role }
+      : null,
   };
 
   let formattedError = null;
@@ -50,13 +52,16 @@ const responseHandler = (
       };
     } else {
       // Jika error yang dilempar bukan berupa objek Error standar (misal throw "string")
-      formattedError = error; 
+      formattedError = error;
     }
   }
 
   //  Log otomatis berdasarkan status code
   if (status >= 400) {
-    logger.error({ ...logData, body: req.body, error: formattedError }, `API Error: ${messageDev}`);
+    logger.error(
+      { ...logData, body: req.body, error: formattedError },
+      `API Error: ${messageDev}`
+    );
   } else {
     logger.info(logData, `API Success: ${messageDev}`);
   }

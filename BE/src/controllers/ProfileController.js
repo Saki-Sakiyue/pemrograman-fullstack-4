@@ -1,9 +1,9 @@
-const db = require("../config/database");
-const { validateUpdateProfile } = require("../validators/profileValidator");
-const logger = require("../utils/logger");
-const responseHandler = require("../utils/responseHandler");
-const { hashPassword, generateToken } = require("../services/AuthService");
-const { deletePublicFile } = require("../utils/fileUtils");
+const db = require('../config/database');
+const { validateUpdateProfile } = require('../validators/profileValidator');
+const logger = require('../utils/logger');
+const responseHandler = require('../utils/responseHandler');
+const { hashPassword, generateToken } = require('../services/AuthService');
+const { deletePublicFile } = require('../utils/fileUtils');
 
 class ProfileController {
   async getProfile(req, res) {
@@ -22,26 +22,29 @@ class ProfileController {
       if (rows.length === 0) {
         return responseHandler(res, {
           status: 404,
-          code: "ERR_PROFILE_NOT_FOUND",
+          code: 'ERR_PROFILE_NOT_FOUND',
           messageDev: `Profile with user ID ${userId} not found`,
-          messageUser: "Profil tidak ditemukan.",
+          messageUser: 'Profil tidak ditemukan.',
         });
       }
 
       const profile = rows[0];
       return responseHandler(res, {
         status: 200,
-        messageDev: "Profile fetched successfully",
-        messageUser: "Profil berhasil dimuat.",
+        messageDev: 'Profile fetched successfully',
+        messageUser: 'Profil berhasil dimuat.',
         data: profile,
       });
     } catch (error) {
-      logger.error({ err: error.message, stack: error.stack }, "Error in getProfile");
+      logger.error(
+        { err: error.message, stack: error.stack },
+        'Error in getProfile'
+      );
       return responseHandler(res, {
         status: 500,
-        code: "ERR_INTERNAL_SERVER",
-        messageDev: "An error occurred while fetching profile",
-        messageUser: "Terjadi kesalahan saat memuat profil. Silakan coba lagi.",
+        code: 'ERR_INTERNAL_SERVER',
+        messageDev: 'An error occurred while fetching profile',
+        messageUser: 'Terjadi kesalahan saat memuat profil. Silakan coba lagi.',
       });
     }
   }
@@ -58,9 +61,9 @@ class ProfileController {
       if (!req.body || Object.keys(req.body).length === 0) {
         return responseHandler(res, {
           status: 400,
-          code: "ERR_NO_DATA",
-          messageDev: "No data provided for update",
-          messageUser: "Tidak ada data yang diberikan untuk diperbarui.",
+          code: 'ERR_NO_DATA',
+          messageDev: 'No data provided for update',
+          messageUser: 'Tidak ada data yang diberikan untuk diperbarui.',
         });
       }
 
@@ -71,8 +74,8 @@ class ProfileController {
 
         return responseHandler(res, {
           status: 400,
-          code: "ERR_VALIDATION",
-          messageDev: "Validation failed",
+          code: 'ERR_VALIDATION',
+          messageDev: 'Validation failed',
           messageUser: validation.message,
         });
       }
@@ -85,8 +88,8 @@ class ProfileController {
       let oldAvatarUrl = null;
       if (avatar_url) {
         const [rows] = await db.query(
-          "SELECT avatar_url FROM users WHERE id = ? AND deleted_at IS NULL",
-          [userId],
+          'SELECT avatar_url FROM users WHERE id = ? AND deleted_at IS NULL',
+          [userId]
         );
         if (rows.length > 0) {
           oldAvatarUrl = rows[0].avatar_url;
@@ -108,9 +111,9 @@ class ProfileController {
 
         return responseHandler(res, {
           status: 404,
-          code: "ERR_PROFILE_NOT_FOUND",
+          code: 'ERR_PROFILE_NOT_FOUND',
           messageDev: `Profile with user ID ${userId} not found for update`,
-          messageUser: "Profil tidak ditemukan untuk diperbarui.",
+          messageUser: 'Profil tidak ditemukan untuk diperbarui.',
         });
       }
 
@@ -126,8 +129,8 @@ class ProfileController {
       if (username) {
         // Ambil data terbaru HANYA jika username berubah untuk memastikan integritas
         const [freshUserRows] = await db.query(
-          "SELECT id, username, role FROM users WHERE id = ? AND deleted_at IS NULL",
-          [userId],
+          'SELECT id, username, role FROM users WHERE id = ? AND deleted_at IS NULL',
+          [userId]
         );
         if (freshUserRows.length > 0) {
           const freshUser = freshUserRows[0];
@@ -148,34 +151,35 @@ class ProfileController {
       return responseHandler(res, {
         status: 200,
         messageDev: newToken
-          ? "Profile updated successfully, new token issued"
-          : "Profile updated successfully",
-        messageUser: "Profil berhasil diperbarui.",
+          ? 'Profile updated successfully, new token issued'
+          : 'Profile updated successfully',
+        messageUser: 'Profil berhasil diperbarui.',
         data: {
           id: userId,
           username: updatedUsername, // Selalu kirim username (baru atau lama)
           avatar_url: avatar_url || undefined,
-          password: password ? "updated" : undefined,
+          password: password ? 'updated' : undefined,
           token: newToken, // Akan bernilai token string ATAU undefined
         },
       });
     } catch (error) {
       if (req.file) deletePublicFile(req.body.avatar_url); // Hapus file baru jika terjadi error
 
-      if (error && error.code === "ER_DUP_ENTRY") {
+      if (error && error.code === 'ER_DUP_ENTRY') {
         return responseHandler(res, {
           status: 400,
-          code: "ERR_DUPLICATE_ENTRY",
-          messageDev: "Username already exists",
-          messageUser: "Username sudah digunakan. Silakan pilih username lain.",
+          code: 'ERR_DUPLICATE_ENTRY',
+          messageDev: 'Username already exists',
+          messageUser: 'Username sudah digunakan. Silakan pilih username lain.',
         });
       }
 
       return responseHandler(res, {
         status: 500,
-        code: "ERR_INTERNAL_SERVER",
-        messageDev: "An error occurred while updating profile",
-        messageUser: "Terjadi kesalahan saat memperbarui profil. Silakan coba lagi.",
+        code: 'ERR_INTERNAL_SERVER',
+        messageDev: 'An error occurred while updating profile',
+        messageUser:
+          'Terjadi kesalahan saat memperbarui profil. Silakan coba lagi.',
         error,
       });
     }

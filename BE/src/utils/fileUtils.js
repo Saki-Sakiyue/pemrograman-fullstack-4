@@ -1,6 +1,6 @@
-const fs = require("fs");
-const path = require("path");
-const logger = require("./logger");
+const fs = require('fs');
+const path = require('path');
+const logger = require('./logger');
 
 /**
  * Utility function to delete a file from the public directory based on its URL.
@@ -10,10 +10,10 @@ const deletePublicFile = fileUrl => {
   if (!fileUrl) return;
 
   // Hapus leading slash jika ada
-  const cleanPath = fileUrl.startsWith("/") ? fileUrl.slice(1) : fileUrl;
+  const cleanPath = fileUrl.startsWith('/') ? fileUrl.slice(1) : fileUrl;
 
   // Mundur ke root BE dan gabungkan dengan path file
-  const absolutePath = path.join(__dirname, "../../public", cleanPath);
+  const absolutePath = path.join(__dirname, '../../public', cleanPath);
 
   if (fs.existsSync(absolutePath)) {
     try {
@@ -21,7 +21,7 @@ const deletePublicFile = fileUrl => {
     } catch (error) {
       logger.error(
         { err: error.message, stack: error.stack },
-        `Failed to delete file at ${absolutePath}`,
+        `Failed to delete file at ${absolutePath}`
       );
     }
   }
