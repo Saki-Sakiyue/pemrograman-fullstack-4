@@ -1,6 +1,6 @@
 'use client';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useHydration } from '@/hooks/useHydration';
+import { useHydration } from '@/hooks/common/useHydration';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Bookmark, Download, Heart, Layout } from 'lucide-react';
 

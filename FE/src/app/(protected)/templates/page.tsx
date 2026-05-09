@@ -1,29 +1,30 @@
 'use client';
 
+import { CategoryFilter } from '@/components/templates/CategoryFilter';
 import TemplateCard from '@/components/templates/TemplateCard';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useDebounce } from '@/hooks/common/useDebounce';
-import { useTemplates } from '@/hooks/queries/useTemplates';
+import { useTemplates } from '@/hooks/queries/template.queries';
 import { Search } from 'lucide-react';
 import { useState } from 'react';
 
 export default function TemplatesPage() {
   const [page, setPage] = useState(1);
-  const { data, isLoading, isError } = useTemplates({ page, limit: 5 });
   const [searchQuery, setSearchQuery] = useState('');
+  const debouncedSearch = useDebounce(searchQuery, 500);
+  const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
+
+  const { data, isLoading, isError } = useTemplates({
+    page,
+    limit: 5,
+    search: debouncedSearch,
+  });
 
   const templates = data?.templates || [];
   const pagination = data?.pagination;
-
   // Logika Filter Sederhana
-  const debouncedSearch = useDebounce(searchQuery, 500);
-  const filteredTemplates = templates?.filter(
-    t =>
-      t.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
-      t.description.toLowerCase().includes(debouncedSearch.toLowerCase())
-  );
 
   return (
     <div className="space-y-8">
@@ -49,6 +50,12 @@ export default function TemplatesPage() {
         </div>
       </div>
 
+      {/* Pasang Komponen Filter */}
+      <CategoryFilter
+        selectedId={selectedCategory}
+        onSelect={setSelectedCategory}
+      />
+
       {/* Main Content */}
       {isLoading ? (
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
@@ -66,14 +73,14 @@ export default function TemplatesPage() {
             Gagal mengambil data dari server.
           </p>
         </div>
-      ) : filteredTemplates?.length === 0 ? (
+      ) : templates?.length === 0 ? (
         <div className="py-20 text-center">
           <p className="text-slate-400">Template tidak ditemukan.</p>
         </div>
       ) : (
         <>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {filteredTemplates?.map(template => (
+            {templates?.map(template => (
               <TemplateCard key={template.id} template={template} />
             ))}
           </div>

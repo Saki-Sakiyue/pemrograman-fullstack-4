@@ -1,7 +1,7 @@
 // src/components/NetworkBanner.tsx
 'use client';
 
-import { useNetworkStatus } from '@/hooks/useNetworkStatus';
+import { useNetworkStatus } from '@/hooks/common/useNetworkStatus';
 
 export default function NetworkBanner() {
   const isOnline = useNetworkStatus();

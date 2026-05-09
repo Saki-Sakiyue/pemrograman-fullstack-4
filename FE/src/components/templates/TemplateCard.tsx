@@ -1,10 +1,12 @@
-// src/components/templates/TemplateCard.tsx
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import { getFullImageUrl } from '@/lib/image';
+import { formatCompactNumber } from '@/lib/utils';
 import { Template } from '@/types/template.types';
-import { Download, Eye, Heart } from 'lucide-react';
+import { Download, Eye, TrendingUp } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface TemplateCardProps {
   template: Template;
@@ -17,7 +19,7 @@ export default function TemplateCard({ template }: TemplateCardProps) {
       <div className="relative aspect-video overflow-hidden bg-slate-100">
         {template.thumbnail_url ? (
           <Image
-            src={template.thumbnail_url}
+            src={getFullImageUrl(template.thumbnail_url)}
             alt={template.title}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -50,15 +52,18 @@ export default function TemplateCard({ template }: TemplateCardProps) {
       <CardFooter className="mt-2 flex items-center justify-between border-t border-slate-50 p-4 pt-0">
         <div className="flex items-center space-x-3 text-xs text-slate-500">
           <span className="flex items-center gap-1">
-            <Download className="h-3.5 w-3.5" /> {template.download_count}
+            <Download className="h-3.5 w-3.5" />{' '}
+            {formatCompactNumber(template.download_count)}
           </span>
           <span className="flex items-center gap-1">
-            <Heart className="h-3.5 w-3.5 text-red-400" />{' '}
-            {template.popularity_score} {/* Pakai data asli! */}
+            <TrendingUp className="h-3.5 w-3.5" />{' '}
+            {formatCompactNumber(template.popularity_score)}
           </span>
         </div>
-        <Button size="sm" variant="outline" className="h-8">
-          <Eye className="mr-1 h-4 w-4" /> View
+        <Button size="sm" variant="outline" className="h-8" asChild>
+          <Link href={`/templates/${template.id}`} className="ml-auto">
+            <Eye className="mr-1 h-4 w-4" /> View
+          </Link>
         </Button>
       </CardFooter>
     </Card>
