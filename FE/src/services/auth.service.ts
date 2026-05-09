@@ -1,6 +1,10 @@
 import apiClient from '@/api/axiosInstance';
 import { BaseResponse } from '@/types/api';
-import { LoginPayload, LoginResponseData, RegisterPayload } from '@/types/auth.types';
+import {
+  LoginPayload,
+  LoginResponseData,
+  RegisterPayload,
+} from '@/types/auth.types';
 
 export const authService = {
   login: async (payload: LoginPayload) => {
