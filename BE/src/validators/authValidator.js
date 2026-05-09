@@ -39,8 +39,7 @@ const validateRegisterPayload = (payload = {}) => {
   if (!/^[a-zA-Z0-9_-]+$/.test(username.trim())) {
     return {
       valid: false,
-      message:
-        'Username hanya boleh mengandung huruf, angka, underscore, dan dash.',
+      message: 'Username hanya boleh mengandung huruf, angka, underscore, dan dash.',
     };
   }
 

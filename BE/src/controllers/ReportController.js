@@ -51,17 +51,12 @@ class ReportController {
         VALUES (?, ?, ?, 'pending', NOW())
       `;
 
-      const [result] = await db.query(insertSql, [
-        req.user.id,
-        template_id,
-        reason.trim(),
-      ]);
+      const [result] = await db.query(insertSql, [req.user.id, template_id, reason.trim()]);
 
       return responseHandler(res, {
         status: 201,
         messageDev: 'Report created successfully',
-        messageUser:
-          'Laporan berhasil dikirim. Terima kasih atas kontribusi Anda!',
+        messageUser: 'Laporan berhasil dikirim. Terima kasih atas kontribusi Anda!',
         data: {
           report_id: result.insertId,
           template_id,
@@ -72,8 +67,7 @@ class ReportController {
         status: 500,
         code: 'ERR_INTERNAL_SERVER',
         messageDev: 'An error occurred while creating report',
-        messageUser:
-          'Terjadi kesalahan saat memproses laporan. Silakan coba lagi.',
+        messageUser: 'Terjadi kesalahan saat memproses laporan. Silakan coba lagi.',
         error,
       });
     }

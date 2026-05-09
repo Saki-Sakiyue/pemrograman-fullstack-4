@@ -5,8 +5,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'dev_jwt_secret_change_me';
 const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1d';
 const BCRYPT_ROUNDS = 10;
 
-const isBcryptHash = value =>
-  typeof value === 'string' && value.startsWith('$2');
+const isBcryptHash = value => typeof value === 'string' && value.startsWith('$2');
 
 const hashPassword = async rawPassword => {
   try {
@@ -33,9 +32,7 @@ const comparePassword = async (rawPassword, storedHash) => {
 const generateToken = ({ id, username, role }) => {
   // Validasi minimal (Mencegah dev lupa mengirim ID atau Role)
   if (!id || !role) {
-    throw new Error(
-      'Generate Token Error: Payload "id" dan "role" wajib diisi!'
-    );
+    throw new Error('Generate Token Error: Payload "id" dan "role" wajib diisi!');
   }
 
   // Kita BUNGKUS ULANG secara eksplisit.

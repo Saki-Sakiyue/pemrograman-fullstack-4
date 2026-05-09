@@ -8,18 +8,25 @@ class TemplateController {
   async index(req, res) {
     try {
       const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
-      const limit = Math.min(
-        Math.max(parseInt(req.query.limit, 10) || 10, 1),
-        100
-      );
+      const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 100);
       const offset = (page - 1) * limit;
-      const search = (req.query.search || '').trim();
 
-      // Mengikuti standar Soft Delete & Visibility Agreement
-      const whereClause = search
-        ? 'WHERE t.deleted_at IS NULL AND t.is_active = ? AND t.title LIKE ?'
-        : 'WHERE t.deleted_at IS NULL AND t.is_active = ?';
-      const whereParams = search ? [true, `%${search}%`] : [true];
+      const search = (req.query.search || '').trim();
+      const categoryId = req.query.category_id;
+
+      // Dynamic Where Clause
+      let whereClause = 'WHERE t.deleted_at IS NULL AND t.is_active = ?';
+      const whereParams = [true];
+
+      if (search) {
+        whereClause += ' AND t.title LIKE ? OR t.description LIKE ?';
+        whereParams.push(`%${search}%`, `%${search}%`);
+      }
+
+      if (categoryId) {
+        whereClause += ' AND t.category_id = ?';
+        whereParams.push(categoryId);
+      }
 
       const sql = `
             SELECT 
@@ -27,7 +34,8 @@ class TemplateController {
                 t.source_url, t.demo_url, t.download_count, 
                 t.popularity_score, t.created_at,
                 c.name AS category_name, 
-                u.username AS author
+                u.username AS author,
+                (SELECT image_url FROM template_images WHERE template_id = t.id AND is_primary LIMIT 1) AS thumbnail_url
             FROM templates t
             INNER JOIN categories c ON c.id = t.category_id
             INNER JOIN users u ON u.id = t.user_id
@@ -36,10 +44,17 @@ class TemplateController {
             LIMIT ? OFFSET ?
         `;
 
-      const countSql = `SELECT COUNT(*) AS total FROM templates t ${whereClause}`;
+      const countSql = `
+            SELECT COUNT(*) AS total FROM templates t
+            INNER JOIN categories c ON c.id = t.category_id
+            INNER JOIN users u ON u.id = t.user_id
+            ${whereClause}
+      `;
 
-      const [rows] = await db.query(sql, [...whereParams, limit, offset]);
-      const [countRows] = await db.query(countSql, whereParams);
+      const [[rows], [countRows]] = await Promise.all([
+        db.query(sql, [...whereParams, limit, offset]),
+        db.query(countSql, whereParams),
+      ]);
 
       const total = countRows[0]?.total || 0;
       const totalPages = Math.ceil(total / limit);
@@ -59,8 +74,73 @@ class TemplateController {
         status: 500,
         code: 'ERR_INTERNAL_SERVER',
         messageDev: 'An error occurred while fetching templates',
-        messageUser:
-          'Terjadi kesalahan saat memuat template. Silakan coba lagi.',
+        messageUser: 'Terjadi kesalahan saat memuat template. Silakan coba lagi.',
+        error,
+      });
+    }
+  }
+
+  async show(req, res) {
+    try {
+      const { id } = req.params;
+
+      // 1. Ambil Data Utama
+      const sql = `
+          SELECT 
+              t.*, 
+              c.name AS category_name, c.slug AS category_slug,
+              u.username AS author, u.avatar_url
+          FROM templates t
+          INNER JOIN categories c ON c.id = t.category_id
+          INNER JOIN users u ON u.id = t.user_id
+          WHERE t.id = ? AND t.deleted_at IS NULL AND t.is_active = TRUE
+      `;
+      const [templateRows] = await db.execute(sql, [id]);
+
+      if (templateRows.length === 0) {
+        return responseHandler(res, {
+          status: 404,
+          code: 'ERR_NOT_FOUND',
+          messageDev: 'Template not found or inactive',
+          messageUser: 'Template yang kamu cari tidak ditemukan atau sudah ditarik.',
+        });
+      }
+
+      const template = templateRows[0];
+
+      // 2. Ambil Relasi Stacks (Teknologi)
+      const [stacksRows, imagesRows] = await Promise.all([
+        db.query(
+          `
+        SELECT s.name, s.icon_url FROM stacks s
+        JOIN template_stacks ts ON s.id = ts.stack_id
+        WHERE ts.template_id = ?`,
+          [id]
+        ),
+        db.query(
+          `
+        SELECT image_url, is_primary FROM template_images 
+        WHERE template_id = ?`,
+          [id]
+        ),
+      ]);
+
+      template.stacks = stacksRows[0];
+      template.images = imagesRows[0];
+
+      return responseHandler(res, {
+        status: 200,
+        messageDev: 'Template detail fetched successfully',
+        messageUser: 'Detail template berhasil dimuat.',
+        data: template,
+      });
+    } catch (error) {
+      logger.error({ err: error.message, stack: error.stack }, 'Error fetching template detail');
+      return responseHandler(res, {
+        status: 500,
+        code: 'ERR_INTERNAL_SERVER',
+        messageDev: 'Error fetching template detail',
+        messageUser: 'Gagal memuat detail template.',
         error,
       });
     }
@@ -89,20 +169,12 @@ class TemplateController {
         });
       }
 
-      const {
-        category_id,
-        title,
-        description,
-        upload_type,
-        source_url,
-        demo_url,
-      } = req.body;
+      const { category_id, title, description, upload_type, source_url, demo_url } = req.body;
 
       // Check if category exists
-      const [categoryRows] = await db.query(
-        `SELECT id FROM categories WHERE id = ? LIMIT 1`,
-        [category_id]
-      );
+      const [categoryRows] = await db.query(`SELECT id FROM categories WHERE id = ? LIMIT 1`, [
+        category_id,
+      ]);
       if (categoryRows.length === 0) {
         return responseHandler(res, {
           status: 400,
@@ -142,8 +214,7 @@ class TemplateController {
         status: 500,
         code: 'ERR_INTERNAL_SERVER',
         messageDev: 'An error occurred while creating template',
-        messageUser:
-          'Terjadi kesalahan saat membuat template. Silakan coba lagi.',
+        messageUser: 'Terjadi kesalahan saat membuat template. Silakan coba lagi.',
         error,
       });
     }
@@ -168,10 +239,9 @@ class TemplateController {
       }
 
       // 1. Eksekusi penambahan jumlah download
-      await db.execute(
-        'UPDATE templates SET download_count = download_count + 1 WHERE id = ?',
-        [templateId]
-      );
+      await db.execute('UPDATE templates SET download_count = download_count + 1 WHERE id = ?', [
+        templateId,
+      ]);
 
       // 2. RE-CALCULATE SCORE
       await TemplateService.updatePopularityScore(templateId);
@@ -219,14 +289,7 @@ class TemplateController {
       `;
 
       // Urutan value ini HARUS SAMA dengan urutan tanda tanya (?) di query atas
-      const values = [
-        title,
-        description,
-        category_id,
-        demo_url,
-        source_url,
-        templateId,
-      ];
+      const values = [title, description, category_id, demo_url, source_url, templateId];
 
       // 3. Eksekusi Database
       const [result] = await db.execute(query, values);
@@ -238,8 +301,7 @@ class TemplateController {
           status: 404,
           code: 'ERR_NOT_FOUND',
           messageDev: 'Update failed: template not found or inactive',
-          messageUser:
-            'Update gagal: Template tidak ditemukan, tidak aktif, atau sudah dihapus.',
+          messageUser: 'Update gagal: Template tidak ditemukan, tidak aktif, atau sudah dihapus.',
         });
       }
 
@@ -250,16 +312,11 @@ class TemplateController {
         messageUser: 'Data template berhasil diperbarui!',
       });
     } catch (error) {
-      logger.error(
-        { err: error.message, stack: error.stack },
-        'Error updating template'
-      );
       return responseHandler(res, {
         status: 500,
         code: 'ERR_INTERNAL_SERVER',
         messageDev: 'Error updating template',
-        messageUser:
-          'Terjadi kesalahan internal pada server saat melakukan update.',
+        messageUser: 'Terjadi kesalahan internal pada server saat melakukan update.',
         error,
       });
     }
@@ -295,10 +352,10 @@ class TemplateController {
         await db.execute('DELETE FROM upvotes WHERE id = ?', [existing[0].id]);
         action = 'removed';
       } else {
-        await db.execute(
-          'INSERT INTO upvotes (user_id, template_id) VALUES (?, ?)',
-          [userId, templateId]
-        );
+        await db.execute('INSERT INTO upvotes (user_id, template_id) VALUES (?, ?)', [
+          userId,
+          templateId,
+        ]);
         action = 'added';
       }
 
@@ -308,10 +365,7 @@ class TemplateController {
       return responseHandler(res, {
         status: 200,
         messageDev: `Upvote ${action} and score updated`,
-        messageUser:
-          action === 'added'
-            ? 'Upvote berhasil ditambahkan.'
-            : 'Upvote dibatalkan.',
+        messageUser: action === 'added' ? 'Upvote berhasil ditambahkan.' : 'Upvote dibatalkan.',
       });
     } catch (error) {
       return responseHandler(res, {
@@ -351,16 +405,16 @@ class TemplateController {
 
       let action = '';
       if (existing.length > 0) {
-        await db.execute(
-          'DELETE FROM bookmarks WHERE user_id = ? AND template_id = ?',
-          [userId, templateId]
-        ); // Pakai user_id & template_id karena dbml mu mungkin ga pake kolom 'id' PK di pivot bookmarks
+        await db.execute('DELETE FROM bookmarks WHERE user_id = ? AND template_id = ?', [
+          userId,
+          templateId,
+        ]); // Pakai user_id & template_id karena dbml mu mungkin ga pake kolom 'id' PK di pivot bookmarks
         action = 'removed';
       } else {
-        await db.execute(
-          'INSERT INTO bookmarks (user_id, template_id) VALUES (?, ?)',
-          [userId, templateId]
-        );
+        await db.execute('INSERT INTO bookmarks (user_id, template_id) VALUES (?, ?)', [
+          userId,
+          templateId,
+        ]);
         action = 'added';
       }
 
@@ -370,10 +424,7 @@ class TemplateController {
       return responseHandler(res, {
         status: 200,
         messageDev: `Bookmark ${action} and score updated`,
-        messageUser:
-          action === 'added'
-            ? 'Disimpan ke bookmark.'
-            : 'Dihapus dari bookmark.',
+        messageUser: action === 'added' ? 'Disimpan ke bookmark.' : 'Dihapus dari bookmark.',
       });
     } catch (error) {
       return responseHandler(res, {
@@ -414,16 +465,14 @@ class TemplateController {
           status: 403,
           code: 'ERR_FORBIDDEN',
           messageDev: "User attempted to delete someone else's template",
-          messageUser:
-            'Anda tidak memiliki akses untuk menghapus template ini.',
+          messageUser: 'Anda tidak memiliki akses untuk menghapus template ini.',
         });
       }
 
       // 2. Eksekusi Soft Delete
-      await db.execute(
-        'UPDATE templates SET deleted_at = NOW(), is_active = FALSE WHERE id = ?',
-        [templateId]
-      );
+      await db.execute('UPDATE templates SET deleted_at = NOW(), is_active = FALSE WHERE id = ?', [
+        templateId,
+      ]);
 
       return responseHandler(res, {
         status: 200,

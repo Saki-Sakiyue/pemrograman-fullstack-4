@@ -8,6 +8,6 @@
   "htmlWhitespaceSensitivity": "ignore",
   "endOfLine": "auto",
   "arrowParens": "avoid",
-  "printWidth": 80,
+  "printWidth": 100,
   "bracketSpacing": true
 }

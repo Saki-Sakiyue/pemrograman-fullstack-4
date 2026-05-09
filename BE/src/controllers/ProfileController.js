@@ -36,10 +36,7 @@ class ProfileController {
         data: profile,
       });
     } catch (error) {
-      logger.error(
-        { err: error.message, stack: error.stack },
-        'Error in getProfile'
-      );
+      logger.error({ err: error.message, stack: error.stack }, 'Error in getProfile');
       return responseHandler(res, {
         status: 500,
         code: 'ERR_INTERNAL_SERVER',
@@ -178,8 +175,7 @@ class ProfileController {
         status: 500,
         code: 'ERR_INTERNAL_SERVER',
         messageDev: 'An error occurred while updating profile',
-        messageUser:
-          'Terjadi kesalahan saat memperbarui profil. Silakan coba lagi.',
+        messageUser: 'Terjadi kesalahan saat memperbarui profil. Silakan coba lagi.',
         error,
       });
     }

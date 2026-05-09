@@ -15,10 +15,7 @@ const verifyToken = (req, res, next) => {
   }
 
   try {
-    const decoded = jwt.verify(
-      token,
-      process.env.JWT_SECRET || 'dev_jwt_secret_change_me'
-    );
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'dev_jwt_secret_change_me');
     req.user = decoded;
     next();
   } catch (error) {

@@ -20,25 +20,14 @@ router.post('/api/auth/logout', AuthController.logout);
 
 // Template routes
 router.get('/api/templates', TemplateController.index);
+router.get('/api/templates/:id', TemplateController.show);
 router.post('/api/templates', verifyToken, TemplateController.create); // Ganti dari post ke create
 router.put('/api/templates/:id', verifyToken, TemplateController.update);
 router.delete('/api/templates/:id', verifyToken, TemplateController.destroy); // Ganti dari delete ke destroy
 // Custom Actions (Interactions)
-router.patch(
-  '/api/templates/:id/download',
-  verifyToken,
-  TemplateController.download
-);
-router.post(
-  '/api/templates/:id/upvote',
-  verifyToken,
-  TemplateController.upvote
-);
-router.post(
-  '/api/templates/:id/bookmark',
-  verifyToken,
-  TemplateController.bookmark
-);
+router.patch('/api/templates/:id/download', verifyToken, TemplateController.download);
+router.post('/api/templates/:id/upvote', verifyToken, TemplateController.upvote);
+router.post('/api/templates/:id/bookmark', verifyToken, TemplateController.bookmark);
 
 router.post('/api/reports', verifyToken, ReportController.post);
 
@@ -50,5 +39,11 @@ router.patch(
   uploadAvatar.single('avatar'),
   ProfileController.updateProfile
 );
+
+// TODO: CRUD Categories
+// TODO: CRUD Comments
+// TODO: CRUD Users (Admin Only)
+// TODO: CRUD Stacks
+// TODO: CRUD Tags
 
 module.exports = router;

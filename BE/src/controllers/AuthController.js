@@ -1,13 +1,6 @@
 const db = require('../config/database');
-const {
-  hashPassword,
-  comparePassword,
-  generateToken,
-} = require('../services/AuthService');
-const {
-  validateLoginPayload,
-  validateRegisterPayload,
-} = require('../validators/authValidator');
+const { hashPassword, comparePassword, generateToken } = require('../services/AuthService');
+const { validateLoginPayload, validateRegisterPayload } = require('../validators/authValidator');
 const logger = require('../utils/logger');
 const responseHandler = require('../utils/responseHandler');
 
@@ -47,10 +40,7 @@ class AuthController {
       }
 
       const user = rows[0];
-      const isPasswordValid = await comparePassword(
-        password,
-        user.password_hash
-      );
+      const isPasswordValid = await comparePassword(password, user.password_hash);
 
       if (!isPasswordValid) {
         return responseHandler(res, {
@@ -120,10 +110,7 @@ class AuthController {
       const trimmedEmail = email.trim();
 
       const checkSql = `SELECT id FROM users WHERE email = ? OR username = ? LIMIT 1`;
-      const [existingUser] = await db.query(checkSql, [
-        trimmedEmail,
-        trimmedUsername,
-      ]);
+      const [existingUser] = await db.query(checkSql, [trimmedEmail, trimmedUsername]);
 
       if (existingUser.length > 0) {
         return responseHandler(res, {
@@ -140,12 +127,7 @@ class AuthController {
             INSERT INTO users (username, email, password_hash, role)
             VALUES (?, ?, ?, ?)
         `;
-      await db.query(insertSql, [
-        trimmedUsername,
-        trimmedEmail,
-        passwordHash,
-        'user',
-      ]);
+      await db.query(insertSql, [trimmedUsername, trimmedEmail, passwordHash, 'user']);
 
       return responseHandler(res, {
         status: 201,

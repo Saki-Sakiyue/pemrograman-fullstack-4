@@ -34,9 +34,9 @@ const responseHandler = (
 
   const logData = {
     ...responseData,
-    user: req.user
-      ? { id: req.user.id, username: req.user.username, role: req.user.role }
-      : null,
+    user: req.user ? { id: req.user.id, username: req.user.username, role: req.user.role } : null,
+    method: req.method,
+    url: req.originalUrl,
   };
 
   let formattedError = null;
@@ -58,10 +58,7 @@ const responseHandler = (
 
   //  Log otomatis berdasarkan status code
   if (status >= 400) {
-    logger.error(
-      { ...logData, body: req.body, error: formattedError },
-      `API Error: ${messageDev}`
-    );
+    logger.error({ ...logData, body: req.body, error: formattedError }, `API Error: ${messageDev}`);
   } else {
     logger.info(logData, `API Success: ${messageDev}`);
   }
