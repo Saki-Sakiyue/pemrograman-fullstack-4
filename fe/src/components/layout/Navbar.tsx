@@ -17,6 +17,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import Image from 'next/image';
+import { getFullImageUrl, isSvgImage } from '@/lib/image';
 
 export default function Navbar() {
   const router = useRouter();
@@ -50,7 +52,13 @@ export default function Navbar() {
               >
                 <Avatar className="h-8 w-8">
                   <AvatarFallback className="bg-blue-100 font-bold text-blue-700">
-                    {user.username.charAt(0).toUpperCase()}
+                    <Image
+                      src={getFullImageUrl(user.avatar_url)}
+                      alt={user.username}
+                      fill
+                      className="object-cover"
+                      unoptimized={isSvgImage(user.avatar_url)}
+                    />
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col items-start text-sm">

@@ -24,8 +24,14 @@ const nextConfig: NextConfig = {
         protocol: 'https',
         hostname: 'images.unsplash.com', // Jika pakai gambar Unsplash
       },
+      {
+        protocol: 'https',
+        hostname: 'api.dicebear.com',
+        pathname: '/9.x/**',
+      },
     ],
     dangerouslyAllowLocalIP: true,
+    dangerouslyAllowSVG: true,
   },
 };
 
