@@ -41,7 +41,12 @@
 
   LOCK TABLES `bookmarks` WRITE;
   /*!40000 ALTER TABLE `bookmarks` DISABLE KEYS */;
-  INSERT INTO `bookmarks` VALUES (1,3,1,'2026-04-11 08:48:01'),(2,2,2,'2026-04-11 08:48:01');
+  INSERT INTO `bookmarks` VALUES
+  (1,2,1,'2026-04-11 08:48:01'),
+  (2,2,3,'2026-04-11 08:48:01'),
+  (3,3,2,'2026-04-11 08:48:01'),
+  (4,4,5,'2026-04-11 08:48:01'),
+  (5,5,1,'2026-04-11 08:48:01');
   /*!40000 ALTER TABLE `bookmarks` ENABLE KEYS */;
   UNLOCK TABLES;
 
@@ -67,7 +72,13 @@
 
   LOCK TABLES `categories` WRITE;
   /*!40000 ALTER TABLE `categories` DISABLE KEYS */;
-  INSERT INTO `categories` VALUES (1,'Admin Dashboard','admin-dashboard'),(2,'Landing Page','landing-page'),(3,'E-Commerce','e-commerce');
+  INSERT INTO `categories` VALUES
+  (1,'Admin Dashboard','admin-dashboard'),
+  (2,'Landing Page','landing-page'),
+  (3,'E-Commerce','e-commerce'),
+  (4,'Portfolio','portfolio'),
+  (5,'UI Kit','ui-kit'),
+  (6,'Blog Template','blog-template');
   /*!40000 ALTER TABLE `categories` ENABLE KEYS */;
   UNLOCK TABLES;
 
@@ -100,7 +111,10 @@
 
   LOCK TABLES `reports` WRITE;
   /*!40000 ALTER TABLE `reports` DISABLE KEYS */;
-  INSERT INTO `reports` VALUES (1,2,2,'Link demo-nya udah mati bro, tolong di-update.','pending','2026-04-11 08:48:05',NULL);
+  INSERT INTO `reports` VALUES
+  (1,2,2,'Demo link is no longer accessible.','pending','2026-04-11 08:48:05',NULL),
+  (2,4,3,'ZIP template file corrupted after download.','resolved','2026-04-11 08:48:05',NULL),
+  (3,6,5,'Preview images are broken.','pending','2026-04-11 08:48:05',NULL);
   /*!40000 ALTER TABLE `reports` ENABLE KEYS */;
   UNLOCK TABLES;
 
@@ -125,7 +139,15 @@
 
   LOCK TABLES `stacks` WRITE;
   /*!40000 ALTER TABLE `stacks` DISABLE KEYS */;
-  INSERT INTO `stacks` VALUES (1,'React','icon-react.png'),(2,'Next.js','icon-nextjs.png'),(3,'Tailwind CSS','icon-tailwind.png'),(4,'Express.js','icon-express.png');
+  INSERT INTO `stacks` VALUES
+  (1,'React','https://cdn.simpleicons.org/react/61DAFB'),
+  (2,'Next.js','https://cdn.simpleicons.org/nextdotjs/000000'),
+  (3,'Tailwind CSS','https://cdn.simpleicons.org/tailwindcss/06B6D4'),
+  (4,'Express.js','https://cdn.simpleicons.org/express/000000'),
+  (5,'Figma','https://cdn.simpleicons.org/figma/F24E1E'),
+  (6,'Vue.js','https://cdn.simpleicons.org/vue.js/4FC08D'),
+  (7,'Laravel','https://cdn.simpleicons.org/laravel/FF2D20'),
+  (8,'Bootstrap','https://cdn.simpleicons.org/bootstrap/7952B3');
   /*!40000 ALTER TABLE `stacks` ENABLE KEYS */;
   UNLOCK TABLES;
 
@@ -151,7 +173,15 @@
 
   LOCK TABLES `tags` WRITE;
   /*!40000 ALTER TABLE `tags` DISABLE KEYS */;
-  INSERT INTO `tags` VALUES (1,'Responsive','responsive'),(2,'Dark Mode','dark-mode'),(3,'Minimalist','minimalist');
+  INSERT INTO `tags` VALUES
+  (1,'Responsive','responsive'),
+  (2,'Dark Mode','dark-mode'),
+  (3,'Minimalist','minimalist'),
+  (4,'Modern','modern'),
+  (5,'Clean UI','clean-ui'),
+  (6,'Mobile First','mobile-first'),
+  (7,'SEO Friendly','seo-friendly'),
+  (8,'Animated','animated');
   /*!40000 ALTER TABLE `tags` ENABLE KEYS */;
   UNLOCK TABLES;
 
@@ -179,7 +209,24 @@
 
   LOCK TABLES `template_images` WRITE;
   /*!40000 ALTER TABLE `template_images` DISABLE KEYS */;
-  INSERT INTO `template_images` VALUES (1,1,'uploads/images/sneat-1.jpg',1),(2,1,'uploads/images/sneat-2.jpg',0),(3,2,'uploads/images/saas-1.jpg',1);
+  INSERT INTO `template_images` VALUES
+  (1,1,'https://images.unsplash.com/photo-1551288049-bbbda536339a?q=80&w=1000',1),
+  (2,1,'https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000',0),
+
+  (3,2,'https://images.unsplash.com/photo-1472851294608-062f824d29cc?q=80&w=1000',1),
+  (4,2,'https://images.unsplash.com/photo-1557821552-17105176677c?q=80&w=1000',0),
+
+  (5,3,'https://images.unsplash.com/photo-1498050108023-c5249f4df085?q=80&w=1000',1),
+  (6,3,'https://images.unsplash.com/photo-1516321318423-f06f85e504b3?q=80&w=1000',0),
+
+  (7,4,'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1000',1),
+  (8,4,'https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=1000',0),
+
+  (9,5,'https://images.unsplash.com/photo-1545239351-1141bd82e8a6?q=80&w=1000',1),
+  (10,5,'https://images.unsplash.com/photo-1558655146-d09347e92766?q=80&w=1000',0),
+
+  (11,6,'https://images.unsplash.com/photo-1499750310107-5fef28a66643?q=80&w=1000',1),
+  (12,6,'https://images.unsplash.com/photo-1501504905252-473c47e087f8?q=80&w=1000',0);
   /*!40000 ALTER TABLE `template_images` ENABLE KEYS */;
   UNLOCK TABLES;
 
@@ -208,7 +255,17 @@
 
   LOCK TABLES `template_stacks` WRITE;
   /*!40000 ALTER TABLE `template_stacks` DISABLE KEYS */;
-  INSERT INTO `template_stacks` VALUES (1,1,1),(2,2,2),(3,2,3);
+  INSERT INTO `template_stacks` VALUES
+  (1,1,8),
+  (2,2,2),
+  (3,2,3),
+  (4,3,1),
+  (5,3,3),
+  (6,4,6),
+  (7,4,3),
+  (8,5,5),
+  (9,6,2),
+  (10,6,3);
   /*!40000 ALTER TABLE `template_stacks` ENABLE KEYS */;
   UNLOCK TABLES;
 
@@ -237,7 +294,26 @@
 
   LOCK TABLES `template_tags` WRITE;
   /*!40000 ALTER TABLE `template_tags` DISABLE KEYS */;
-  INSERT INTO `template_tags` VALUES (1,1,1),(2,1,3),(3,2,1),(4,2,2);
+  INSERT INTO `template_tags` VALUES
+  (1,1,1),
+  (2,1,4),
+  (3,1,5),
+
+  (4,2,1),
+  (5,2,2),
+  (6,2,8),
+
+  (7,3,3),
+  (8,3,4),
+
+  (9,4,1),
+  (10,4,6),
+
+  (11,5,4),
+  (12,5,5),
+
+  (13,6,3),
+  (14,6,7);
   /*!40000 ALTER TABLE `template_tags` ENABLE KEYS */;
   UNLOCK TABLES;
 
@@ -277,7 +353,18 @@
 
   LOCK TABLES `templates` WRITE;
   /*!40000 ALTER TABLE `templates` DISABLE KEYS */;
-  INSERT INTO `templates` VALUES (1,2,1,'Sneat - Free Bootstrap Admin','Template admin dashboard clean dan modern dengan Bootstrap 5.','link','https://github.com/themeselection/sneat','https://demos.themeselection.com/sneat',150,450,1,'2026-04-11 08:47:50','2026-04-11 08:47:50',NULL),(2,3,2,'Tailwind SaaS Landing','Landing page khusus untuk startup SaaS dengan dark mode bawaan.','zip','uploads/templates/tailwind-saas.zip','https://tailwind-saas-demo.com',85,200,1,'2026-04-11 08:47:50','2026-04-11 08:47:50',NULL);
+  INSERT INTO `templates` VALUES
+  (1,2,1,'Sneat Admin Dashboard','Modern admin dashboard template built with Bootstrap 5.','link','https://github.com/themeselection/sneat-bootstrap-html-admin-template-free','https://demos.themeselection.com/sneat-bootstrap-html-admin-template-free/',150,450,1,'2026-04-11 08:47:50','2026-04-11 08:47:50',NULL),
+
+  (2,3,2,'Tailwind SaaS Landing','Landing page template for SaaS startup with dark mode support.','zip','uploads/templates/tailwind-saas.zip','https://tailwindui.com/',85,200,1,'2026-04-11 08:47:50','2026-04-11 08:47:50',NULL),
+
+  (3,4,4,'Developer Portfolio','Clean developer portfolio template using React and Tailwind CSS.','link','https://github.com/cruip/open-react-template','https://open.cruip.com/',120,300,1,'2026-04-11 08:47:50','2026-04-11 08:47:50',NULL),
+
+  (4,5,3,'Modern E-Commerce UI','Responsive e-commerce frontend UI kit with modern design.','zip','uploads/templates/ecommerce-ui.zip','https://commercejs.com/demo/',95,260,1,'2026-04-11 08:47:50','2026-04-11 08:47:50',NULL),
+
+  (5,3,5,'Figma Mobile UI Kit','Professional mobile app UI kit for Figma.','link','https://www.figma.com/community','https://www.figma.com/community',210,520,1,'2026-04-11 08:47:50','2026-04-11 08:47:50',NULL),
+
+  (6,2,6,'Minimal Blog Template','Minimalist blog template optimized for SEO and readability.','link','https://github.com/tailwindtoolbox/Minimal-Blog','https://tailwindtoolbox.github.io/Minimal-Blog/',70,140,1,'2026-04-11 08:47:50','2026-04-11 08:47:50',NULL);
   /*!40000 ALTER TABLE `templates` ENABLE KEYS */;
   UNLOCK TABLES;
 
@@ -307,7 +394,13 @@
 
   LOCK TABLES `upvotes` WRITE;
   /*!40000 ALTER TABLE `upvotes` DISABLE KEYS */;
-  INSERT INTO `upvotes` VALUES (1,2,1,'2026-04-11 08:48:04'),(2,3,1,'2026-04-11 08:48:04');
+  INSERT INTO `upvotes` VALUES
+  (1,2,1,'2026-04-11 08:48:04'),
+  (2,3,1,'2026-04-11 08:48:04'),
+  (3,4,2,'2026-04-11 08:48:04'),
+  (4,5,5,'2026-04-11 08:48:04'),
+  (5,2,3,'2026-04-11 08:48:04'),
+  (6,3,4,'2026-04-11 08:48:04');
   /*!40000 ALTER TABLE `upvotes` ENABLE KEYS */;
   UNLOCK TABLES;
 
@@ -340,7 +433,12 @@
 
   LOCK TABLES `users` WRITE;
   /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-  INSERT INTO `users` VALUES (1,'abdul_dev','abdul@templas.com','hashed_pw_123','admin','https://ui-avatars.com/api/?name=Abdul','2026-04-11 08:47:35','2026-04-11 08:47:35',NULL),(2,'raffi_coder','raffi@gmail.com','hashed_pw_456','user','https://ui-avatars.com/api/?name=Raffi','2026-04-11 08:47:35','2026-04-11 08:47:35',NULL),(3,'nathania_ui','nathania@gmail.com','hashed_pw_789','user','https://ui-avatars.com/api/?name=Nathania','2026-04-11 08:47:35','2026-04-11 08:47:35',NULL);
+  INSERT INTO `users` VALUES
+  (1,'abdul_dev','abdul@templas.com','$2a$12$j29oD5PkJZVfw0MKHNs/UuOCOCYnQyz3aiXj/fpijz9hjcjw8rU8G','admin','https://api.dicebear.com/9.x/notionists/svg?seed=Abdul','2026-04-11 08:47:35','2026-04-11 08:47:35',NULL),
+  (2,'raffi_coder','raffi@gmail.com','$2a$12$j29oD5PkJZVfw0MKHNs/UuOCOCYnQyz3aiXj/fpijz9hjcjw8rU8G','user','https://api.dicebear.com/9.x/notionists/svg?seed=Raffi','2026-04-11 08:47:35','2026-04-11 08:47:35',NULL),
+  (3,'nathania_ui','nathania@gmail.com','$2a$12$j29oD5PkJZVfw0MKHNs/UuOCOCYnQyz3aiXj/fpijz9hjcjw8rU8G','user','https://api.dicebear.com/9.x/notionists/svg?seed=Nathania','2026-04-11 08:47:35','2026-04-11 08:47:35',NULL),
+  (4,'bani_frontend','bani@gmail.com','$2a$12$j29oD5PkJZVfw0MKHNs/UuOCOCYnQyz3aiXj/fpijz9hjcjw8rU8G','user','https://api.dicebear.com/9.x/notionists/svg?seed=Bani','2026-04-11 08:47:35','2026-04-11 08:47:35',NULL),
+  (5,'saki_design','saki@gmail.com','$2a$12$j29oD5PkJZVfw0MKHNs/UuOCOCYnQyz3aiXj/fpijz9hjcjw8rU8G','user','https://api.dicebear.com/9.x/notionists/svg?seed=Saki','2026-04-11 08:47:35','2026-04-11 08:47:35',NULL);
   /*!40000 ALTER TABLE `users` ENABLE KEYS */;
   UNLOCK TABLES;
 
