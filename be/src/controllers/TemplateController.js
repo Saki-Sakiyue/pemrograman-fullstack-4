@@ -19,7 +19,7 @@ class TemplateController {
       const whereParams = [true];
 
       if (search) {
-        whereClause += ' AND t.title LIKE ? OR t.description LIKE ?';
+        whereClause += ' AND (t.title LIKE ? OR t.description LIKE ?)';
         whereParams.push(`%${search}%`, `%${search}%`);
       }
 
@@ -37,7 +37,7 @@ class TemplateController {
                 u.username AS author,
                 (SELECT image_url FROM template_images WHERE template_id = t.id AND is_primary LIMIT 1) AS thumbnail_url
             FROM templates t
-            INNER JOIN categories c ON c.id = t.category_id
+            LEFT JOIN categories c ON c.id = t.category_id
             INNER JOIN users u ON u.id = t.user_id
             ${whereClause}
             ORDER BY t.created_at DESC
@@ -46,7 +46,7 @@ class TemplateController {
 
       const countSql = `
             SELECT COUNT(*) AS total FROM templates t
-            INNER JOIN categories c ON c.id = t.category_id
+            LEFT JOIN categories c ON c.id = t.category_id
             INNER JOIN users u ON u.id = t.user_id
             ${whereClause}
       `;
@@ -91,7 +91,7 @@ class TemplateController {
               c.name AS category_name, c.slug AS category_slug,
               u.username AS author, u.avatar_url
           FROM templates t
-          INNER JOIN categories c ON c.id = t.category_id
+          LEFT JOIN categories c ON c.id = t.category_id
           INNER JOIN users u ON u.id = t.user_id
           WHERE t.id = ? AND t.deleted_at IS NULL AND t.is_active = TRUE
       `;
@@ -108,8 +108,8 @@ class TemplateController {
 
       const template = templateRows[0];
 
-      // 2. Ambil Relasi Stacks (Teknologi)
-      const [stacksRows, imagesRows] = await Promise.all([
+      // 2. Ambil Relasi
+      const [stacksRows, imagesRows, tagsRows] = await Promise.all([
         db.query(
           `
         SELECT s.name, s.icon_url FROM stacks s
@@ -123,10 +123,19 @@ class TemplateController {
         WHERE template_id = ?`,
           [id]
         ),
+        db.query(
+          `
+        SELECT t.name, t.slug 
+        FROM tags t
+        JOIN template_tags tt ON t.id = tt.tag_id
+        WHERE tt.template_id = ?`,
+          [id]
+        ),
       ]);
 
       template.stacks = stacksRows[0];
       template.images = imagesRows[0];
+      template.tags = tagsRows[0];
 
       return responseHandler(res, {
         status: 200,

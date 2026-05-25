@@ -29,6 +29,10 @@ interface TemplateImages {
   image_url: string;
   is_primary: number;
 }
+interface TemplateTags {
+  name: string;
+  slug: string;
+}
 
 export interface TemplateDetail {
   id: number;
@@ -51,6 +55,7 @@ export interface TemplateDetail {
   avatar_url: string;
   stacks: TemplateStacks[];
   images: TemplateImages[];
+  tags: TemplateTags[]
 }
 
 //> Params
@@ -58,7 +63,7 @@ export interface TemplateQueryParams {
   page?: number;
   limit?: number;
   search?: string;
-  category?: string; // Persiapan jika nanti butuh filter kategori
+  category_id?: number;
 }
 
 //> Payload

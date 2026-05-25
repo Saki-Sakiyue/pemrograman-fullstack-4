@@ -5,6 +5,7 @@ const TemplateController = require('../controllers/TemplateController');
 const AuthController = require('../controllers/AuthController');
 const ReportController = require('../controllers/ReportController');
 const ProfileController = require('../controllers/ProfileController');
+const ScraperController = require('../controllers/ScraperController');
 const { uploadAvatar } = require('../middleware/uploadMiddleware');
 
 const router = express.Router();
@@ -39,6 +40,8 @@ router.patch(
   uploadAvatar.single('avatar'),
   ProfileController.updateProfile
 );
+
+router.get('/api/scrape', verifyToken, ScraperController.scrapeTemplate);
 
 // TODO: CRUD Categories
 // TODO: CRUD Comments

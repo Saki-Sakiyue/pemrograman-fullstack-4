@@ -18,7 +18,7 @@ export default function TemplatesPage() {
 
   const { data, isLoading, isError } = useTemplates({
     page,
-    limit: 5,
+    limit: 8,
     search: debouncedSearch,
   });
 

@@ -23,6 +23,7 @@ export default function TemplateCard({ template }: TemplateCardProps) {
             alt={template.title}
             fill
             className="object-cover transition-transform duration-500 group-hover:scale-105"
+            unoptimized
           />
         ) : (
           <div className="flex h-full items-center justify-center text-slate-400">

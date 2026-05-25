@@ -8,6 +8,15 @@ export function proxy(request: NextRequest) {
   const token = request.cookies.get('templas_token')?.value;
   const { pathname } = request.nextUrl;
 
+  // Redirect Homepage
+  if (pathname === '/') {
+    if (token) {
+      return NextResponse.redirect(new URL('/dashboard', request.url));
+    } else {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+  }
+
   const isProtectedRoute = protectedRoutes.some(route =>
     pathname.startsWith(route)
   );
@@ -22,6 +31,18 @@ export function proxy(request: NextRequest) {
 
   // Skenario B: Sudah login dan mengakses auth route
   if (token && isAuthRoute) {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
+
+  // Skenario C: Akses ke route yang tidak ada
+  if (
+    !isProtectedRoute &&
+    !isAuthRoute &&
+    !pathname.startsWith('/api') &&
+    !pathname.startsWith('/_next/static') &&
+    !pathname.startsWith('/_next/image') &&
+    pathname !== '/favicon.ico'
+  ) {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 

@@ -6,7 +6,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useTemplateDetail } from '@/hooks/queries/template.queries';
 import { getFullImageUrl } from '@/lib/image';
 import { formatCompactNumber } from '@/lib/utils';
-import { ArrowLeft, Download, Eye, Layers, User } from 'lucide-react';
+import { ArrowLeft, Download, Eye, Layers, Tag, User } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -59,6 +59,7 @@ export default function TemplateDetailPage() {
                 alt={template.title}
                 fill
                 className="object-cover transition-all duration-500"
+                unoptimized
               />
             ) : (
               <div className="flex h-full items-center justify-center text-slate-400">
@@ -176,17 +177,46 @@ export default function TemplateDetailPage() {
                     key={idx}
                     className="flex items-center gap-1.5 rounded-lg border bg-slate-50 px-3 py-1.5"
                   >
-                    <Image
-                      src={getFullImageUrl(stack.icon_url)}
-                      alt={stack.name}
-                      width={16}
-                      height={16}
-                      className="object-contain"
-                      unoptimized={stack.icon_url.endsWith('.svg')}
-                    />
-                    <span className="text-xs font-semibold text-slate-700">
-                      {stack.name}
-                    </span>
+                    <Link
+                      href={`/templates?stacks=${stack.name}`}
+                      className="flex items-center gap-1.5"
+                    >
+                      <Image
+                        src={getFullImageUrl(stack.icon_url)}
+                        alt={stack.name}
+                        width={16}
+                        height={16}
+                        className="object-contain"
+                        unoptimized={stack.icon_url.endsWith('.svg')}
+                      />
+                      <span className="text-xs font-semibold text-slate-700">
+                        {stack.name}
+                      </span>
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Tech Tags */}
+            <div className="space-y-4">
+              <h3 className="flex items-center gap-2 text-sm font-bold text-slate-900">
+                <Tag size={16} className="text-primary" /> Tech Tags
+              </h3>
+              <div className="flex flex-wrap gap-2">
+                {template.tags.map((tag, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center gap-1.5 rounded-lg border bg-slate-50 px-3 py-1.5"
+                  >
+                    <Link
+                      href={`/templates?tag=${tag.slug}`}
+                      className="flex items-center gap-1.5"
+                    >
+                      <span className="text-xs font-semibold text-slate-700">
+                        {tag.name}
+                      </span>
+                    </Link>
                   </div>
                 ))}
               </div>
