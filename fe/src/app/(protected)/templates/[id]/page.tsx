@@ -3,10 +3,15 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useTemplateDetail } from '@/hooks/queries/template.queries';
+import {
+  useTemplateDetail,
+  useDownloadTemplate,
+  useUpvoteTemplate,
+  useBookmarkTemplate,
+} from '@/hooks/queries/template.queries';
 import { getFullImageUrl } from '@/lib/image';
 import { formatCompactNumber } from '@/lib/utils';
-import { ArrowLeft, Download, Eye, Layers, User } from 'lucide-react';
+import { ArrowLeft, Download, Eye, Layers, User, Heart, Bookmark } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -15,6 +20,10 @@ import { useState } from 'react';
 export default function TemplateDetailPage() {
   const { id } = useParams();
   const { data, isLoading, error } = useTemplateDetail(id as string);
+  
+  const downloadMutation = useDownloadTemplate();
+  const upvoteMutation = useUpvoteTemplate();
+  const bookmarkMutation = useBookmarkTemplate();
 
   // State untuk gambar yang sedang di-preview (Besar)
   const [userSelectedImage, setUserSelectedImage] = useState<string | null>(
@@ -32,6 +41,17 @@ export default function TemplateDetailPage() {
   // Fungsi untuk handle klik thumbnail
   const handleThumbnailClick = (url: string) => {
     setUserSelectedImage(url);
+  };
+
+  const handleDownload = () => {
+    if (!template) return;
+    downloadMutation.mutate(template.id, {
+      onSuccess: () => {
+        if (template.source_url) {
+          window.open(template.source_url, '_blank');
+        }
+      }
+    });
   };
 
   if (isLoading) return <DetailSkeleton />;
@@ -146,6 +166,8 @@ export default function TemplateDetailPage() {
             {/* Action Buttons */}
             <div className="space-y-3">
               <Button
+                onClick={handleDownload}
+                disabled={downloadMutation.isPending}
                 className="text-md h-12 w-full gap-2 font-bold shadow-lg shadow-blue-200"
                 size="lg"
               >
@@ -161,6 +183,24 @@ export default function TemplateDetailPage() {
                   <Eye size={20} /> Live Preview
                 </a>
               </Button>
+              <div className="grid grid-cols-2 gap-3 mt-3">
+                <Button
+                  variant="outline"
+                  onClick={() => upvoteMutation.mutate(template.id)}
+                  disabled={upvoteMutation.isPending}
+                  className="gap-2 text-xs font-bold"
+                >
+                  <Heart size={16} className="text-red-500 fill-red-500" /> Like
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => bookmarkMutation.mutate(template.id)}
+                  disabled={bookmarkMutation.isPending}
+                  className="gap-2 text-xs font-bold"
+                >
+                  <Bookmark size={16} className="text-blue-500 fill-blue-500" /> Save
+                </Button>
+              </div>
             </div>
 
             <hr className="border-slate-100" />

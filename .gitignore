@@ -11,3 +11,4 @@ be/dist/
 .env
 .env.local
 *.log
+sprint_tasks.md

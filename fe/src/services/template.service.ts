@@ -17,10 +17,31 @@ export const templateService = {
     return response.data;
   },
 
-  getById: async (id: string) => {
+  getById: async (id: number | string) => {
     const response = await apiClient.get<
       BaseResponse<TemplateDetailResponseData>
     >(`/templates/${id}`);
+    return response.data;
+  },
+
+  download: async (id: number | string) => {
+    const response = await apiClient.patch<BaseResponse<any>>(
+      `/templates/${id}/download`
+    );
+    return response.data;
+  },
+
+  upvote: async (id: number | string) => {
+    const response = await apiClient.post<BaseResponse<any>>(
+      `/templates/${id}/upvote`
+    );
+    return response.data;
+  },
+
+  bookmark: async (id: number | string) => {
+    const response = await apiClient.post<BaseResponse<any>>(
+      `/templates/${id}/bookmark`
+    );
     return response.data;
   },
 };

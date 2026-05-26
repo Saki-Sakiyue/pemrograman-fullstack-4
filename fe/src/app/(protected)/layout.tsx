@@ -1,5 +1,6 @@
 import Sidebar from '@/components/layout/Sidebar';
 import Navbar from '@/components/layout/Navbar';
+import Footer from '@/components/layout/Footer';
 
 export default function ProtectedLayout({
   children,
@@ -13,7 +14,10 @@ export default function ProtectedLayout({
       <div className="flex flex-1 flex-col overflow-hidden">
         <Navbar />
 
-        <main className="flex-1 overflow-y-auto p-6">{children}</main>
+        <main className="flex flex-1 flex-col overflow-y-auto p-6">
+          <div className="flex-1">{children}</div>
+          <Footer />
+        </main>
       </div>
     </div>
   );
