@@ -44,6 +44,3 @@ next-env.d.ts
 # ignore all .env except .env.example
 !.env.example
 
-# .md
-prd.md
-sprint_tasks.md
