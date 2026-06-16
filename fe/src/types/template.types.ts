@@ -58,7 +58,7 @@ export interface TemplateQueryParams {
   page?: number;
   limit?: number;
   search?: string;
-  category?: string; // Persiapan jika nanti butuh filter kategori
+  category_id?: number | null; // Filter berdasarkan ID kategori
 }
 
 //> Payload

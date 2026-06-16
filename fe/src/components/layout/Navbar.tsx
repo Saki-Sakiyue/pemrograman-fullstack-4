@@ -7,7 +7,7 @@ import { LogOut, User as UserIcon, Menu } from 'lucide-react';
 
 import { useAuthStore } from '@/store/useAuthStore';
 import { useHydration } from '@/hooks/common/useHydration';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,8 +17,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import Image from 'next/image';
-import { getFullImageUrl, isSvgImage } from '@/lib/image';
+import { getFullImageUrl } from '@/lib/image';
 
 export default function Navbar() {
   const router = useRouter();
@@ -51,14 +50,16 @@ export default function Navbar() {
                 className="relative flex h-10 w-auto items-center gap-2 rounded-full pr-4 pl-2 hover:bg-slate-100"
               >
                 <Avatar className="h-8 w-8">
-                  <AvatarFallback className="bg-blue-100 font-bold text-blue-700">
-                    <Image
+                  {/* AvatarImage hanya render jika avatar_url ada (tidak null/empty) */}
+                  {user.avatar_url && (
+                    <AvatarImage
                       src={getFullImageUrl(user.avatar_url)}
                       alt={user.username}
-                      fill
-                      className="object-cover"
-                      unoptimized={isSvgImage(user.avatar_url)}
                     />
+                  )}
+                  {/* Fallback: tampilkan inisial huruf pertama username */}
+                  <AvatarFallback className="bg-blue-100 font-bold text-blue-700">
+                    {user.username?.charAt(0).toUpperCase() ?? 'U'}
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex flex-col items-start text-sm">

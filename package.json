@@ -1,0 +1,17 @@
+{
+  "name": "templas-fullstack",
+  "version": "1.0.0",
+  "description": "Templas - Community-Driven UI/UX Asset & Code Template Repository",
+  "scripts": {
+    "kill-ports": "npx kill-port 3000 3001 3002",
+    "predev": "npm run kill-ports",
+    "dev:be": "npm run dev --prefix BE",
+    "dev:fe": "npm run dev --prefix fe",
+    "dev": "concurrently --names \"BE,FE\" --prefix-colors \"bgBlue.bold,bgGreen.bold\" \"npm run dev:be\" \"npm run dev:fe\"",
+    "start:be": "npm run start --prefix BE",
+    "start:fe": "npm run start --prefix fe"
+  },
+  "devDependencies": {
+    "concurrently": "^10.0.3"
+  }
+}

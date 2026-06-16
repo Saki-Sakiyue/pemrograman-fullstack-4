@@ -5,6 +5,7 @@ const TemplateController = require('../controllers/TemplateController');
 const AuthController = require('../controllers/AuthController');
 const ReportController = require('../controllers/ReportController');
 const ProfileController = require('../controllers/ProfileController');
+const CategoryController = require('../controllers/CategoryController');
 const { uploadAvatar } = require('../middleware/uploadMiddleware');
 
 const router = express.Router();
@@ -17,6 +18,9 @@ router.get('/api', (req, res) => {
 router.post('/api/auth/login', AuthController.login);
 router.post('/api/auth/register', AuthController.register);
 router.post('/api/auth/logout', AuthController.logout);
+
+// Category routes (public)
+router.get('/api/categories', CategoryController.index);
 
 // Template routes
 router.get('/api/templates', TemplateController.index);

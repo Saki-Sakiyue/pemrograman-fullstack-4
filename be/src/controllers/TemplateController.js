@@ -19,7 +19,7 @@ class TemplateController {
       const whereParams = [true];
 
       if (search) {
-        whereClause += ' AND t.title LIKE ? OR t.description LIKE ?';
+        whereClause += ' AND (t.title LIKE ? OR t.description LIKE ?)';
         whereParams.push(`%${search}%`, `%${search}%`);
       }
 
@@ -266,6 +266,8 @@ class TemplateController {
 
   async update(req, res) {
     const templateId = req.params.id;
+    const userId = req.user.id;
+    const userRole = req.user.role;
     // Mengambil data yang dikirim dari Postman/Frontend
     const { title, description, category_id, demo_url, source_url } = req.body;
 
@@ -280,6 +282,30 @@ class TemplateController {
         });
       }
 
+      // 2. Cek eksistensi & Kepemilikan Template (Anti-IDOR)
+      const [template] = await db.execute(
+        'SELECT id, user_id FROM templates WHERE id = ? AND deleted_at IS NULL AND is_active = TRUE',
+        [templateId]
+      );
+
+      if (template.length === 0) {
+        return responseHandler(res, {
+          status: 404,
+          code: 'ERR_NOT_FOUND',
+          messageDev: 'Template not found or inactive',
+          messageUser: 'Template tidak ditemukan atau sudah tidak aktif.',
+        });
+      }
+
+      if (template[0].user_id !== userId && userRole !== 'admin') {
+        return responseHandler(res, {
+          status: 403,
+          code: 'ERR_FORBIDDEN',
+          messageDev: "User attempted to update someone else's template",
+          messageUser: 'Anda tidak memiliki akses untuk mengubah template ini.',
+        });
+      }
+
       const query = `
         UPDATE templates 
         SET title = ?, description = ?, category_id = ?, demo_url = ?, source_url = ?
@@ -288,24 +314,9 @@ class TemplateController {
           AND is_active = TRUE
       `;
 
-      // Urutan value ini HARUS SAMA dengan urutan tanda tanya (?) di query atas
       const values = [title, description, category_id, demo_url, source_url, templateId];
+      await db.execute(query, values);
 
-      // 3. Eksekusi Database
-      const [result] = await db.execute(query, values);
-
-      // 4. Cek apakah ada data yang berhasil di-update
-
-      if (result.affectedRows === 0) {
-        return responseHandler(res, {
-          status: 404,
-          code: 'ERR_NOT_FOUND',
-          messageDev: 'Update failed: template not found or inactive',
-          messageUser: 'Update gagal: Template tidak ditemukan, tidak aktif, atau sudah dihapus.',
-        });
-      }
-
-      // 5. Kembalikan Respons Sukses
       return responseHandler(res, {
         status: 200,
         messageDev: 'Template updated successfully',

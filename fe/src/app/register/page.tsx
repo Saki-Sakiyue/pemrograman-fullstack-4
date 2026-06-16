@@ -1,168 +1,228 @@
-'use client';
+'use client'
 
-import { authService } from '@/services/auth.service';
-import { useAuthStore } from '@/store/useAuthStore';
-import { setCookie } from 'cookies-next';
-import { AnimatePresence, motion, Variants } from 'framer-motion';
+import { authService } from "@/services/auth.service";
+import { useAuthStore } from "@/store/useAuthStore";
+import { setCookie } from "cookies-next";
+import { AnimatePresence, motion, Variants } from "framer-motion";
 import {
-  ArrowRight,
-  Beaker,
-  Download,
-  Eye,
-  EyeOff,
-  Heart,
-  LayoutDashboard,
-  Loader2,
-  Lock,
-  Mail,
-} from 'lucide-react';
-import Link from 'next/link';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
-import { toast } from 'sonner';
+    ArrowRight,
+    Beaker,
+    Download,
+    Eye,
+    EyeOff,
+    Heart,
+    LayoutDashboard,
+    Loader2,
+    Lock,
+    Mail,
+    User,
+} from "lucide-react";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
+import { toast } from "sonner";
+
+
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface RippleItem {
-  id: number;
-  x: number;
-  y: number;
-  size: number;
+    id: number;
+    x: number;
+    y: number;
+    size: number;
 }
 
 // ─── Hook: Count-Up Animation ─────────────────────────────────────────────────
 function useCountUp(target: number, duration = 1500, startDelay = 400) {
-  const [value, setValue] = useState(0);
+    const [value, setValue] = useState(0);
 
-  useEffect(() => {
-    let raf: number;
-    const timeout = setTimeout(() => {
-      const startTime = performance.now();
-      const animate = (now: number) => {
-        const elapsed = now - startTime;
-        const progress = Math.min(elapsed / duration, 1);
-        // Ease-out cubic
-        const eased = 1 - Math.pow(1 - progress, 3);
-        setValue(Math.round(eased * target));
-        if (progress < 1) raf = requestAnimationFrame(animate);
-      };
-      raf = requestAnimationFrame(animate);
-    }, startDelay);
+    useEffect(() => {
+        let raf: number;
+        const timeout = setTimeout(() => {
+            const startTime = performance.now();
+            const animate = (now: number) => {
+                const elapsed = now - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                // Ease-out cubic
+                const eased = 1 - Math.pow(1 - progress, 3);
+                setValue(Math.round(eased * target));
+                if (progress < 1) raf = requestAnimationFrame(animate);
+            };
+            raf = requestAnimationFrame(animate);
+        }, startDelay);
 
-    return () => {
-      clearTimeout(timeout);
-      cancelAnimationFrame(raf);
-    };
-  }, [target, duration, startDelay]);
+        return () => {
+            clearTimeout(timeout);
+            cancelAnimationFrame(raf);
+        };
+    }, [target, duration, startDelay]);
 
-  return value;
+    return value;
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
-export default function LoginPage() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get('redirect') || '/dashboard';
-  const setUser = useAuthStore(state => state.setUser);
+export default function RegisterPage() {
+    const router = useRouter();
+    const searchParams = useSearchParams();
+    const callbackUrl = searchParams.get('redirect') || '/dashboard';
+    const setUser = useAuthStore(state => state.setUser);
 
-  // Form state
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+    // Form state
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [passwordConfirm, setPasswordConfirm] = useState('');
+    const [isLoading, setIsLoading] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirm, setShowConfirmPassword] = useState(false);
 
-  // Feature 9: Ripple
-  const [ripples, setRipples] = useState<RippleItem[]>([]);
-  const rippleId = useRef(0);
+    // Feature 9: Ripple
+    const [ripples, setRipples] = useState<RippleItem[]>([]);
+    const rippleId = useRef(0);
 
-  // Feature 6: Parallax
-  const leftPanelRef = useRef<HTMLDivElement>(null);
-  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+    // Feature 6: Parallax
+    const leftPanelRef = useRef<HTMLDivElement>(null);
+    const [mouse, setMouse] = useState({ x: 0, y: 0 });
 
-  // Feature 5: Count-up
-  const templateCount = useCountUp(12, 1200, 500);
-  const upvoteCount = useCountUp(450, 1400, 600);
-  const downloadCount = useCountUp(1284, 1600, 700);
+    // Feature 5: Count-up
+    const templateCount = useCountUp(12, 1200, 500);
+    const upvoteCount = useCountUp(450, 1400, 600);
+    const downloadCount = useCountUp(1284, 1600, 700);
 
-  // ── Parallax mouse handler ─────────────────────────────────────────────────
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    const rect = leftPanelRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const cx = rect.width / 2;
-    const cy = rect.height / 2;
-    setMouse({
-      x: (e.clientX - rect.left - cx) / cx,
-      y: (e.clientY - rect.top - cy) / cy,
-    });
-  }, []);
-
-  const handleMouseLeave = useCallback(() => {
-    setMouse({ x: 0, y: 0 });
-  }, []);
-
-  // ── Ripple handler ─────────────────────────────────────────────────────────
-  const handleButtonClick = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const size = Math.max(rect.width, rect.height) * 2.2;
-      const id = rippleId.current++;
-      setRipples(prev => [
-        ...prev,
-        { id, x: e.clientX - rect.left, y: e.clientY - rect.top, size },
-      ]);
-      setTimeout(() => setRipples(prev => prev.filter(r => r.id !== id)), 600);
-    },
-    []
-  );
-
-  // ── Login logic ────────────────────────────────────────────────────────────
-  const handleLogin = async (e: FormEvent) => {
-    e.preventDefault();
-    setIsLoading(true);
-    try {
-      const response = await authService.login({
-        identifier: username,
-        password,
-      });
-      if (response.data) {
-        // Flag tersebut diabaikan oleh cookies-next di sisi client, sehingga dihapus.
-        // Cookie ini diakses oleh middleware.ts (server-side) untuk cek auth guard.
-        setCookie('templas_token', response.data.token, {
-          path: '/',
-          maxAge: 60 * 60 * 24, // 1 hari (sesuai JWT_EXPIRES_IN)
-          secure: process.env.NODE_ENV === 'production',
-          sameSite: 'lax',
+    // ── Parallax mouse handler ─────────────────────────────────────────────────
+    const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+        const rect = leftPanelRef.current?.getBoundingClientRect();
+        if (!rect) return;
+        const cx = rect.width / 2;
+        const cy = rect.height / 2;
+        setMouse({
+            x: (e.clientX - rect.left - cx) / cx,
+            y: (e.clientY - rect.top - cy) / cy,
         });
-        setUser(response.data.user);
-        toast.success('Login berhasil! Selamat datang kembali.');
-        router.push(callbackUrl);
-      }
-    } catch (error) {
-      console.error('Login error:', error);
-      toast.error('Gagal login. Periksa kembali kredensial Anda.');
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    }, []);
 
-  // ── Framer Motion variants ─────────────────────────────────────────────────
-  const formContainer = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
-    },
-  };
+    const handleMouseLeave = useCallback(() => {
+        setMouse({ x: 0, y: 0 });
+    }, []);
 
-  const formItem: Variants = {
-    hidden: { opacity: 0, y: 20 },
-    show: {
-      opacity: 1,
-      y: 0,
-      transition: { type: 'spring', stiffness: 300, damping: 24 },
-    },
-  };
+    // ── Ripple handler ─────────────────────────────────────────────────────────
+    const handleButtonClick = useCallback(
+        (e: React.MouseEvent<HTMLButtonElement>) => {
+            const rect = e.currentTarget.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height) * 2.2;
+            const id = rippleId.current++;
+            setRipples(prev => [
+                ...prev,
+                { id, x: e.clientX - rect.left, y: e.clientY - rect.top, size },
+            ]);
+            setTimeout(() => setRipples(prev => prev.filter(r => r.id !== id)), 600);
+        },
+        []
+    );
 
-  return (
+    // ── Register logic ──────────────────────────────────────────────────────────
+    const handleRegister = async (e: FormEvent) => {
+        e.preventDefault();
+        if (password !== passwordConfirm) {
+            toast.error('Password dan konfirmasi password tidak cocok.');
+            return;
+        }
+        setIsLoading(true);
+        try {
+            const response = await authService.register({
+                username,
+                email,
+                password,
+                passwordConfirm,
+            });
+
+            toast.success('Registrasi berhasil! Silakan login.');
+            router.push('/login');
+            
+            if (response.data) {
+                // Bug Fix Sprint 11 #4:
+                // `httpOnly: true` tidak bisa di-set via JavaScript di browser (itu hak eksklusif server).
+                // Flag tersebut diabaikan oleh cookies-next di sisi client, sehingga dihapus.
+                // Cookie ini diakses oleh middleware.ts (server-side) untuk cek auth guard.
+                setCookie('templas_token', response.data.token, {
+                    path: '/',
+                    maxAge: 60 * 60 * 24, // 1 hari (sesuai JWT_EXPIRES_IN)
+                    secure: process.env.NODE_ENV === 'production',
+                    sameSite: 'lax',
+                });
+                setUser(response.data.user);
+                toast.success('Registrasi berhasil! Selamat datang.');
+                router.push(callbackUrl);
+            }
+        } catch (error) {
+            console.error('Register error:', error);
+            // Extract message from API response if available, otherwise use default
+            const errorMessage = (error as any)?.response?.data?.message || 'Gagal registrasi. Email mungkin sudah digunakan.';
+            toast.error(errorMessage);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // ── Framer Motion variants ─────────────────────────────────────────────────
+    const formContainer = {
+        hidden: { opacity: 0 },
+        show: {
+            opacity: 1,
+            transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+        },
+    };
+
+    const formItem: Variants = {
+        hidden: { opacity: 0, y: 20 },
+        show: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                type: 'spring',
+                stiffness: 150,
+                damping: 18,
+            },
+        },
+    };
+
+    const panelVariant = {
+        hidden: { opacity: 0, x: -30 },
+        visible: (custom: number) => ({
+            opacity: 1,
+            x: 0,
+            transition: {
+                delay: custom * 0.1,
+                type: 'spring',
+                stiffness: 100,
+                damping: 15,
+            },
+        }),
+    };
+
+    // ── Parallax text variant ─────────────────────────────────────────────────
+    const parallaxText = (offset: number): Variants => ({
+        rest: {
+            x: 0,
+            y: 0,
+            opacity: 0.8,
+        },
+        hover: {
+            x: offset * 20,
+            y: offset * 20,
+            opacity: 1,
+            transition: {
+                type: 'spring',
+                stiffness: 50,
+                damping: 15,
+                duration: 0.3,
+                ease: 'easeOut',
+            },
+        },
+    });
+
+    // ── Render ────────────────────────────────────────────────────────────────
+   return (
     <>
         {/* ── Main Layout ───────────────────────────────────────────────────── */}
         <div className="flex min-h-screen w-full bg-white font-sans">
@@ -352,15 +412,15 @@ export default function LoginPage() {
                   </p>
               </motion.div>
 
-              <form onSubmit={handleLogin} className="space-y-5">
+              <form onSubmit={handleRegister} className="space-y-5">
                 {/* Username */}
                 <motion.div variants={formItem} className="space-y-1.5">
                   <label className="text-sm font-semibold text-slate-700">
-                    Username / Email
+                    Username
                   </label>
                   <div className="group relative">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 transition-colors group-focus-within:text-blue-600">
-                      <Mail className="h-5 w-5" />
+                      <User className="h-5 w-5" />
                     </div>
                     <input
                       type="text"
@@ -373,18 +433,32 @@ export default function LoginPage() {
                   </div>
                 </motion.div>
 
+                {/* {EmaIl}   */}
+                <motion.div variants={formItem} className="space-y-1.5">
+                  <label className="text-sm font-semibold text-slate-700">
+                    Email
+                  </label>
+                  <div className="group relative">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 transition-colors group-focus-within:text-blue-600">
+                      <Mail className="h-5 w-5" />
+                    </div>
+                    <input
+                      type="email"
+                      value={email}
+                      onChange={e => setEmail(e.target.value)}
+                      required
+                      className="block w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pr-4 pl-10 text-slate-900 transition-all placeholder:text-slate-400 focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-600/10 focus:outline-none"
+                      placeholder="Masukkan email"
+                    />
+                  </div>
+                </motion.div>
+
                 {/* Password */}
                 <motion.div variants={formItem} className="space-y-1.5">
                   <div className="flex items-center justify-between">
                     <label className="text-sm font-semibold text-slate-700">
                       Password
                     </label>
-                    <Link
-                      href="#"
-                      className="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline"
-                    >
-                      Lupa password?
-                    </Link>
                   </div>
                   <div className="group relative">
                     <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 transition-colors group-focus-within:text-blue-600">
@@ -404,6 +478,39 @@ export default function LoginPage() {
                       className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 focus:outline-none"
                     >
                       {showPassword ? (
+                        <EyeOff className="h-5 w-5" />
+                      ) : (
+                        <Eye className="h-5 w-5" />
+                      )}
+                    </button>
+                  </div>
+                </motion.div>
+
+                {/* Confirm Password */}
+                <motion.div variants={formItem} className="space-y-1.5">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-semibold text-slate-700">
+                      Konfirmasi Password
+                    </label>
+                  </div>
+                  <div className="group relative">
+                    <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 transition-colors group-focus-within:text-blue-600">
+                      <Lock className="h-5 w-5" />
+                    </div>
+                    <input
+                      type={(showConfirm) ? 'text' : 'password'}
+                      value={passwordConfirm}
+                      onChange={e => setPasswordConfirm(e.target.value)}
+                      required
+                      className="block w-full rounded-xl border border-slate-200 bg-slate-50/50 py-2.5 pr-12 pl-10 text-slate-900 transition-all placeholder:text-slate-400 focus:border-blue-600 focus:bg-white focus:ring-4 focus:ring-blue-600/10 focus:outline-none"
+                      placeholder="Konfirmasi password"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowConfirmPassword(!showConfirm)}
+                      className="absolute inset-y-0 right-0 flex items-center pr-3 text-slate-400 hover:text-slate-600 focus:outline-none"
+                    >
+                      {showConfirm ? (
                         <EyeOff className="h-5 w-5" />
                       ) : (
                         <Eye className="h-5 w-5" />
@@ -447,7 +554,7 @@ export default function LoginPage() {
                       </>
                     ) : (
                       <>
-                        <span>Masuk ke Dashboard</span>
+                        <span>Registrasi</span>
                         <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
                       </>
                     )}
@@ -459,12 +566,12 @@ export default function LoginPage() {
                 variants={formItem}
                 className="mt-8 text-center text-sm text-slate-500"
               >
-                Belum punya akun?{' '}
+                Sudah ada Akun??{' '}
                 <Link
                   href="/register"
                   className="font-semibold text-blue-600 hover:underline"
                 >
-                  Daftar sekarang
+                  Login
                 </Link>
               </motion.p>
             </motion.div>

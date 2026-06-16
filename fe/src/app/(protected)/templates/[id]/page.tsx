@@ -31,10 +31,11 @@ export default function TemplateDetailPage() {
   );
   const template = data;
 
-  // Logika untuk menentukan gambar utama yang ditampilkan
+  // Bug Fix Sprint 11 #4: Gunakan optional chaining penuh `images?.find` dan `images?.[0]`
+  // agar tidak throw error jika field `images` dari API bernilai undefined.
   const primaryImage =
-    template?.images.find(img => img.is_primary === 1)?.image_url ||
-    template?.images?.[0].image_url;
+    template?.images?.find(img => img.is_primary === 1)?.image_url ||
+    template?.images?.[0]?.image_url;
 
   const displayImage = userSelectedImage || primaryImage || null;
 
@@ -78,6 +79,8 @@ export default function TemplateDetailPage() {
                 src={getFullImageUrl(displayImage)}
                 alt={template.title}
                 fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 66vw"
                 className="object-cover transition-all duration-500"
               />
             ) : (
@@ -104,6 +107,7 @@ export default function TemplateDetailPage() {
                     src={getFullImageUrl(img.image_url)}
                     alt={`Thumbnail ${idx}`}
                     fill
+                    sizes="128px"
                     className="object-cover"
                   />
                 </button>
@@ -147,6 +151,7 @@ export default function TemplateDetailPage() {
                     src={getFullImageUrl(template.avatar_url)}
                     alt={template.author}
                     fill
+                    sizes="40px"
                     className="object-cover"
                   />
                 ) : (

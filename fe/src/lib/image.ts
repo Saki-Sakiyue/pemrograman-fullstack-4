@@ -4,6 +4,7 @@ export const getFullImageUrl = (path: string | null | undefined): string => {
   return `${process.env.NEXT_PUBLIC_API_BASE_URL}${path}`;
 };
 
-export const isSvgImage = (url: string): boolean => {
+export const isSvgImage = (url: string | null | undefined): boolean => {
+  if (!url) return false;
   return url.toLowerCase().endsWith('.svg') || url.toLowerCase().includes('svg');
-}
+};

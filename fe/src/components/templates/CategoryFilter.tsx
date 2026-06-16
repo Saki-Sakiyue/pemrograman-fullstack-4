@@ -1,6 +1,6 @@
 'use client';
 
-// import { useCategories } from "@/hooks/queries/category.queries";
+import { useCategories } from '@/hooks/queries/category.queries';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 
@@ -10,15 +10,13 @@ interface CategoryFilterProps {
 }
 
 export function CategoryFilter({ selectedId, onSelect }: CategoryFilterProps) {
-  const { data, isLoading } = {
-    data: { data: [{ id: 1, name: 'Category 1' }] },
-    isLoading: false,
-  }; // useCategories();
+  const { data: categories, isLoading } = useCategories();
 
   if (isLoading) return <FilterSkeleton />;
 
   return (
     <div className="mb-8 flex flex-wrap gap-2">
+      {/* Tombol "Semua" untuk reset filter */}
       <Button
         variant={selectedId === null ? 'default' : 'outline'}
         size="sm"
@@ -28,7 +26,7 @@ export function CategoryFilter({ selectedId, onSelect }: CategoryFilterProps) {
         Semua
       </Button>
 
-      {data?.data?.map(cat => (
+      {categories?.map(cat => (
         <Button
           key={cat.id}
           variant={selectedId === cat.id ? 'default' : 'outline'}
@@ -46,8 +44,8 @@ export function CategoryFilter({ selectedId, onSelect }: CategoryFilterProps) {
 function FilterSkeleton() {
   return (
     <div className="mb-8 flex gap-2">
-      {[1, 2, 3, 4].map(i => (
-        <Skeleton key={i} className="h-9 w-20 rounded-full" />
+      {[1, 2, 3, 4, 5, 6].map(i => (
+        <Skeleton key={i} className="h-9 w-24 rounded-full" />
       ))}
     </div>
   );

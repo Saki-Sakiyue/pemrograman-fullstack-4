@@ -3,6 +3,9 @@ import type { NextConfig } from 'next';
 const nextConfig: NextConfig = {
   /* config options here */
   reactCompiler: true,
+  turbopack: {
+    root: __dirname, // Supresswarning multiple lockfiles (monorepo)
+  },
   images: {
     remotePatterns: [
       {
