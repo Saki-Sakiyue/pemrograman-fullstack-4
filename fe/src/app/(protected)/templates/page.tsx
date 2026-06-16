@@ -16,10 +16,11 @@ export default function TemplatesPage() {
   const debouncedSearch = useDebounce(searchQuery, 500);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
 
-  const { data, isLoading, isError } = useTemplates({
+const { data, isLoading, isError } = useTemplates({
     page,
     limit: 5,
     search: debouncedSearch,
+    category_id: selectedCategory ?? undefined,
   });
 
   const templates = data?.templates || [];

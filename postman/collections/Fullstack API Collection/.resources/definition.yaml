@@ -1,0 +1,6 @@
+$kind: collection
+description: Collection untuk testing Template dan Profile API endpoints
+variables:
+  base_url: http://localhost:3000
+  auth_token: ""
+  user_id: ""

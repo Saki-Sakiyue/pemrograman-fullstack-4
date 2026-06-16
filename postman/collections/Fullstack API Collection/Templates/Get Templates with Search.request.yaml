@@ -1,0 +1,22 @@
+$kind: http-request
+url: "{{base_url}}/api/templates?search=sneat&page=1&limit=10"
+method: GET
+headers:
+  Content-Type: application/json
+queryParams:
+  search: sneat
+  page: "1"
+  limit: "10"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status code is 200', function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test('Search filter works', function () {
+          const responseJson = pm.response.json();
+          pm.expect(responseJson.success).to.equal(true);
+      });
+    language: text/javascript
+order: 2000

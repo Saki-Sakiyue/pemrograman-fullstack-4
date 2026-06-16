@@ -1,0 +1,15 @@
+# Use this workspace to collaborate
+workspace:
+  id: fa1caa03-26eb-40ca-be94-5f61ace7dada
+
+localResources:
+  collections:
+    - ..\Postman_Collection_Templates_API.json
+    - ..\Postman_Fullstack_API.json
+
+# Each entry here maps a local resource to one or more corresponding objects in Postman Cloud
+
+cloudResources:
+  collections:
+    ..\postman\collections\Template API Collection: de73b1cb-342a-494d-bb1b-ad51992b6dcf
+    ..\postman\collections\Fullstack API Collection: bb9d7c30-6b01-46d8-b5ae-44b04a501bf1

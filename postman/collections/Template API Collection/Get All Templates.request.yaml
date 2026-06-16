@@ -1,0 +1,42 @@
+$kind: http-request
+url: "{{base_url}}/api/templates?page=1&limit=10"
+method: GET
+headers:
+  Content-Type: application/json
+queryParams:
+  page: "1"
+  limit: "10"
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status code is 200', function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test('Response has success property set to true', function () {
+          const responseJson = pm.response.json();
+          pm.expect(responseJson).to.have.property('success', true);
+      });
+
+      pm.test('Response contains data array', function () {
+          const responseJson = pm.response.json();
+          pm.expect(responseJson).to.have.property('data');
+          pm.expect(responseJson.data).to.be.an('array');
+      });
+
+      pm.test('Response contains pagination info', function () {
+          const responseJson = pm.response.json();
+          pm.expect(responseJson).to.have.property('pagination');
+          pm.expect(responseJson.pagination).to.have.property('page');
+          pm.expect(responseJson.pagination).to.have.property('limit');
+          pm.expect(responseJson.pagination).to.have.property('total');
+          pm.expect(responseJson.pagination).to.have.property('totalPages');
+      });
+
+      // Save first template ID if exists
+      const responseJson = pm.response.json();
+      if (responseJson.data.length > 0) {
+          pm.environment.set('template_id', responseJson.data[0].id);
+      }
+    language: text/javascript
+order: 1000

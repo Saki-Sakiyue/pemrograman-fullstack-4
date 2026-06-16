@@ -6,6 +6,7 @@ const AuthController = require('../controllers/AuthController');
 const ReportController = require('../controllers/ReportController');
 const ProfileController = require('../controllers/ProfileController');
 const CategoryController = require('../controllers/CategoryController');
+const BookmarkController = require('../controllers/BookmarkController');
 const { uploadAvatar } = require('../middleware/uploadMiddleware');
 
 const router = express.Router();
@@ -44,6 +45,7 @@ router.patch(
   ProfileController.updateProfile
 );
 
+router.get('/api/bookmarks', verifyToken, BookmarkController.index);
 // TODO: CRUD Categories
 // TODO: CRUD Comments
 // TODO: CRUD Users (Admin Only)

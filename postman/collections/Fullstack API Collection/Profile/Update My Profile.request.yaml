@@ -1,0 +1,27 @@
+$kind: http-request
+url: "{{base_url}}/api/profile/update"
+method: PUT
+headers:
+  Authorization: Bearer {{auth_token}}
+  Content-Type: application/json
+body:
+  type: text
+  content: |-
+    {
+      "username": "admin_updated",
+      "email": "admin.new@example.com"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      pm.test('Status code is 200', function () {
+          pm.response.to.have.status(200);
+      });
+
+      pm.test('Response has success message', function () {
+          const responseJson = pm.response.json();
+          pm.expect(responseJson).to.have.property('success', true);
+          pm.expect(responseJson).to.have.property('message');
+      });
+    language: text/javascript
+order: 2000

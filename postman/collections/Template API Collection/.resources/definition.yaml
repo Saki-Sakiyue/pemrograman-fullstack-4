@@ -1,0 +1,6 @@
+$kind: collection
+description: Collection untuk testing Template API endpoints
+variables:
+  base_url: http://localhost:3000
+  template_id: ""
+  search_term: sneat
