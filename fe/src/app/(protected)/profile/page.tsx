@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
@@ -12,8 +13,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
-import { Calendar, Mail, User, Lock, Camera, X } from 'lucide-react';
+import { Calendar, Mail, User, Camera, X } from 'lucide-react';
 import { getFullImageUrl } from '@/lib/image';
+import { UpdateProfilePayload } from '@/services/profile.service';
 
 // Validation Schema
 const updateProfileSchema = z.object({
@@ -110,7 +112,7 @@ export default function ProfilePage() {
     }
 
     // Build payload with only provided fields
-    const payload: any = {};
+    const payload: UpdateProfilePayload = {};
     if (data.username && data.username !== profile?.username) {
       payload.username = data.username;
     }
@@ -130,13 +132,6 @@ export default function ProfilePage() {
         // Update Zustand store with new user data
         if (response.data) {
           updateUser(response.data);
-        }
-
-        // Update token in cookie if returned by API
-        if (response.data?.token) {
-          setCookie('token', response.data.token, {
-            maxAge: 60 * 60 * 24 * 7, // 7 days
-          });
         }
 
         setIsEditMode(false);
@@ -219,10 +214,12 @@ export default function ProfilePage() {
               {/* Avatar & Basic Info */}
               <div className="flex items-center gap-4">
                 {profile?.avatar_url && (
-                  <img
+                  <Image
                     src={getFullImageUrl(profile.avatar_url)}
                     alt={profile.username}
-                    className="h-16 w-16 rounded-full object-cover"
+                    width={64}
+                    height={64}
+                    className="rounded-full object-cover"
                   />
                 )}
                 <div>
@@ -285,10 +282,11 @@ export default function ProfilePage() {
                   {/* Avatar Preview */}
                   <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg border-2 border-dashed border-slate-300 bg-slate-50">
                     {avatarPreview || profile?.avatar_url ? (
-                      <img
+                      <Image
                         src={avatarPreview || getFullImageUrl(profile?.avatar_url || '')}
                         alt="Avatar preview"
-                        className="h-full w-full object-cover"
+                        fill
+                        className="object-cover"
                       />
                     ) : (
                       <div className="flex h-full w-full items-center justify-center">
