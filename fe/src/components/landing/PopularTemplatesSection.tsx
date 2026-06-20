@@ -1,44 +1,25 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Download, Eye, Lock, ThumbsUp, MessageSquare } from 'lucide-react';
+import { Download, Eye, Lock, ThumbsUp } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { useAuthStore } from '@/store/useAuthStore';
-
-const popularTemplates = [
-  {
-    id: 1,
-    title: 'Modern SaaS Dashboard',
-    description: 'A complete admin dashboard with charts, data tables, and user management pages.',
-    category: ['Admin', 'Next.js', 'Tailwind'],
-    likes: 342,
-    downloads: '1.2k',
-    comments: 89,
-  },
-  {
-    id: 2,
-    title: 'Startup Landing Page',
-    description: 'High-converting landing page template for tech startups and apps.',
-    category: ['Landing', 'React'],
-    likes: 289,
-    downloads: '940',
-    comments: 64,
-  },
-  {
-    id: 3,
-    title: 'Clean Auth Flow',
-    description: 'Beautiful login, register, and forgot password screens with smooth animations.',
-    category: ['Auth', 'Vue', 'Tailwind'],
-    likes: 156,
-    downloads: '620',
-    comments: 42,
-  },
-];
+import { useTemplates } from '@/hooks/queries/template.queries';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function PopularTemplatesSection() {
   const router = useRouter();
   const user = useAuthStore((state) => state.user);
+
+  // Fetch 3 template terpopuler untuk landing page
+  const { data, isLoading, isError } = useTemplates({
+    page: 1,
+    limit: 3,
+    // Jika custom hook Anda mendukung parameter sort, Anda bisa menambahkan sort: 'popular' di sini
+  });
+
+  const templates = data?.templates || [];
 
   const handleDownload = (templateTitle: string) => {
     if (!user) {
@@ -82,109 +63,128 @@ export default function PopularTemplatesSection() {
           </motion.div>
         </div>
 
-        {/* Template Grid */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {popularTemplates.map((template, idx) => (
-            <motion.div
-              key={template.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: '-50px' }}
-              transition={{ delay: idx * 0.1 }}
-              className="group bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-blue-300 hover:shadow-xl transition-all duration-300"
-            >
-              {/* Preview Area */}
-              <div className="h-48 bg-slate-100 flex items-center justify-center relative overflow-hidden">
-                <div className="text-slate-400">
-                  {idx === 0 && (
-                    <svg className="w-16 h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
-                    </svg>
-                  )}
-                  {idx === 1 && (
-                    <svg className="w-16 h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" />
-                    </svg>
-                  )}
-                  {idx === 2 && (
-                    <svg className="w-16 h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
-                    </svg>
-                  )}
-                </div>
-                
-                {/* Hover Overlay */}
-                <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
-                  <button className="p-2.5 bg-white rounded-lg text-slate-900 hover:bg-blue-50 transition shadow-lg">
-                    <Eye className="h-5 w-5" />
-                  </button>
+        {/* Loading Skeleton State */}
+        {isLoading ? (
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {[...Array(3)].map((_, i) => (
+              <div key={i} className="space-y-4 p-4 border border-slate-200 rounded-xl">
+                <Skeleton className="h-48 w-full rounded-lg" />
+                <Skeleton className="h-4 w-1/4" />
+                <Skeleton className="h-6 w-3/4" />
+                <Skeleton className="h-4 w-full" />
+                <div className="flex justify-between pt-4 border-t">
+                  <Skeleton className="h-4 w-1/3" />
+                  <Skeleton className="h-8 w-1/4" />
                 </div>
               </div>
+            ))}
+          </div>
+        ) : isError ? (
+          <div className="rounded-xl border border-dashed border-red-200 bg-red-50/50 py-12 text-center text-red-600">
+            <p className="font-medium">Gagal memuat template populer.</p>
+          </div>
+        ) : templates.length === 0 ? (
+          <div className="py-12 text-center text-slate-400">
+            <p>Belum ada template yang tersedia.</p>
+          </div>
+        ) : (
+          /* Template Grid Real Data */
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {templates.map((template, idx) => (
+              <motion.div
+                key={template.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: '-50px' }}
+                transition={{ delay: idx * 0.1 }}
+                className="group bg-white border border-slate-200 rounded-xl overflow-hidden hover:border-blue-300 hover:shadow-xl transition-all duration-300"
+              >
+                {/* Preview Area (Thumbnail Dinamis) */}
+                <div className="h-48 bg-slate-100 flex items-center justify-center relative overflow-hidden">
+                  {template.thumbnail_url ? (
+                    <img
+                      src={template.thumbnail_url}
+                      alt={template.title}
+                      className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                    />
+                  ) : (
+                    <div className="text-slate-400">
+                      <svg className="w-16 h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                      </svg>
+                    </div>
+                  )}
 
-              {/* Content */}
-              <div className="p-5">
-                {/* Category Tags */}
-                <div className="flex flex-wrap gap-2 mb-3">
-                  {template.category.map((cat) => (
-                    <span
-                      key={cat}
-                      className="px-2.5 py-1 bg-slate-100 text-slate-600 text-xs font-medium rounded-md"
+                  {/* Hover Overlay */}
+                  <div className="absolute inset-0 bg-slate-900/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-3">
+                    <button 
+                      onClick={() => router.push(`/templates/${template.id}`)}
+                      className="p-2.5 bg-white rounded-lg text-slate-900 hover:bg-blue-50 transition shadow-lg"
                     >
-                      {cat}
-                    </span>
-                  ))}
+                      <Eye className="h-5 w-5" />
+                    </button>
+                  </div>
                 </div>
 
-                {/* Title & Description */}
-                <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition">
-                  {template.title}
-                </h3>
-                <p className="text-sm text-slate-600 mb-4 line-clamp-2">
-                  {template.description}
-                </p>
-
-                {/* Stats & Action */}
-                <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-                  <div className="flex items-center gap-4 text-sm text-slate-500">
-                    <div className="flex items-center gap-1.5">
-                      <ThumbsUp className="h-4 w-4" />
-                      <span>{template.likes}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <Download className="h-4 w-4" />
-                      <span>{template.downloads}</span>
-                    </div>
-                    <div className="flex items-center gap-1.5">
-                      <MessageSquare className="h-4 w-4" />
-                      <span>{template.comments}</span>
-                    </div>
+                {/* Content */}
+                <div className="p-5">
+                  {/* Category Tags */}
+                  <div className="flex flex-wrap gap-2 mb-3">
+                    <span className="px-2.5 py-1 bg-blue-50 text-blue-600 text-xs font-medium rounded-md">
+                      {template.category_name}
+                    </span>
+                    <span className="px-2.5 py-1 bg-slate-100 text-slate-600 text-xs font-medium rounded-md">
+                      By @{template.author}
+                    </span>
                   </div>
 
-                  <button
-                    onClick={() => handleDownload(template.title)}
-                    className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition ${
-                      user
-                        ? 'text-blue-600 hover:bg-blue-50'
-                        : 'text-slate-500 hover:bg-slate-100'
-                    }`}
-                  >
-                    {user ? (
-                      <>
+                  {/* Title & Description */}
+                  <h3 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-blue-600 transition line-clamp-1">
+                    {template.title}
+                  </h3>
+                  <p className="text-sm text-slate-600 mb-4 line-clamp-2 min-h-[40px]">
+                    {template.description}
+                  </p>
+
+                  {/* Stats & Action */}
+                  <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+                    <div className="flex items-center gap-4 text-sm text-slate-500">
+                      <div className="flex items-center gap-1.5" title="Popularity Score">
+                        <ThumbsUp className="h-4 w-4" />
+                        <span>{template.popularity_score}</span>
+                      </div>
+                      <div className="flex items-center gap-1.5" title="Total Download">
                         <Download className="h-4 w-4" />
-                        Download
-                      </>
-                    ) : (
-                      <>
-                        <Lock className="h-4 w-4" />
-                        Lihat
-                      </>
-                    )}
-                  </button>
+                        <span>{template.download_count}</span>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => handleDownload(template.title)}
+                      className={`flex items-center gap-1.5 px-4 py-2 rounded-lg text-sm font-semibold transition ${
+                        user
+                          ? 'text-blue-600 hover:bg-blue-50'
+                          : 'text-slate-500 hover:bg-slate-100'
+                      }`}
+                    >
+                      {user ? (
+                        <>
+                          <Download className="h-4 w-4" />
+                          Download
+                        </>
+                      ) : (
+                        <>
+                          <Lock className="h-4 w-4" />
+                          Lihat
+                        </>
+                      )}
+                    </button>
+                  </div>
                 </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
 
         {/* View All Button */}
         <motion.div
