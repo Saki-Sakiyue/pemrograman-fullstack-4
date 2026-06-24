@@ -1,71 +1,87 @@
 const validateCreateTemplate = (payload = {}) => {
-  const { title, description, upload_type, source_url, category_id } = payload;
+  const title = normalizeText(payload.title);
+  const description = normalizeText(payload.description ?? payload.desc);
+  const categoryId = Number(payload.category_id ?? payload.categoryId);
+  const sourceUrl = normalizeOptionalUrl(payload.source_url);
+  const demoUrl = normalizeOptionalUrl(payload.demo_url);
 
-  // Validasi title
-  if (!title || typeof title !== 'string' || !title.trim()) {
+  if (!title) {
     return {
       valid: false,
       message: 'Title wajib diisi.',
     };
   }
 
-  if (title.trim().length < 3 || title.trim().length > 100) {
+  if (title.length < 3 || title.length > 100) {
     return {
       valid: false,
       message: 'Title harus antara 3-100 karakter.',
     };
   }
 
-  // Validasi description
-  if (!description || typeof description !== 'string' || !description.trim()) {
+  if (!description) {
     return {
       valid: false,
       message: 'Description wajib diisi.',
     };
   }
 
-  if (description.trim().length < 10 || description.trim().length > 1000) {
+  if (description.length < 10 || description.length > 1000) {
     return {
       valid: false,
       message: 'Description harus antara 10-1000 karakter.',
     };
   }
 
-  // Validasi upload_type
-  const validUploadTypes = ['file', 'url', 'both'];
-  if (!upload_type || !validUploadTypes.includes(upload_type)) {
+  if (!Number.isInteger(categoryId) || categoryId < 1) {
     return {
       valid: false,
-      message: `Upload type harus salah satu dari: ${validUploadTypes.join(', ')}`,
+      message: 'Category wajib dipilih.',
     };
   }
 
-  // Validasi source_url jika ada
-  if (source_url) {
-    if (typeof source_url !== 'string') {
-      return {
-        valid: false,
-        message: 'Source URL harus berupa string.',
-      };
-    }
-
-    if (!isValidUrl(source_url)) {
-      return {
-        valid: false,
-        message: 'Source URL tidak valid.',
-      };
-    }
-  }
-
-  // Validasi category_id
-  if (!category_id || typeof category_id !== 'number' || category_id < 1) {
+  if (sourceUrl && !isValidUrl(sourceUrl)) {
     return {
       valid: false,
-      message: 'Category ID wajib diisi dan harus berupa angka positif.',
+      message: 'Source URL tidak valid.',
     };
   }
 
-  return { valid: true };
+  if (demoUrl && !isValidUrl(demoUrl)) {
+    return {
+      valid: false,
+      message: 'Demo URL tidak valid.',
+    };
+  }
+
+  return {
+    valid: true,
+    data: {
+      title,
+      description,
+      category_id: categoryId,
+      source_url: sourceUrl,
+      demo_url: demoUrl,
+    },
+  };
+};
+
+const normalizeText = value => {
+  if (typeof value !== 'string') {
+    return '';
+  }
+
+  return value.trim();
+};
+
+const normalizeOptionalUrl = value => {
+  if (typeof value !== 'string') {
+    return null;
+  }
+
+  const trimmed = value.trim();
+
+  return trimmed ? trimmed : null;
 };
 
 const isValidUrl = string => {

@@ -7,7 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useDebounce } from '@/hooks/common/useDebounce';
 import { useTemplates } from '@/hooks/queries/template.queries';
-import { Search } from 'lucide-react';
+import { Plus, Search } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
 
 export default function TemplatesPage() {
@@ -48,6 +49,13 @@ export default function TemplatesPage() {
             onChange={e => setSearchQuery(e.target.value)}
           />
         </div>
+
+        <Button asChild className="shrink-0">
+          <Link href="/templates/new">
+            <Plus className="mr-2 h-4 w-4" />
+            Upload Template
+          </Link>
+        </Button>
       </div>
 
       {/* Pasang Komponen Filter */}

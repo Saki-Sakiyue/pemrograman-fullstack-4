@@ -169,7 +169,7 @@ class TemplateController {
         });
       }
 
-      const { category_id, title, description, upload_type, source_url, demo_url } = req.body;
+      const { category_id, title, description, source_url, demo_url } = validation.data;
 
       // Check if category exists
       const [categoryRows] = await db.query(`SELECT id FROM categories WHERE id = ? LIMIT 1`, [
@@ -193,11 +193,11 @@ class TemplateController {
         `;
 
       await db.query(insertSql, [
-        title.trim(),
-        description.trim(),
-        upload_type,
-        source_url || null,
-        demo_url || null,
+        title,
+        description,
+        'url',
+        source_url,
+        demo_url,
         category_id,
         req.user.id,
         true,
@@ -207,7 +207,7 @@ class TemplateController {
         status: 201,
         messageDev: 'Template created successfully',
         messageUser: 'Template baru berhasil ditambahkan ke komunitas!',
-        data: { title },
+        data: { title, category_id },
       });
     } catch (error) {
       return responseHandler(res, {

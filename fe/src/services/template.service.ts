@@ -1,6 +1,7 @@
 import apiClient from '@/api/axiosInstance';
 import { BaseResponse } from '@/types/api';
 import {
+  CreateTemplatePayload,
   TemplateDetailResponseData,
   TemplateQueryParams,
   TemplateResponseData,
@@ -21,6 +22,11 @@ export const templateService = {
     const response = await apiClient.get<
       BaseResponse<TemplateDetailResponseData>
     >(`/templates/${id}`);
+    return response.data;
+  },
+
+  create: async (payload: CreateTemplatePayload) => {
+    const response = await apiClient.post<BaseResponse<any>>('/templates', payload);
     return response.data;
   },
 
