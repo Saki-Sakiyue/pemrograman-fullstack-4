@@ -169,7 +169,7 @@ class TemplateController {
         });
       }
 
-      const { category_id, title, description, upload_type, source_url, demo_url } = req.body;
+      const { category_id, title, description, source_url, demo_url, upload_type } = validation.data;
 
       // Check if category exists
       const [categoryRows] = await db.query(`SELECT id FROM categories WHERE id = ? LIMIT 1`, [

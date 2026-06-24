@@ -28,7 +28,8 @@ import {
   useDeleteTemplate,
 } from '@/hooks/queries/admin-template.queries';
 import { useAuthStore } from '@/store/useAuthStore';
-import { Search, Shield } from 'lucide-react';
+import { Plus, Search, Shield } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
 
 export default function TemplatesPage() {
@@ -109,6 +110,13 @@ export default function TemplatesPage() {
             onChange={e => setSearchQuery(e.target.value)}
           />
         </div>
+
+        <Button asChild className="shrink-0">
+          <Link href="/templates/new">
+            <Plus className="mr-2 h-4 w-4" />
+            Upload Template
+          </Link>
+        </Button>
       </div>
 
       {/* Filters */}
