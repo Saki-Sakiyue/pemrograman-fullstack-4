@@ -9,9 +9,10 @@ import {
   useUpvoteTemplate,
   useBookmarkTemplate,
 } from '@/hooks/queries/template.queries';
+import ReportModal from '@/components/report/ReportModal';
 import { getFullImageUrl } from '@/lib/image';
 import { formatCompactNumber } from '@/lib/utils';
-import { ArrowLeft, Download, Eye, Layers, User, Heart, Bookmark } from 'lucide-react';
+import { ArrowLeft, Download, Eye, Layers, User, Heart, Bookmark, AlertCircle } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -29,6 +30,9 @@ export default function TemplateDetailPage() {
   const [userSelectedImage, setUserSelectedImage] = useState<string | null>(
     null
   );
+  // State untuk report modal
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+
   const template = data;
 
   // Bug Fix Sprint 11 #4: Gunakan optional chaining penuh `images?.find` dan `images?.[0]`
@@ -206,6 +210,13 @@ export default function TemplateDetailPage() {
                   <Bookmark size={16} className="text-blue-500 fill-blue-500" /> Save
                 </Button>
               </div>
+              <Button
+                variant="outline"
+                onClick={() => setIsReportModalOpen(true)}
+                className="w-full gap-2 text-xs font-bold text-red-600 hover:text-red-700"
+              >
+                <AlertCircle size={16} /> Laporkan
+              </Button>
             </div>
 
             <hr className="border-slate-100" />
@@ -259,6 +270,13 @@ export default function TemplateDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Report Modal */}
+      <ReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        templateId={template.id}
+      />
     </div>
   );
 }
