@@ -3,6 +3,7 @@ const { validateCreateTemplate } = require('../validators/templateValidator');
 const logger = require('../utils/logger');
 const responseHandler = require('../utils/responseHandler');
 const TemplateService = require('../services/TemplateService');
+const crypto = require('crypto');
 
 class TemplateController {
   async index(req, res) {
@@ -148,6 +149,7 @@ class TemplateController {
 
   async create(req, res) {
     try {
+      console.log(req.body)
       const validation = validateCreateTemplate(req.body);
 
       if (!validation.valid) {
@@ -192,7 +194,7 @@ class TemplateController {
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
         `;
 
-      await db.query(insertSql, [
+      const [result] = await db.query(insertSql, [
         title.trim(),
         description.trim(),
         upload_type,
@@ -203,11 +205,33 @@ class TemplateController {
         true,
       ]);
 
+      const templateId = result.insertId;
+
+      // Handle multiple images upload
+      if (req.files && req.files.length > 0) {
+        const imageInserts = req.files.map((file, index) => {
+          const imageUrl = `/uploads/templates/${file.filename}`;
+          const isPrimary = index === 0 ? 1 : 0; // First image is primary
+          return [templateId, imageUrl, isPrimary];
+        });
+
+        const imageInsertSql = `
+          INSERT INTO template_images (template_id, image_url, is_primary)
+          VALUES ?
+        `;
+
+        await db.query(imageInsertSql, [imageInserts]);
+      }
+
       return responseHandler(res, {
         status: 201,
         messageDev: 'Template created successfully',
         messageUser: 'Template baru berhasil ditambahkan ke komunitas!',
-        data: { title },
+        data: { 
+          id: templateId,
+          title,
+          images_uploaded: req.files ? req.files.length : 0,
+        },
       });
     } catch (error) {
       return responseHandler(res, {

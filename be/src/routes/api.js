@@ -6,7 +6,7 @@ const AuthController = require('../controllers/AuthController');
 const ReportController = require('../controllers/ReportController');
 const ProfileController = require('../controllers/ProfileController');
 const CategoryController = require('../controllers/CategoryController');
-const { uploadAvatar } = require('../middleware/uploadMiddleware');
+const { uploadAvatar, uploadTemplateImages } = require('../middleware/uploadMiddleware');
 
 const router = express.Router();
 
@@ -25,7 +25,12 @@ router.get('/api/categories', CategoryController.index);
 // Template routes
 router.get('/api/templates', TemplateController.index);
 router.get('/api/templates/:id', TemplateController.show);
-router.post('/api/templates', verifyToken, TemplateController.create); // Ganti dari post ke create
+router.post(
+  '/api/templates',
+  verifyToken,
+  uploadTemplateImages.array('images', 5),
+  TemplateController.create
+);
 router.put('/api/templates/:id', verifyToken, TemplateController.update);
 router.delete('/api/templates/:id', verifyToken, TemplateController.destroy); // Ganti dari delete ke destroy
 // Custom Actions (Interactions)
