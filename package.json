@@ -7,7 +7,7 @@
     "predev": "npm run kill-ports",
     "dev:be": "npm run dev --prefix BE",
     "dev:fe": "npm run dev --prefix fe",
-    "dev": "concurrently --names \"BE,FE\" --prefix-colors \"bgBlue.bold,bgGreen.bold\" \"npm run dev:be\" \"npm run dev:fe\"",
+    "dev": "npx concurrently --names \"BE,FE\" --prefix-colors \"bgBlue.bold,bgGreen.bold\" \"npm run dev:be\" \"npm run dev:fe\"",
     "start:be": "npm run start --prefix BE",
     "start:fe": "npm run start --prefix fe"
   },

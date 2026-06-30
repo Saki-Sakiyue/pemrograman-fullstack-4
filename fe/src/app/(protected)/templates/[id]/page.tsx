@@ -86,6 +86,7 @@ export default function TemplateDetailPage() {
                 priority
                 sizes="(max-width: 1024px) 100vw, 66vw"
                 className="object-cover transition-all duration-500"
+                unoptimized
               />
             ) : (
               <div className="flex h-full items-center justify-center text-slate-400">
@@ -113,6 +114,7 @@ export default function TemplateDetailPage() {
                     fill
                     sizes="128px"
                     className="object-cover"
+                    unoptimized
                   />
                 </button>
               ))}
@@ -157,6 +159,7 @@ export default function TemplateDetailPage() {
                     fill
                     sizes="40px"
                     className="object-cover"
+                    unoptimized
                   />
                 ) : (
                   <User className="p-2 text-slate-400" />
@@ -238,7 +241,7 @@ export default function TemplateDetailPage() {
                       width={16}
                       height={16}
                       className="object-contain"
-                      unoptimized={stack.icon_url.endsWith('.svg')}
+                      unoptimized
                     />
                     <span className="text-xs font-semibold text-slate-700">
                       {stack.name}

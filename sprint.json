@@ -1,0 +1,725 @@
+{
+  "ProductOwner": "Abdul Developer",
+  "TeamDev": [
+    {
+      "nama": "Muhammad Riandana Pranatha",
+      "code": "MRP"
+    },
+    {
+      "nama": "Raffi Ramadhan Tajudin",
+      "code": "RRT"
+    },
+    {
+      "nama": "Sholahuddin Robbani",
+      "code": "SR"
+    },
+    {
+      "nama": "Nathania Belva Zerlina",
+      "code": "NBZ"
+    }
+  ],
+  "Sprints": [
+    {
+      "no": 1,
+      "tanggal": "5 Maret 2026",
+      "details": [
+        {
+          "size": "M",
+          "storyPoints": 3,
+          "mandays": 1,
+          "featureGroup": "FS",
+          "issue": "Pembentukan Kelompok",
+          "assignee": "RRT"
+        },
+        {
+          "size": "M",
+          "storyPoints": 3,
+          "mandays": 1,
+          "featureGroup": "FS",
+          "issue": "Pembentukan Kelompok",
+          "assignee": "MRP"
+        },
+        {
+          "size": "M",
+          "storyPoints": 3,
+          "mandays": 1,
+          "featureGroup": "FS",
+          "issue": "Pembentukan Kelompok",
+          "assignee": "SR"
+        },
+        {
+          "size": "M",
+          "storyPoints": 3,
+          "mandays": 1,
+          "featureGroup": "FS",
+          "issue": "Pembentukan Kelompok",
+          "assignee": "NBZ"
+        },
+        {
+          "size": "M",
+          "storyPoints": 3,
+          "mandays": 1,
+          "featureGroup": "FS",
+          "issue": "Pembentukan Kelompok",
+          "assignee": "RRT"
+        }
+      ]
+    },
+    {
+      "no": 2,
+      "tanggal": "5 - 12 Maret 2026",
+      "details": [
+        {
+          "size": "XL",
+          "storyPoints": 8,
+          "mandays": 3.5,
+          "featureGroup": "FS",
+          "issue": "Finalisasi deskripsi sistem dan dokumentasi alur teknis data (System Workflow).",
+          "assignee": "RRT",
+          "progress": 100
+        },
+        {
+          "size": "L",
+          "storyPoints": 5,
+          "mandays": 2,
+          "featureGroup": "FS",
+          "issue": "Analisis kebutuhan fitur MVP (Auth & Template Listing).",
+          "assignee": "MRP",
+          "progress": 100
+        },
+        {
+          "size": "L",
+          "storyPoints": 5,
+          "mandays": 2,
+          "featureGroup": "FS",
+          "issue": "Perencanaan fitur Upload dan Download Counter.",
+          "assignee": "SR",
+          "progress": 100
+        },
+        {
+          "size": "M",
+          "storyPoints": 3,
+          "mandays": 1,
+          "featureGroup": "FS",
+          "issue": "Perancangan User Journey dan Wireframe awal halaman Landing Page.",
+          "assignee": "NBZ",
+          "progress": 100
+        }
+      ]
+    },
+    {
+      "no": 3,
+      "tanggal": "12-19 Maret 2026",
+      "details": [
+        {
+          "size": "XL",
+          "storyPoints": 8,
+          "mandays": 3.5,
+          "featureGroup": "FS",
+          "issue": "Perancangan ERD Database MySQL (Users, Templates, Stacks, Tags).",
+          "assignee": "RRT",
+          "progress": 100
+        },
+        {
+          "size": "XL",
+          "storyPoints": 8,
+          "mandays": 3.5,
+          "featureGroup": "FS",
+          "issue": "Setup Boilerplate Express.js dan koneksi awal database.",
+          "assignee": "MRP",
+          "progress": 100
+        },
+        {
+          "size": "L",
+          "storyPoints": 5,
+          "mandays": 2,
+          "featureGroup": "FS",
+          "issue": "Inisialisasi Project Next.js dan konfigurasi integrasi API dasar.",
+          "assignee": "SR",
+          "progress": 100
+        },
+        {
+          "size": "L",
+          "storyPoints": 5,
+          "mandays": 2,
+          "featureGroup": "FS",
+          "issue": "Desain UI komponen Search Bar dan navigasi utama.",
+          "assignee": "NBZ",
+          "progress": 100
+        }
+      ]
+    },
+    {
+      "no": 4,
+      "tanggal": "03-9 April 2026",
+      "details": [
+        {
+          "size": "XL",
+          "storyPoints": 8,
+          "mandays": 3.5,
+          "feature": "Auth",
+          "featureGroup": "FS",
+          "issue": "Session & Layout: Middleware proteksi halaman, token storage, navbar dinamis.",
+          "assignee": "RRT",
+          "progress": 100
+        },
+        {
+          "size": "M",
+          "storyPoints": 3,
+          "mandays": 1,
+          "feature": "Auth",
+          "featureGroup": "FS",
+          "issue": "E2E Register.",
+          "assignee": "MRP",
+          "progress": 100
+        },
+        {
+          "size": "M",
+          "storyPoints": 3,
+          "mandays": 1,
+          "feature": "Auth",
+          "featureGroup": "FS",
+          "issue": "E2E Login & Logout.",
+          "assignee": "SR",
+          "progress": 100
+        },
+        {
+          "size": "L",
+          "storyPoints": 5,
+          "mandays": 2,
+          "feature": "Setup",
+          "featureGroup": "FS",
+          "issue": "Foundation: Next.js, Tailwind.",
+          "assignee": "NBZ",
+          "progress": 100
+        },
+        {
+          "size": "L",
+          "storyPoints": 5,
+          "mandays": 2,
+          "feature": "Setup",
+          "featureGroup": "FS",
+          "issue": "Database ERD Design.",
+          "assignee": "RRT",
+          "progress": 100
+        },
+        {
+          "size": "L",
+          "storyPoints": 5,
+          "mandays": 2,
+          "feature": "Setup",
+          "featureGroup": "FS",
+          "issue": "Setup Next.js: Formatting, Package Install, Layout Initialization.",
+          "assignee": "RRT",
+          "progress": 100
+        }
+      ]
+    },
+    {
+      "no": 5,
+      "tanggal": "09-16 April 2026",
+      "details": [
+        {
+          "issue": "Membuat API untuk menerima submit template.",
+          "assignee": "RRT"
+        },
+        {
+          "issue": "API untuk melihat dan mengedit profil pengguna.",
+          "assignee": "MRP"
+        },
+        {
+          "issue": "Membuat API untuk mengambil daftar template.",
+          "assignee": "SR"
+        },
+        {
+          "issue": "Standarisasi Handling Response API.",
+          "assignee": "RRT"
+        },
+        {
+          "issue": "API counter download (+1).",
+          "assignee": "NBZ"
+        }
+      ]
+    },
+    {
+      "no": 6,
+      "tanggal": "23-30 April 2026",
+      "details": [
+        {
+          "issue": "API manajemen profil pengguna (Get & Update Profile).",
+          "assignee": "RRT"
+        },
+        {
+          "issue": "API Delete Template.",
+          "assignee": "MRP"
+        },
+        {
+          "issue": "API daftar template.",
+          "assignee": "SR"
+        },
+        {
+          "issue": "API Update Template.",
+          "assignee": "NBZ"
+        }
+      ]
+    },
+    {
+      "no": 7,
+      "tanggal": "23-30 April 2026",
+      "details": [
+        {
+          "issue": "Setup Multer dan API upload file.",
+          "assignee": "RRT"
+        },
+        {
+          "issue": "API Bookmark Template.",
+          "assignee": "MRP"
+        },
+        {
+          "issue": "API Report Template.",
+          "assignee": "SR"
+        },
+        {
+          "issue": "API Upvote / Like Template.",
+          "assignee": "NBZ"
+        }
+      ]
+    },
+    {
+      "no": 8,
+      "tanggal": "29 April - 03 May 2026",
+      "details": [
+        {
+          "issue": "Debugging",
+          "assignee": "RRT"
+        },
+        {
+          "issue": "Debugging",
+          "assignee": "MRP"
+        },
+        {
+          "issue": "Debugging",
+          "assignee": "SR"
+        },
+        {
+          "issue": "Debugging",
+          "assignee": "NBZ"
+        }
+      ]
+    },
+    {
+      "no": 9,
+      "tanggal": "21 - 25 May 2026",
+      "details": [
+        {
+          "issue": "Inisialisasi proyek Next.js dan setup Tailwind.",
+          "assignee": "RRT"
+        },
+        {
+          "issue": "Kerangka Dashboard dan Profil.",
+          "assignee": "MRP"
+        },
+        {
+          "issue": "Navbar.tsx dan Sidebar.tsx.",
+          "assignee": "SR"
+        },
+        {
+          "issue": "Kerangka galeri template dan detail placeholder.",
+          "assignee": "NBZ"
+        }
+      ]
+    },
+    {
+      "no": 10,
+      "tanggal": "21 - 28 May 2026",
+      "details": [
+        {
+          "issue": "apiClient, QueryProvider, global error handling.",
+          "assignee": "RRT"
+        },
+        {
+          "issue": "Integrasi API daftar template dengan search dan pagination.",
+          "assignee": "MRP"
+        },
+        {
+          "issue": "Integrasi API detail template.",
+          "assignee": "SR"
+        },
+        {
+          "issue": "Integrasi thumbnail, kategori, tech stack, download dan upvote.",
+          "assignee": "NBZ"
+        }
+      ]
+    },
+    {
+      "no": 11,
+      "tanggal": "4 - 11 June 2026",
+      "details": [
+        {
+          "issue": "Halaman Profile dan update profile.",
+          "assignee": "RRT"
+        },
+        {
+          "issue": "Endpoint GET /api/categories.",
+          "assignee": "MRP"
+        },
+        {
+          "issue": "Halaman Register.",
+          "assignee": "SR"
+        },
+        {
+          "issue": "Upload avatar profile.",
+          "assignee": "NBZ"
+        }
+      ]
+    },
+    {
+      "no": 12,
+      "tanggal": "5 - 12 June 2026",
+      "details": [
+        {
+          "issue": "Halaman Upload Template.",
+          "assignee": "RRT"
+        },
+        {
+          "issue": "Integrasi CategoryFilter dengan API Categories.",
+          "assignee": "MRP"
+        },
+        {
+          "issue": "Membuat component landing page.",
+          "assignee": "SR"
+        },
+        {
+          "issue": "Fitur Report Template.",
+          "assignee": "NBZ"
+        }
+      ]
+    },
+    {
+      "no": 139,
+      "tanggal": "18 - 25 June 2026",
+      "details": [
+        {
+          "issue": "Admin Users & Reports API.",
+          "assignee": "RRT"
+        },
+        {
+          "issue": "Halaman Bookmark.",
+          "assignee": "MRP"
+        },
+        {
+          "issue": "Membuat component landing page.",
+          "assignee": "SR"
+        },
+        {
+          "issue": "Fitur Report Template.",
+          "assignee": "NBZ"
+        }
+      ]
+    },
+    {
+      "no": 13,
+      "tanggal": "18 - 25 June 2026",
+      "details": [
+        {
+          "featureGroup": "FS",
+          "issue": "Fix CategoryFilter Bug.",
+          "assignee": "RRT"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Profile Bookmarks API.",
+          "assignee": "RRT"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Profile My Templates API.",
+          "assignee": "RRT"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Admin Middleware.",
+          "assignee": "RRT"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Upload Template API Enhancement.",
+          "assignee": "SR"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Upload Template Page.",
+          "assignee": "SR"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Upload Template Service.",
+          "assignee": "SR"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Bookmarks Page.",
+          "assignee": "NBZ"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Bookmarks Query Hook.",
+          "assignee": "NBZ"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Profile Templates Tab.",
+          "assignee": "NBZ"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "E2E Upload Testing.",
+          "assignee": "MRP"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Profile Integration.",
+          "assignee": "MRP"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Sprint 13 Documentation.",
+          "assignee": "MRP"
+        }
+      ]
+    },
+    {
+      "no": 14,
+      "tanggal": "26 June - 3 July 2026",
+      "details": [
+        {
+          "featureGroup": "FS",
+          "issue": "Tags API.",
+          "assignee": "SR"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Stacks API.",
+          "assignee": "SR"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Template-Tags Relation (BE).",
+          "assignee": "SR"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Template-Stacks Relation (BE).",
+          "assignee": "SR"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Filter by Tags (BE).",
+          "assignee": "SR"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Filter by Stacks Backend.",
+          "assignee": "SR"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Tags Service.",
+          "assignee": "MRP"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Stacks Service.",
+          "assignee": "MRP"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "TagFilter Component.",
+          "assignee": "MRP"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "StackFilter Component.",
+          "assignee": "MRP"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Update Templates Page.",
+          "assignee": "MRP"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Update Upload Form.",
+          "assignee": "MRP"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Tags Query Hook.",
+          "assignee": "MRP"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Multiple Images Middleware.",
+          "assignee": "RRT"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Multiple Images API.",
+          "assignee": "RRT"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Set Primary Image Logic.",
+          "assignee": "RRT"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Image Upload Component.",
+          "assignee": "NBZ"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Image Validation.",
+          "assignee": "NBZ"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Integration Testing.",
+          "assignee": "NBZ"
+        }
+      ]
+    },
+    {
+      "no": 15,
+      "tanggal": "4 - 11 July 2026",
+      "details": [
+        {
+          "featureGroup": "FS",
+          "issue": "Admin Users API.",
+          "assignee": "RRT"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Admin Templates API.",
+          "assignee": "RRT"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Admin Reports API.",
+          "assignee": "RRT"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Admin Dashboard Layout.",
+          "assignee": "RRT"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Admin Users Page.",
+          "assignee": "RRT"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Admin Templates Page.",
+          "assignee": "RRT"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Admin Reports Page.",
+          "assignee": "RRT"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Admin Dashboard Stats.",
+          "assignee": "RRT"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Admin Route Protection.",
+          "assignee": "RRT"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Popular Templates Page.",
+          "assignee": "SR"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Advanced Search Backend.",
+          "assignee": "SR"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Template Stats Endpoint.",
+          "assignee": "SR"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Upload Form Validation.",
+          "assignee": "SR"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Upvote/Bookmark in Card.",
+          "assignee": "MRP"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Loading States Polish.",
+          "assignee": "MRP"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Empty States.",
+          "assignee": "MRP"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Mobile Responsive Check.",
+          "assignee": "NBZ"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Final Integration Test.",
+          "assignee": "NBZ"
+        }
+      ]
+    },
+    {
+      "no": 16,
+      "tanggal": "1 October",
+      "details": [
+        {
+          "featureGroup": "FS",
+          "issue": "API Documentation.",
+          "assignee": "RRT"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Database Seeding.",
+          "assignee": "RRT"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "README Update.",
+          "assignee": "SR"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Error Handling Review.",
+          "assignee": "SR"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Validity Checker Cron.",
+          "assignee": "NBZ"
+        },
+        {
+          "featureGroup": "FS",
+          "issue": "Log Actions for Audit Trail.",
+          "assignee": "NBZ"
+        }
+      ]
+    }
+  ]
+}
