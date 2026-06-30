@@ -30,6 +30,38 @@ export const useTemplateDetail = (id: number | string) => {
   });
 };
 
+export const useBookmarks = (
+  params: TemplateQueryParams = {
+    limit: 5,
+    page: 1,
+  }
+) => {
+  return useQuery({
+    queryKey: ['bookmarks', params],
+    queryFn: async () => {
+      const response = await templateService.getBookmarks(params);
+      return response.data;
+    },
+    placeholderData: previousData => previousData,
+  });
+};
+
+export const useMyTemplates = (
+  params: TemplateQueryParams = {
+    limit: 5,
+    page: 1,
+  }
+) => {
+  return useQuery({
+    queryKey: ['myTemplates', params],
+    queryFn: async () => {
+      const response = await templateService.getMyTemplates(params);
+      return response.data;
+    },
+    placeholderData: previousData => previousData,
+  });
+};
+
 export const useDownloadTemplate = () => {
   const queryClient = useQueryClient();
   return useMutation({

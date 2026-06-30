@@ -5,7 +5,6 @@ import Image from 'next/image';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { setCookie } from 'cookies-next';
 import { useHydration } from '@/hooks/common/useHydration';
 import { useGetProfile, useUpdateProfile } from '@/hooks/queries/profile.queries';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -16,25 +15,34 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Calendar, Mail, User, Camera, X } from 'lucide-react';
 import { getFullImageUrl } from '@/lib/image';
 import { UpdateProfilePayload } from '@/services/profile.service';
+import MyTemplatesSection from './my-templates';
 
 // Validation Schema
-const updateProfileSchema = z.object({
-  username: z
-    .string()
-    .min(3, 'Username minimal 3 karakter')
-    .max(30, 'Username maksimal 30 karakter')
-    .optional()
-    .or(z.literal('')),
-  password: z
-    .string()
-    .min(6, 'Password minimal 6 karakter')
-    .optional()
-    .or(z.literal('')),
-  passwordConfirm: z
-    .string()
-    .optional()
-    .or(z.literal('')),
-});
+const updateProfileSchema = z
+  .object({
+    username: z
+      .string()
+      .min(3, 'Username minimal 3 karakter')
+      .max(30, 'Username maksimal 30 karakter')
+      .optional()
+      .or(z.literal('')),
+    password: z
+      .string()
+      .min(6, 'Password minimal 6 karakter')
+      .optional()
+      .or(z.literal('')),
+    passwordConfirm: z
+      .string()
+      .optional()
+      .or(z.literal('')),
+  })
+  .refine(
+    data => !data.password || data.password === data.passwordConfirm,
+    {
+      message: 'Password tidak cocok',
+      path: ['passwordConfirm'],
+    }
+  );
 
 type UpdateProfileFormData = z.infer<typeof updateProfileSchema>;
 
@@ -53,7 +61,6 @@ export default function ProfilePage() {
     handleSubmit,
     formState: { errors },
     reset,
-    watch,
   } = useForm<UpdateProfileFormData>({
     resolver: zodResolver(updateProfileSchema),
     defaultValues: {
@@ -63,16 +70,14 @@ export default function ProfilePage() {
     },
   });
 
-  // Update form when profile data is loaded
-  React.useEffect(() => {
-    if (profile && isEditMode) {
-      reset({ username: profile.username, password: '', passwordConfirm: '' });
-    } else {
-      // Reset avatar when exiting edit mode
-      setAvatarFile(null);
-      setAvatarPreview(null);
-    }
-  }, [profile, isEditMode, reset]);
+  const handleStartEdit = () => {
+    setIsEditMode(true);
+    reset({
+      username: profile?.username || '',
+      password: '',
+      passwordConfirm: '',
+    });
+  };
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -103,15 +108,7 @@ export default function ProfilePage() {
     setAvatarPreview(null);
   };
 
-  const password = watch('password');
-
   const onSubmit = (data: UpdateProfileFormData) => {
-    // Validate password confirmation if password is provided
-    if (data.password && data.password !== data.passwordConfirm) {
-      return;
-    }
-
-    // Build payload with only provided fields
     const payload: UpdateProfilePayload = {};
     if (data.username && data.username !== profile?.username) {
       payload.username = data.username;
@@ -143,7 +140,13 @@ export default function ProfilePage() {
 
   const handleCancel = () => {
     setIsEditMode(false);
-    reset();
+    reset({
+      username: profile?.username || '',
+      password: '',
+      passwordConfirm: '',
+    });
+    setAvatarFile(null);
+    setAvatarPreview(null);
   };
 
   if (!isHydrated) return null;
@@ -193,7 +196,7 @@ export default function ProfilePage() {
         <h1 className="text-2xl font-bold text-slate-900">Profil Saya</h1>
         {!isEditMode && (
           <Button
-            onClick={() => setIsEditMode(true)}
+            onClick={handleStartEdit}
             variant="outline"
             size="sm"
           >
@@ -361,26 +364,23 @@ export default function ProfilePage() {
               </div>
 
               {/* Confirm Password Field */}
-              {password && (
-                <div>
-                  <label className="text-sm font-medium text-slate-700">
-                    Konfirmasi Password
-                  </label>
-                  <Input
-                    type="password"
-                    placeholder="Konfirmasi password baru"
-                    {...register('passwordConfirm')}
-                    disabled={isUpdating}
-                    className="mt-1"
-                  />
-                  {password !==
-                    watch('passwordConfirm') && (
-                    <p className="mt-1 text-xs text-red-600">
-                      Password tidak cocok
-                    </p>
-                  )}
-                </div>
-              )}
+              <div>
+                <label className="text-sm font-medium text-slate-700">
+                  Konfirmasi Password
+                </label>
+                <Input
+                  type="password"
+                  placeholder="Konfirmasi password baru"
+                  {...register('passwordConfirm')}
+                  disabled={isUpdating}
+                  className="mt-1"
+                />
+                {errors.passwordConfirm && (
+                  <p className="mt-1 text-xs text-red-600">
+                    {errors.passwordConfirm.message}
+                  </p>
+                )}
+              </div>
 
               {/* Action Buttons */}
               <div className="flex gap-3 border-t border-slate-200 pt-6">
@@ -405,6 +405,8 @@ export default function ProfilePage() {
           )}
         </CardContent>
       </Card>
+
+      <MyTemplatesSection />
     </div>
   );
 }
