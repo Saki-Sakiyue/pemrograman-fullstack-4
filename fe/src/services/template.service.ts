@@ -24,6 +24,26 @@ export const templateService = {
     return response.data;
   },
 
+  getBookmarks: async (params?: TemplateQueryParams) => {
+    const response = await apiClient.get<BaseResponse<TemplateResponseData>>(
+      '/profile/bookmarks',
+      {
+        params,
+      }
+    );
+    return response.data;
+  },
+
+  getMyTemplates: async (params?: TemplateQueryParams) => {
+    const response = await apiClient.get<BaseResponse<TemplateResponseData>>(
+      '/profile/templates',
+      {
+        params,
+      }
+    );
+    return response.data;
+  },
+
   download: async (id: number | string) => {
     const response = await apiClient.patch<BaseResponse<any>>(
       `/templates/${id}/download`
