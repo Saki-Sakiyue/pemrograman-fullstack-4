@@ -8,16 +8,29 @@ const crypto = require('crypto');
 class TemplateController {
   async index(req, res) {
     try {
+      const isAdmin = req.user?.role === 'admin';
       const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
       const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 100);
       const offset = (page - 1) * limit;
 
       const search = (req.query.search || '').trim();
       const categoryId = req.query.category_id;
+      const statusParam = req.query.status;
+      console.log('statusParam :>> ', statusParam);
 
       // Dynamic Where Clause
-      let whereClause = 'WHERE t.deleted_at IS NULL AND t.is_active = ?';
-      const whereParams = [true];
+      let whereClause = 'WHERE t.deleted_at IS NULL';
+      const whereParams = [];
+
+      if (isAdmin) {
+        if (statusParam) {
+          whereClause += ' AND t.status = ?';
+          whereParams.push(statusParam);
+        }
+      } else {
+        whereClause += ' AND t.status = ?';
+        whereParams.push('approved');
+      }
 
       if (search) {
         whereClause += ' AND (t.title LIKE ? OR t.description LIKE ?)';
@@ -36,6 +49,7 @@ class TemplateController {
                 t.popularity_score, t.created_at,
                 c.name AS category_name, 
                 u.username AS author,
+                t.status, t.is_active,
                 (SELECT image_url FROM template_images WHERE template_id = t.id AND is_primary LIMIT 1) AS thumbnail_url
             FROM templates t
             INNER JOIN categories c ON c.id = t.category_id
@@ -85,6 +99,12 @@ class TemplateController {
     try {
       const { id } = req.params;
 
+      // Role-based status filtering:
+      // - Admin can view any template regardless of status
+      // - Regular users can only view approved templates
+      const isAdmin = req.user?.role === 'admin';
+      const statusCondition = isAdmin ? '' : "AND t.status = 'approved'";
+
       // 1. Ambil Data Utama
       const sql = `
           SELECT 
@@ -94,7 +114,7 @@ class TemplateController {
           FROM templates t
           INNER JOIN categories c ON c.id = t.category_id
           INNER JOIN users u ON u.id = t.user_id
-          WHERE t.id = ? AND t.deleted_at IS NULL AND t.is_active = TRUE
+          WHERE t.id = ? AND t.deleted_at IS NULL ${statusCondition}
       `;
       const [templateRows] = await db.execute(sql, [id]);
 
@@ -149,7 +169,7 @@ class TemplateController {
 
   async create(req, res) {
     try {
-      console.log(req.body)
+      console.log(req.body);
       const validation = validateCreateTemplate(req.body);
 
       if (!validation.valid) {
@@ -189,9 +209,9 @@ class TemplateController {
       const insertSql = `
             INSERT INTO templates (
                 title, description, upload_type, source_url, demo_url,
-                category_id, user_id, is_active, created_at
+                category_id, user_id, status, is_active, created_at
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, NOW())
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())
         `;
 
       const [result] = await db.query(insertSql, [
@@ -202,7 +222,8 @@ class TemplateController {
         demo_url || null,
         category_id,
         req.user.id,
-        true,
+        'pending', // New templates start as pending
+        false, // is_active = false until approved by admin
       ]);
 
       const templateId = result.insertId;
@@ -227,7 +248,7 @@ class TemplateController {
         status: 201,
         messageDev: 'Template created successfully',
         messageUser: 'Template baru berhasil ditambahkan ke komunitas!',
-        data: { 
+        data: {
           id: templateId,
           title,
           images_uploaded: req.files ? req.files.length : 0,
