@@ -32,7 +32,7 @@ const validateCreateTemplate = (payload = {}) => {
   }
 
   // Validasi upload_type
-  const validUploadTypes = ['file', 'url', 'both'];
+  const validUploadTypes = ['file', 'link', 'both'];
   if (!upload_type || !validUploadTypes.includes(upload_type)) {
     return {
       valid: false,
@@ -58,7 +58,9 @@ const validateCreateTemplate = (payload = {}) => {
   }
 
   // Validasi category_id
-  if (!category_id || typeof category_id !== 'number' || category_id < 1) {
+  const categoryId = Number(category_id);
+
+  if (!Number.isInteger(categoryId) || categoryId < 1) {
     return {
       valid: false,
       message: 'Category ID wajib diisi dan harus berupa angka positif.',

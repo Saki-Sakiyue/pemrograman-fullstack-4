@@ -12,3 +12,11 @@ be/dist/
 .env.local
 *.log
 sprint_tasks.md
+
+# Ignore uploaded files
+/be/public/uploads/avatars/*
+/be/public/uploads/templates/*
+
+# Keep directory structure
+!/be/public/uploads/avatars/.gitkeep
+!/be/public/uploads/templates/.gitkeep
