@@ -29,6 +29,29 @@ const verifyToken = (req, res, next) => {
   }
 };
 
+const verifyAdmin = (req, res, next) => {
+  if (!req.user) {
+    return responseHandler(res, {
+      status: 401,
+      code: 'ERR_UNAUTHORIZED',
+      messageDev: 'User not authenticated',
+      messageUser: 'Unauthorized',
+    });
+  }
+
+  if (req.user.role !== 'admin') {
+    return responseHandler(res, {
+      status: 403,
+      code: 'ERR_FORBIDDEN',
+      messageDev: 'User does not have admin role',
+      messageUser: 'Akses ditolak. Hanya admin yang dapat mengakses resource ini.',
+    });
+  }
+
+  next();
+};
+
 module.exports = {
   verifyToken,
+  verifyAdmin,
 };

@@ -43,6 +43,8 @@ router.patch(
   uploadAvatar.single('avatar'),
   ProfileController.updateProfile
 );
+router.get('/api/profile/bookmarks', verifyToken, ProfileController.getBookmarks);
+router.get('/api/profile/templates', verifyToken, ProfileController.getMyTemplates);
 
 // TODO: CRUD Categories
 // TODO: CRUD Comments

@@ -20,6 +20,7 @@ export default function TemplatesPage() {
     page,
     limit: 5,
     search: debouncedSearch,
+    category_id: selectedCategory,
   });
 
   const templates = data?.templates || [];

@@ -180,6 +180,144 @@ class ProfileController {
       });
     }
   }
+
+  async getBookmarks(req, res) {
+    try {
+      const userId = req.user.id;
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 12;
+      const offset = (page - 1) * limit;
+
+      // Query total count
+      const [countRows] = await db.query(
+        `SELECT COUNT(*) as total 
+         FROM bookmarks b
+         INNER JOIN templates t ON b.template_id = t.id
+         WHERE b.user_id = ? AND t.deleted_at IS NULL AND t.is_active = 1`,
+        [userId]
+      );
+      const total = countRows[0].total;
+
+      // Query bookmarked templates
+      const sql = `
+        SELECT 
+          t.id,
+          t.title,
+          t.description,
+          t.source_url,
+          t.demo_url,
+          t.download_count,
+          t.popularity_score,
+          t.created_at,
+          c.id as category_id,
+          c.name as category_name,
+          u.id as author_id,
+          u.username as author_username,
+          b.created_at as bookmarked_at,
+          (SELECT ti.image_url FROM template_images ti WHERE ti.template_id = t.id AND ti.is_primary = 1 LIMIT 1) as thumbnail_url
+        FROM bookmarks b
+        INNER JOIN templates t ON b.template_id = t.id
+        INNER JOIN categories c ON t.category_id = c.id
+        INNER JOIN users u ON t.user_id = u.id
+        WHERE b.user_id = ? AND t.deleted_at IS NULL AND t.is_active = 1
+        ORDER BY b.created_at DESC
+        LIMIT ? OFFSET ?
+      `;
+
+      const [templates] = await db.query(sql, [userId, limit, offset]);
+
+      return responseHandler(res, {
+        status: 200,
+        messageDev: 'Bookmarks fetched successfully',
+        messageUser: 'Bookmark berhasil dimuat.',
+        data: {
+          templates,
+          pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+          },
+        },
+      });
+    } catch (error) {
+      logger.error({ err: error.message, stack: error.stack }, 'Error in getBookmarks');
+      return responseHandler(res, {
+        status: 500,
+        code: 'ERR_INTERNAL_SERVER',
+        messageDev: 'An error occurred while fetching bookmarks',
+        messageUser: 'Terjadi kesalahan saat memuat bookmark. Silakan coba lagi.',
+      });
+    }
+  }
+
+  async getMyTemplates(req, res) {
+    try {
+      const userId = req.user.id;
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 12;
+      const offset = (page - 1) * limit;
+
+      // Query total count
+      const [countRows] = await db.query(
+        `SELECT COUNT(*) as total 
+         FROM templates 
+         WHERE user_id = ? AND deleted_at IS NULL`,
+        [userId]
+      );
+      const total = countRows[0].total;
+
+      // Query user's templates with stats
+      const sql = `
+        SELECT 
+          t.id,
+          t.title,
+          t.description,
+          t.source_url,
+          t.demo_url,
+          t.download_count,
+          t.popularity_score,
+          t.is_active,
+          t.created_at,
+          t.updated_at,
+          c.id as category_id,
+          c.name as category_name,
+          (SELECT COUNT(*) FROM upvotes WHERE template_id = t.id) as upvote_count,
+          (SELECT COUNT(*) FROM bookmarks WHERE template_id = t.id) as bookmark_count,
+          (SELECT ti.image_url FROM template_images ti WHERE ti.template_id = t.id AND ti.is_primary = 1 LIMIT 1) as thumbnail_url
+        FROM templates t
+        INNER JOIN categories c ON t.category_id = c.id
+        WHERE t.user_id = ? AND t.deleted_at IS NULL
+        ORDER BY t.created_at DESC
+        LIMIT ? OFFSET ?
+      `;
+
+      const [templates] = await db.query(sql, [userId, limit, offset]);
+
+      return responseHandler(res, {
+        status: 200,
+        messageDev: 'User templates fetched successfully',
+        messageUser: 'Template Anda berhasil dimuat.',
+        data: {
+          templates,
+          pagination: {
+            page,
+            limit,
+            total,
+            totalPages: Math.ceil(total / limit),
+          },
+        },
+      });
+    } catch (error) {
+      logger.error({ err: error.message, stack: error.stack }, 'Error in getMyTemplates');
+      return responseHandler(res, {
+        status: 500,
+        code: 'ERR_INTERNAL_SERVER',
+        messageDev: 'An error occurred while fetching user templates',
+        messageUser: 'Terjadi kesalahan saat memuat template Anda. Silakan coba lagi.',
+      });
+    }
+  }
 }
 
 const object = new ProfileController();
