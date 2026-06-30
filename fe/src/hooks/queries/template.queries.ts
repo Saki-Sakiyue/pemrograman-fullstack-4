@@ -3,6 +3,15 @@ import { TemplateQueryParams } from '@/types/template.types';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
+// Query Keys for cache management
+export const templateKeys = {
+  all: ['templates'] as const,
+  lists: () => [...templateKeys.all, 'list'] as const,
+  list: (params: TemplateQueryParams) => [...templateKeys.lists(), params] as const,
+  details: () => [...templateKeys.all, 'detail'] as const,
+  detail: (id: string) => [...templateKeys.details(), id] as const,
+};
+
 export const useTemplates = (
   params: TemplateQueryParams = {
     limit: 1,
@@ -10,7 +19,7 @@ export const useTemplates = (
   }
 ) => {
   return useQuery({
-    queryKey: ['templates', params],
+    queryKey: templateKeys.list(params),
     queryFn: async () => {
       const response = await templateService.getAll(params);
       return response.data;

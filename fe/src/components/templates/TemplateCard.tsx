@@ -1,18 +1,36 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter } from '@/components/ui/card';
+import StatusBadge from '@/components/admin/StatusBadge';
 import { getFullImageUrl } from '@/lib/image';
 import { formatCompactNumber } from '@/lib/utils';
 import { Template } from '@/types/template.types';
-import { Download, Eye, TrendingUp } from 'lucide-react';
+import {
+  Download,
+  Eye,
+  TrendingUp,
+  CheckCircle,
+  XCircle,
+  Trash2,
+} from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
 interface TemplateCardProps {
   template: Template;
+  isAdmin?: boolean;
+  onApprove?: () => void;
+  onReject?: () => void;
+  onDelete?: () => void;
 }
 
-export default function TemplateCard({ template }: TemplateCardProps) {
+export default function TemplateCard({
+  template,
+  isAdmin,
+  onApprove,
+  onReject,
+  onDelete,
+}: TemplateCardProps) {
   return (
     <Card className="group overflow-hidden border-slate-200 transition-all duration-300 hover:shadow-lg">
       {/* Thumbnail Area */}
@@ -31,10 +49,14 @@ export default function TemplateCard({ template }: TemplateCardProps) {
             No Preview
           </div>
         )}
-        <div className="absolute top-2 left-2">
+        <div className="absolute top-2 left-2 flex gap-2">
           <Badge className="bg-white/90 text-slate-900 hover:bg-white">
             {template.category_name || 'Uncategorized'}
           </Badge>
+          {/* Show status badge for admin */}
+          {isAdmin && template.status && (
+            <StatusBadge status={template.status} />
+          )}
         </div>
       </div>
 
@@ -68,6 +90,49 @@ export default function TemplateCard({ template }: TemplateCardProps) {
           </Link>
         </Button>
       </CardFooter>
+
+      {/* Admin Actions */}
+      {isAdmin && (onApprove || onReject || onDelete) && (
+        <div className="border-t border-slate-100 bg-slate-50 p-3">
+          <div className="flex flex-wrap gap-2">
+            {template.status === 'pending' && onApprove && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={onApprove}
+                className="flex-1 text-green-600 hover:bg-green-50 hover:text-green-700"
+              >
+                <CheckCircle className="mr-1 h-3.5 w-3.5" />
+                Approve
+              </Button>
+            )}
+            {template.status === 'pending' && onReject && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={onReject}
+                className="flex-1 text-orange-600 hover:bg-orange-50 hover:text-orange-700"
+              >
+                <XCircle className="mr-1 h-3.5 w-3.5" />
+                Reject
+              </Button>
+            )}
+            {onDelete && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={onDelete}
+                className="text-red-600 hover:bg-red-50 hover:text-red-700"
+              >
+                {!(template.status === 'pending' && (onApprove || onReject))
+                  ? 'Delete'
+                  : ''}
+                <Trash2 className="h-3.5 w-3.5" />
+              </Button>
+            )}
+          </div>
+        </div>
+      )}
     </Card>
   );
 }

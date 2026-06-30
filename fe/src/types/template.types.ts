@@ -12,6 +12,8 @@ export interface Template {
   category_name: string;
   author: string;
   thumbnail_url?: string;
+  status: 'pending' | 'approved' | 'rejected';
+  is_active: number;
 }
 
 export interface PaginationMeta {
@@ -59,6 +61,7 @@ export interface TemplateQueryParams {
   limit?: number;
   search?: string;
   category_id?: number | null; // Filter berdasarkan ID kategori
+  status?: 'pending' | 'approved' | 'rejected'; // Admin can filter by status
 }
 
 //> Payload
