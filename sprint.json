@@ -422,68 +422,81 @@
       "tanggal": "18 - 25 June 2026",
       "details": [
         {
-          "featureGroup": "FS",
-          "issue": "Fix CategoryFilter Bug.",
+          "feature": "Fix CategoryFilter Bug",
+          "group": "FS",
+          "issue": "Add category_id: selectedCategory ke useTemplates query",
           "assignee": "RRT"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Profile Bookmarks API.",
+          "feature": "Profile Bookmarks API",
+          "group": "FS",
+          "issue": "GET /api/profile/bookmarks - return list bookmarked templates with pagination",
           "assignee": "RRT"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Profile My Templates API.",
+          "feature": "Profile My Templates API",
+          "group": "FS",
+          "issue": "GET /api/profile/templates - return user's uploaded templates with stats",
           "assignee": "RRT"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Admin Middleware.",
+          "feature": "Admin Middleware",
+          "group": "FS",
+          "issue": "Create verifyAdmin middleware untuk protect admin routes",
           "assignee": "RRT"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Upload Template API Enhancement.",
+          "feature": "Upload Template API Enhancement",
+          "group": "FS",
+          "issue": "Update POST /api/templates untuk handle better validation",
           "assignee": "SR"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Upload Template Page.",
+          "feature": "Upload Template Page",
+          "group": "FS",
+          "issue": "Create /templates/new page dengan form: title, desc, category, source_url, demo_url",
           "assignee": "SR"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Upload Template Service.",
+          "feature": "Upload Template Service",
+          "group": "FS",
+          "issue": "Create templateService.create() di frontend untuk handle upload",
           "assignee": "SR"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Bookmarks Page.",
+          "feature": "Bookmarks Page",
+          "group": "FS",
+          "issue": "Create /bookmarks page dengan grid layout, filter, pagination",
           "assignee": "NBZ"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Bookmarks Query Hook.",
+          "feature": "Bookmarks Query Hook",
+          "group": "FS",
+          "issue": "Create useBookmarks() hook di template.queries.ts",
           "assignee": "NBZ"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Profile Templates Tab.",
+          "feature": "Profile Templates Tab",
+          "group": "FS",
+          "issue": "Add \"My Templates\" tab di profile page dengan list uploads",
           "assignee": "NBZ"
         },
         {
-          "featureGroup": "FS",
-          "issue": "E2E Upload Testing.",
+          "feature": "E2E Upload Testing",
+          "group": "FS",
+          "issue": "Test upload flow from form to database",
           "assignee": "MRP"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Profile Integration.",
+          "feature": "Profile Integration",
+          "group": "FS",
+          "issue": "Ensure bookmarks & my templates APIs work with frontend",
           "assignee": "MRP"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Sprint 13 Documentation.",
+          "feature": "Sprint 13 Documentation",
+          "group": "FS",
+          "issue": "Document new endpoints & pages in README",
           "assignee": "MRP"
         }
       ]
@@ -493,98 +506,117 @@
       "tanggal": "26 June - 3 July 2026",
       "details": [
         {
-          "featureGroup": "FS",
-          "issue": "Tags API.",
+          "feature": "Tags API",
+          "group": "FS",
+          "issue": "GET /api/tags - return all tags",
           "assignee": "SR"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Stacks API.",
+          "feature": "Stacks API",
+          "group": "FS",
+          "issue": "GET /api/stacks - return all stacks with icons",
           "assignee": "SR"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Template-Tags Relation (BE).",
+          "feature": "Template-Tags Relation (BE)",
+          "group": "FS",
+          "issue": "Update POST /api/templates untuk insert template_tags, GET /:id fetch tags",
           "assignee": "SR"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Template-Stacks Relation (BE).",
+          "feature": "Template-Stacks Relation (BE)",
+          "group": "FS",
+          "issue": "Update POST /api/templates untuk insert template_stacks",
           "assignee": "SR"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Filter by Tags (BE).",
+          "feature": "Filter by Tags (BE)",
+          "group": "FS",
+          "issue": "Update GET /api/templates support tag_id[] query (array)",
           "assignee": "SR"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Filter by Stacks Backend.",
+          "feature": "Filter by Stacks Backend",
+          "group": "FS",
+          "issue": "Update GET /api/templates support stack_id[] query (array)",
           "assignee": "SR"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Tags Service.",
+          "feature": "Tags Service",
+          "group": "FS",
+          "issue": "Create tagService.getAll() di services",
           "assignee": "MRP"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Stacks Service.",
+          "feature": "Stacks Service",
+          "group": "FS",
+          "issue": "Create stackService.getAll() di services",
           "assignee": "MRP"
         },
         {
-          "featureGroup": "FS",
-          "issue": "TagFilter Component.",
+          "feature": "TagFilter Component",
+          "group": "FS",
+          "issue": "Multi-select filter dengan checkboxes/pills, styled like CategoryFilter",
           "assignee": "MRP"
         },
         {
-          "featureGroup": "FS",
-          "issue": "StackFilter Component.",
+          "feature": "StackFilter Component",
+          "group": "FS",
+          "issue": "Multi-select filter dengan icons, checkboxes/pills",
           "assignee": "MRP"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Update Templates Page.",
+          "feature": "Update Templates Page",
+          "group": "FS",
+          "issue": "Integrate TagFilter & StackFilter ke templates page",
           "assignee": "MRP"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Update Upload Form.",
+          "feature": "Update Upload Form",
+          "group": "FS",
+          "issue": "Add multi-select tags & stacks di upload template form",
           "assignee": "MRP"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Tags Query Hook.",
+          "feature": "Tags Query Hook",
+          "group": "FS",
+          "issue": "Create useTags() & useStacks() hooks",
           "assignee": "MRP"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Multiple Images Middleware.",
+          "feature": "Multiple Images Middleware",
+          "group": "FS",
+          "issue": "Update uploadMiddleware untuk handle array images (max 5)",
           "assignee": "RRT"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Multiple Images API.",
+          "feature": "Multiple Images API",
+          "group": "FS",
+          "issue": "Update POST /api/templates insert multiple images ke template_images",
           "assignee": "RRT"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Set Primary Image Logic.",
+          "feature": "Set Primary Image Logic",
+          "group": "FS",
+          "issue": "First image = primary, atau accept is_primary flag",
           "assignee": "RRT"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Image Upload Component.",
+          "feature": "Image Upload Component",
+          "group": "FS",
+          "issue": "Drag & drop multiple images dengan preview, reorder, set primary",
           "assignee": "NBZ"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Image Validation.",
+          "feature": "Image Validation",
+          "group": "FS",
+          "issue": "Client-side validation: type (jpg/png), size (max 5MB each), max 5 files",
           "assignee": "NBZ"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Integration Testing.",
+          "feature": "Integration Testing",
+          "group": "FS",
+          "issue": "Test tags/stacks filter + multiple images upload end-to-end",
           "assignee": "NBZ"
         }
       ]
@@ -594,93 +626,111 @@
       "tanggal": "4 - 11 July 2026",
       "details": [
         {
-          "featureGroup": "FS",
-          "issue": "Admin Users API.",
+          "feature": "Admin Users API",
+          "group": "FS",
+          "issue": "GET /api/admin/users (list, search), PUT /:id (update role), DELETE /:id (soft delete)",
           "assignee": "RRT"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Admin Templates API.",
+          "feature": "Admin Templates API",
+          "group": "FS",
+          "issue": "GET /api/admin/templates (all), PATCH /:id/status (approve/reject/delete)",
           "assignee": "RRT"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Admin Reports API.",
+          "feature": "Admin Reports API",
+          "group": "FS",
+          "issue": "GET /api/admin/reports (list by status), PATCH /:id (resolve/dismiss)",
           "assignee": "RRT"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Admin Dashboard Layout.",
+          "feature": "Admin Dashboard Layout",
+          "group": "FS",
+          "issue": "Create /admin layout dengan sidebar: Dashboard, Users, Templates, Reports",
           "assignee": "RRT"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Admin Users Page.",
+          "feature": "Admin Users Page",
+          "group": "FS",
+          "issue": "List users dengan table, search, filter by role, edit role modal, delete confirm",
           "assignee": "RRT"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Admin Templates Page.",
+          "feature": "Admin Templates Page",
+          "group": "FS",
+          "issue": "List templates dengan status badges, approve/reject/delete buttons, search",
           "assignee": "RRT"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Admin Reports Page.",
+          "feature": "Admin Reports Page",
+          "group": "FS",
+          "issue": "List reports dengan details modal, resolve/dismiss actions, filter by status",
           "assignee": "RRT"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Admin Dashboard Stats.",
+          "feature": "Admin Dashboard Stats",
+          "group": "FS",
+          "issue": "Overview page: total users, templates, downloads, active reports (simple cards)",
           "assignee": "RRT"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Admin Route Protection.",
+          "feature": "Admin Route Protection",
+          "group": "FS",
+          "issue": "Protect /admin/* routes dengan role check di middleware",
           "assignee": "RRT"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Popular Templates Page.",
+          "feature": "Popular Templates Page",
+          "group": "FS",
+          "issue": "Create /popular page sorted by popularity_score DESC dengan hero section",
           "assignee": "SR"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Advanced Search Backend.",
+          "feature": "Advanced Search Backend",
+          "group": "FS",
+          "issue": "Add search by author, date range ke GET /api/templates",
           "assignee": "SR"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Template Stats Endpoint.",
+          "feature": "Template Stats Endpoint",
+          "group": "FS",
+          "issue": "GET /api/stats/overview - total templates, downloads, users (public)",
           "assignee": "SR"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Upload Form Validation.",
+          "feature": "Upload Form Validation",
+          "group": "FS",
+          "issue": "Better client + server validation untuk upload template",
           "assignee": "SR"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Upvote/Bookmark in Card.",
+          "feature": "Upvote/Bookmark in Card",
+          "group": "FS",
+          "issue": "Add quick action buttons (heart, bookmark) di TemplateCard hover state",
           "assignee": "MRP"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Loading States Polish.",
+          "feature": "Loading States Polish",
+          "group": "FS",
+          "issue": "Improve skeletons & loading animations (smooth transitions)",
           "assignee": "MRP"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Empty States.",
+          "feature": "Empty States",
+          "group": "FS",
+          "issue": "Better empty states untuk bookmarks, my templates, search results",
           "assignee": "MRP"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Mobile Responsive Check.",
+          "feature": "Mobile Responsive Check",
+          "group": "FS",
+          "issue": "Ensure all new pages responsive di mobile (esp. admin, upload form)",
           "assignee": "NBZ"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Final Integration Test.",
+          "feature": "Final Integration Test",
+          "group": "FS",
+          "issue": "Test all features end-to-end: upload → approve → download",
           "assignee": "NBZ"
         }
       ]
@@ -690,33 +740,39 @@
       "tanggal": "1 October",
       "details": [
         {
-          "featureGroup": "FS",
-          "issue": "API Documentation.",
+          "feature": "API Documentation",
+          "group": "FS",
+          "issue": "Swagger/OpenAPI docs untuk semua endpoints",
           "assignee": "RRT"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Database Seeding.",
+          "feature": "Database Seeding",
+          "group": "FS",
+          "issue": "Script seed categories (10), tags (50), stacks (30)",
           "assignee": "RRT"
         },
         {
-          "featureGroup": "FS",
-          "issue": "README Update.",
+          "feature": "README Update",
+          "group": "FS",
+          "issue": "Update README dengan setup instructions, API docs link, screenshots",
           "assignee": "SR"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Error Handling Review.",
+          "feature": "Error Handling Review",
+          "group": "FS",
+          "issue": "Standardize error messages & codes across BE & FE",
           "assignee": "SR"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Validity Checker Cron.",
+          "feature": "Validity Checker Cron",
+          "group": "FS",
+          "issue": "Background job cek source_url & demo_url masih valid",
           "assignee": "NBZ"
         },
         {
-          "featureGroup": "FS",
-          "issue": "Log Actions for Audit Trail.",
+          "feature": "Audit Trail",
+          "group": "FS",
+          "issue": "Log actions (upload, delete, report) untuk audit trail",
           "assignee": "NBZ"
         }
       ]
