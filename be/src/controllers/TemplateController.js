@@ -15,7 +15,16 @@ class TemplateController {
       const search = (req.query.search || '').trim();
       const categoryId = req.query.category_id;
 
+      // Support tag_id[] and stack_id[] as array filters
+      const tagIds = req.query.tag_id
+        ? (Array.isArray(req.query.tag_id) ? req.query.tag_id : [req.query.tag_id]).map(Number).filter(Boolean)
+        : [];
+      const stackIds = req.query.stack_id
+        ? (Array.isArray(req.query.stack_id) ? req.query.stack_id : [req.query.stack_id]).map(Number).filter(Boolean)
+        : [];
+
       // Public endpoint - always show approved templates only
+      let fromClause = 'FROM templates t\n        INNER JOIN categories c ON c.id = t.category_id\n        INNER JOIN users u ON u.id = t.user_id';
       let whereClause = "WHERE t.deleted_at IS NULL AND t.status = 'approved'";
       const whereParams = [];
 
@@ -29,8 +38,22 @@ class TemplateController {
         whereParams.push(categoryId);
       }
 
+      // Filter by tag_id[]
+      if (tagIds.length > 0) {
+        fromClause += '\n        INNER JOIN template_tags tt ON tt.template_id = t.id';
+        whereClause += ` AND tt.tag_id IN (${tagIds.map(() => '?').join(', ')})`;
+        whereParams.push(...tagIds);
+      }
+
+      // Filter by stack_id[]
+      if (stackIds.length > 0) {
+        fromClause += '\n        INNER JOIN template_stacks tsk ON tsk.template_id = t.id';
+        whereClause += ` AND tsk.stack_id IN (${stackIds.map(() => '?').join(', ')})`;
+        whereParams.push(...stackIds);
+      }
+
       const sql = `
-        SELECT 
+        SELECT DISTINCT
           t.id, t.title, t.description, t.upload_type, 
           t.source_url, t.demo_url, t.download_count, 
           t.popularity_score, t.created_at,
@@ -38,18 +61,15 @@ class TemplateController {
           u.username AS author,
           t.status, t.is_active,
           (SELECT image_url FROM template_images WHERE template_id = t.id AND is_primary LIMIT 1) AS thumbnail_url
-        FROM templates t
-        INNER JOIN categories c ON c.id = t.category_id
-        INNER JOIN users u ON u.id = t.user_id
+        ${fromClause}
         ${whereClause}
         ORDER BY t.created_at DESC
         LIMIT ? OFFSET ?
       `;
 
       const countSql = `
-        SELECT COUNT(*) AS total FROM templates t
-        INNER JOIN categories c ON c.id = t.category_id
-        INNER JOIN users u ON u.id = t.user_id
+        SELECT COUNT(DISTINCT t.id) AS total
+        ${fromClause}
         ${whereClause}
       `;
 
@@ -110,9 +130,9 @@ class TemplateController {
       const template = templateRows[0];
 
       // Fetch relations
-      const [stacksRows, imagesRows] = await Promise.all([
+      const [stacksRows, imagesRows, tagsRows] = await Promise.all([
         db.query(
-          `SELECT s.name, s.icon_url FROM stacks s
+          `SELECT s.id, s.name, s.icon_url FROM stacks s
            JOIN template_stacks ts ON s.id = ts.stack_id
            WHERE ts.template_id = ?`,
           [id]
@@ -122,10 +142,17 @@ class TemplateController {
            WHERE template_id = ?`,
           [id]
         ),
+        db.query(
+          `SELECT tg.id, tg.name, tg.slug FROM tags tg
+           JOIN template_tags tt ON tg.id = tt.tag_id
+           WHERE tt.template_id = ?`,
+          [id]
+        ),
       ]);
 
       template.stacks = stacksRows[0];
       template.images = imagesRows[0];
+      template.tags = tagsRows[0];
 
       return responseHandler(res, {
         status: 200,
@@ -220,6 +247,24 @@ class TemplateController {
         `;
 
         await db.query(imageInsertSql, [imageInserts]);
+      }
+
+      // Handle template_tags insert
+      const tagIds = req.body.tag_ids
+        ? (Array.isArray(req.body.tag_ids) ? req.body.tag_ids : [req.body.tag_ids]).map(Number).filter(Boolean)
+        : [];
+      if (tagIds.length > 0) {
+        const tagInserts = tagIds.map(tagId => [templateId, tagId]);
+        await db.query('INSERT IGNORE INTO template_tags (template_id, tag_id) VALUES ?', [tagInserts]);
+      }
+
+      // Handle template_stacks insert
+      const stackIds = req.body.stack_ids
+        ? (Array.isArray(req.body.stack_ids) ? req.body.stack_ids : [req.body.stack_ids]).map(Number).filter(Boolean)
+        : [];
+      if (stackIds.length > 0) {
+        const stackInserts = stackIds.map(stackId => [templateId, stackId]);
+        await db.query('INSERT IGNORE INTO template_stacks (template_id, stack_id) VALUES ?', [stackInserts]);
       }
 
       return responseHandler(res, {

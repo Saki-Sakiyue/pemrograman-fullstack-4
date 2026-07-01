@@ -6,6 +6,8 @@ const AuthController = require('../controllers/AuthController');
 const ReportController = require('../controllers/ReportController');
 const ProfileController = require('../controllers/ProfileController');
 const CategoryController = require('../controllers/CategoryController');
+const TagController = require('../controllers/TagController');
+const StackController = require('../controllers/StackController');
 const AdminUserController = require('../controllers/AdminUserController');
 const AdminTemplateController = require('../controllers/AdminTemplateController');
 const AdminReportController = require('../controllers/AdminReportController');
@@ -25,6 +27,8 @@ router.post('/api/auth/logout', AuthController.logout);
 
 // ========== MASTER DATA ROUTES ==========
 router.get('/api/categories', CategoryController.index);
+router.get('/api/tags', TagController.index);
+router.get('/api/stacks', StackController.index);
 
 // ========== TEMPLATE ROUTES ==========
 router.get('/api/templates', optionalAuth, TemplateController.index);
