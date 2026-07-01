@@ -30,6 +30,23 @@ export const templateService = {
     return response.data;
   },
 
+  /**
+   * Create template with multiple images
+   * @param formData FormData dengan: title, description, category_id, images[], etc
+   */
+  createWithImages: async (formData: FormData) => {
+    const response = await apiClient.post<BaseResponse<any>>(
+      '/templates',
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+    return response.data;
+  },
+
   getBookmarks: async (params?: TemplateQueryParams) => {
     const response = await apiClient.get<BaseResponse<TemplateResponseData>>(
       '/profile/bookmarks',

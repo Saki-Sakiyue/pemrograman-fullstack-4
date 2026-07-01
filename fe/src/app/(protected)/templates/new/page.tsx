@@ -2,10 +2,11 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import React from 'react';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
-import { ArrowLeft, Loader2, Sparkles, Code2, Tags } from 'lucide-react';
+import { ArrowLeft, Loader2, Sparkles, Code2, Tags, Image } from 'lucide-react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
@@ -15,6 +16,8 @@ import { useCategories } from '@/hooks/queries/category.queries';
 import { useTags } from '@/hooks/queries/tag.queries';
 import { useStacks } from '@/hooks/queries/stack.queries';
 import { templateService } from '@/services/template.service';
+import { ImageUploader } from '@/components/templates/ImageUploader';
+import { ImageFile } from '@/types/image.types';
 
 const optionalUrlSchema = (label: string) =>
   z.preprocess(
@@ -43,6 +46,7 @@ export default function NewTemplatePage() {
   const { data: categories, isLoading: isCategoriesLoading, error: categoriesError } = useCategories();
   const { data: tags, isLoading: isTagsLoading } = useTags();
   const { data: stacks, isLoading: isStacksLoading } = useStacks();
+  const [images, setImages] = React.useState<ImageFile[]>([]);
 
   const {
     register,
@@ -64,17 +68,39 @@ export default function NewTemplatePage() {
 
   const onSubmit = async (values: TemplateFormData) => {
     try {
-      const response = await templateService.create({
-        title: values.title,
-        description: values.description,
-        category_id: values.category_id,
-        source_url: values.source_url || undefined,
-        demo_url: values.demo_url || undefined,
-        upload_type: values.source_url ? 'link' : 'file', // default fallback
-        tag_ids: values.tag_ids || [],
-        stack_ids: values.stack_ids || [],
+      if (images.length === 0) {
+        toast.error('Tambahkan minimal 1 gambar template.');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('title', values.title);
+      formData.append('description', values.description);
+      formData.append('category_id', values.category_id.toString());
+      formData.append('source_url', values.source_url || '');
+      formData.append('demo_url', values.demo_url || '');
+      formData.append('upload_type', values.source_url ? 'link' : 'file');
+
+      if (values.tag_ids && values.tag_ids.length > 0) {
+        values.tag_ids.forEach((id) => {
+          formData.append('tag_ids[]', id.toString());
+        });
+      }
+
+      if (values.stack_ids && values.stack_ids.length > 0) {
+        values.stack_ids.forEach((id) => {
+          formData.append('stack_ids[]', id.toString());
+        });
+      }
+
+      images.forEach((image, index) => {
+        formData.append('images', image.file);
+        if (image.isPrimary) {
+          formData.append('primary_image_index', index.toString());
+        }
       });
 
+      const response = await templateService.createWithImages(formData);
       toast.success(response.messageUser || 'Template berhasil ditambahkan.');
       router.push('/templates');
     } catch (err: any) {
@@ -278,6 +304,20 @@ export default function NewTemplatePage() {
                   <Input id="demo_url" placeholder="https://demo.example.com" {...register('demo_url')} />
                   {errors.demo_url && <p className="text-sm text-red-600">{errors.demo_url.message}</p>}
                 </div>
+              </div>
+
+              {/* Image Uploader */}
+              <div className="space-y-3 rounded-lg border border-blue-100 bg-blue-50 p-4 dark:border-blue-900 dark:bg-blue-950">
+                <div className="flex items-center gap-2">
+                  <Image className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                  <label className="text-sm font-semibold text-blue-900 dark:text-blue-100">
+                    Template Images (Required)
+                  </label>
+                </div>
+                <p className="text-xs text-blue-700 dark:text-blue-300">
+                  Upload minimal 1 gambar template Anda. Anda bisa upload sampai 5 gambar.
+                </p>
+                <ImageUploader onImagesChange={setImages} />
               </div>
 
               <div className="flex flex-wrap gap-3 pt-2">
