@@ -78,7 +78,9 @@ export default function MyTemplatesSection() {
         </div>
       ) : templates.length === 0 ? (
         <div className="py-20 text-center">
-          <p className="text-slate-400">Kamu belum mengupload template apa pun.</p>
+          <p className="text-slate-400">
+            Kamu belum mengupload template apa pun.
+          </p>
         </div>
       ) : (
         <>

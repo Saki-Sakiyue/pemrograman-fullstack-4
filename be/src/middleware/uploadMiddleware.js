@@ -50,7 +50,7 @@ const uploadAvatar = multer({
 const uploadTemplateImages = multer({
   storage: templateImageStorage,
   fileFilter: fileFilter,
-  limits: { 
+  limits: {
     fileSize: 5 * 1024 * 1024, // 5MB per file
     files: 5, // max 5 files
   },

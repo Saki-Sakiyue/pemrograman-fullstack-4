@@ -1,7 +1,14 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { LayoutDashboard, Download, Shield, Globe, Heart, Zap } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Download,
+  Shield,
+  Globe,
+  Heart,
+  Zap,
+} from 'lucide-react';
 
 const features = [
   {
@@ -44,37 +51,42 @@ const features = [
 
 export default function FeaturesSection() {
   return (
-    <section id="features" className="py-20 px-6 bg-white">
-      <div className="max-w-7xl mx-auto">
-        <motion.div 
+    <section id="features" className="bg-white px-6 py-20">
+      <div className="mx-auto max-w-7xl">
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          className="text-center mb-16"
+          viewport={{ once: true, margin: '-100px' }}
+          className="mb-16 text-center"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">
+          <h2 className="mb-4 text-3xl font-bold text-slate-900 md:text-4xl">
             Kenapa Memilih Templas?
           </h2>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Platform template terlengkap dengan kualitas terbaik untuk mempercepat alur kerja desain Anda.
+          <p className="mx-auto max-w-2xl text-lg text-slate-600">
+            Platform template terlengkap dengan kualitas terbaik untuk
+            mempercepat alur kerja desain Anda.
           </p>
         </motion.div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
           {features.map((feature, idx) => (
             <motion.div
               key={idx}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
+              viewport={{ once: true, margin: '-50px' }}
               transition={{ delay: idx * 0.1 }}
-              className="group p-6 rounded-2xl border border-slate-200 bg-white hover:border-blue-300 hover:shadow-xl transition-all duration-300"
+              className="group rounded-2xl border border-slate-200 bg-white p-6 transition-all duration-300 hover:border-blue-300 hover:shadow-xl"
             >
-              <div className={`h-14 w-14 rounded-xl bg-${feature.color}-100 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+              <div
+                className={`h-14 w-14 rounded-xl bg-${feature.color}-100 mb-4 flex items-center justify-center transition-transform duration-300 group-hover:scale-110`}
+              >
                 <feature.icon className={`h-7 w-7 text-${feature.color}-600`} />
               </div>
-              <h3 className="text-xl font-bold text-slate-900 mb-2">{feature.title}</h3>
-              <p className="text-slate-600 leading-relaxed">{feature.desc}</p>
+              <h3 className="mb-2 text-xl font-bold text-slate-900">
+                {feature.title}
+              </h3>
+              <p className="leading-relaxed text-slate-600">{feature.desc}</p>
             </motion.div>
           ))}
         </div>

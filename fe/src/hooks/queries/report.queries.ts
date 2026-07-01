@@ -4,8 +4,7 @@ import { toast } from 'sonner';
 
 export const useSubmitReport = () => {
   return useMutation({
-    mutationFn: (payload: ReportPayload) =>
-      reportService.submitReport(payload),
+    mutationFn: (payload: ReportPayload) => reportService.submitReport(payload),
     onSuccess: () => {
       toast.success('Laporan berhasil dikirim. Terima kasih telah melaporkan!');
     },

@@ -78,7 +78,9 @@ export default function BookmarksPage() {
         </div>
       ) : templates.length === 0 ? (
         <div className="py-20 text-center">
-          <p className="text-slate-400">Belum ada bookmark untuk ditampilkan.</p>
+          <p className="text-slate-400">
+            Belum ada bookmark untuk ditampilkan.
+          </p>
         </div>
       ) : (
         <>

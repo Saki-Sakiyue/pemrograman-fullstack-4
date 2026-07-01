@@ -10,7 +10,8 @@ import {
 export const adminUserKeys = {
   all: ['admin-users'] as const,
   lists: () => [...adminUserKeys.all, 'list'] as const,
-  list: (params: AdminUsersParams) => [...adminUserKeys.lists(), params] as const,
+  list: (params: AdminUsersParams) =>
+    [...adminUserKeys.lists(), params] as const,
 };
 
 /**
@@ -31,14 +32,21 @@ export function useUpdateUserRole() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({ userId, role }: { userId: number; role: 'admin' | 'user' }) =>
-      adminUserService.updateRole(userId, role),
+    mutationFn: ({
+      userId,
+      role,
+    }: {
+      userId: number;
+      role: 'admin' | 'user';
+    }) => adminUserService.updateRole(userId, role),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: adminUserKeys.all });
       toast.success('User role updated successfully');
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Failed to update user role');
+      toast.error(
+        error?.response?.data?.message || 'Failed to update user role'
+      );
     },
   });
 }

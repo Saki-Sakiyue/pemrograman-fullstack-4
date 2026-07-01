@@ -6,7 +6,10 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 import { useHydration } from '@/hooks/common/useHydration';
-import { useGetProfile, useUpdateProfile } from '@/hooks/queries/profile.queries';
+import {
+  useGetProfile,
+  useUpdateProfile,
+} from '@/hooks/queries/profile.queries';
 import { useAuthStore } from '@/store/useAuthStore';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -31,18 +34,12 @@ const updateProfileSchema = z
       .min(6, 'Password minimal 6 karakter')
       .optional()
       .or(z.literal('')),
-    passwordConfirm: z
-      .string()
-      .optional()
-      .or(z.literal('')),
+    passwordConfirm: z.string().optional().or(z.literal('')),
   })
-  .refine(
-    data => !data.password || data.password === data.passwordConfirm,
-    {
-      message: 'Password tidak cocok',
-      path: ['passwordConfirm'],
-    }
-  );
+  .refine(data => !data.password || data.password === data.passwordConfirm, {
+    message: 'Password tidak cocok',
+    path: ['passwordConfirm'],
+  });
 
 type UpdateProfileFormData = z.infer<typeof updateProfileSchema>;
 
@@ -125,7 +122,7 @@ export default function ProfilePage() {
     }
 
     updateProfile(payload, {
-      onSuccess: (response) => {
+      onSuccess: response => {
         // Update Zustand store with new user data
         if (response.data) {
           updateUser(response.data);
@@ -175,7 +172,9 @@ export default function ProfilePage() {
         <h1 className="text-2xl font-bold text-slate-900">Profil Saya</h1>
         <Card className="border-red-200 bg-red-50">
           <CardContent className="pt-6">
-            <p className="text-red-700">Gagal memuat profil. Silakan coba lagi.</p>
+            <p className="text-red-700">
+              Gagal memuat profil. Silakan coba lagi.
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -195,11 +194,7 @@ export default function ProfilePage() {
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold text-slate-900">Profil Saya</h1>
         {!isEditMode && (
-          <Button
-            onClick={handleStartEdit}
-            variant="outline"
-            size="sm"
-          >
+          <Button onClick={handleStartEdit} variant="outline" size="sm">
             Edit Profil
           </Button>
         )}
@@ -286,7 +281,10 @@ export default function ProfilePage() {
                   <div className="relative h-24 w-24 flex-shrink-0 overflow-hidden rounded-lg border-2 border-dashed border-slate-300 bg-slate-50">
                     {avatarPreview || profile?.avatar_url ? (
                       <Image
-                        src={avatarPreview || getFullImageUrl(profile?.avatar_url || '')}
+                        src={
+                          avatarPreview ||
+                          getFullImageUrl(profile?.avatar_url || '')
+                        }
                         alt="Avatar preview"
                         fill
                         className="object-cover"
@@ -300,7 +298,7 @@ export default function ProfilePage() {
                       <button
                         type="button"
                         onClick={handleRemoveAvatar}
-                        className="absolute right-1 top-1 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
+                        className="absolute top-1 right-1 rounded-full bg-red-500 p-1 text-white hover:bg-red-600"
                       >
                         <X className="h-4 w-4" />
                       </button>
@@ -384,11 +382,7 @@ export default function ProfilePage() {
 
               {/* Action Buttons */}
               <div className="flex gap-3 border-t border-slate-200 pt-6">
-                <Button
-                  type="submit"
-                  disabled={isUpdating}
-                  className="flex-1"
-                >
+                <Button type="submit" disabled={isUpdating} className="flex-1">
                   {isUpdating ? 'Menyimpan...' : 'Simpan Perubahan'}
                 </Button>
                 <Button

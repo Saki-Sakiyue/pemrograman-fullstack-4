@@ -4,7 +4,10 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useHydration } from '@/hooks/common/useHydration';
-import { useAdminReports, useUpdateReportStatus } from '@/hooks/queries/admin-report.queries';
+import {
+  useAdminReports,
+  useUpdateReportStatus,
+} from '@/hooks/queries/admin-report.queries';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import StatusBadge from '@/components/admin/StatusBadge';
@@ -41,11 +44,18 @@ export default function AdminReportsPage() {
 
   // Filters & pagination
   const [page, setPage] = useState(1);
-  const [statusFilter, setStatusFilter] = useState<'pending' | 'resolved' | 'rejected' | 'all'>('all');
+  const [statusFilter, setStatusFilter] = useState<
+    'pending' | 'resolved' | 'rejected' | 'all'
+  >('all');
 
   // Modals
-  const [selectedReport, setSelectedReport] = useState<AdminReport | null>(null);
-  const [actionReport, setActionReport] = useState<{ report: AdminReport; action: 'resolved' | 'rejected' } | null>(null);
+  const [selectedReport, setSelectedReport] = useState<AdminReport | null>(
+    null
+  );
+  const [actionReport, setActionReport] = useState<{
+    report: AdminReport;
+    action: 'resolved' | 'rejected';
+  } | null>(null);
 
   // API calls
   const { data, isLoading, error } = useAdminReports({
@@ -68,7 +78,7 @@ export default function AdminReportsPage() {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent mx-auto mb-4"></div>
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
           <p className="text-gray-600">Checking permissions...</p>
         </div>
       </div>
@@ -91,7 +101,7 @@ export default function AdminReportsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">Report Management</h1>
-        <p className="text-gray-500 mt-2">
+        <p className="mt-2 text-gray-500">
           Review and handle user-submitted reports
         </p>
       </div>
@@ -105,7 +115,9 @@ export default function AdminReportsPage() {
           <div className="mb-6 flex items-center justify-between">
             <Select
               value={statusFilter}
-              onValueChange={(value: 'pending' | 'resolved' | 'rejected' | 'all') => setStatusFilter(value)}
+              onValueChange={(
+                value: 'pending' | 'resolved' | 'rejected' | 'all'
+              ) => setStatusFilter(value)}
             >
               <SelectTrigger className="w-[200px]">
                 <SelectValue placeholder="Filter by status" />
@@ -125,11 +137,11 @@ export default function AdminReportsPage() {
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
             </div>
           ) : error ? (
-            <div className="text-center py-8 text-red-600">
+            <div className="py-8 text-center text-red-600">
               Failed to load reports. Please try again.
             </div>
           ) : !data?.reports || data.reports.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="py-8 text-center text-gray-500">
               No reports found.
             </div>
           ) : (
@@ -146,10 +158,10 @@ export default function AdminReportsPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.reports.map((report) => (
+                  {data.reports.map(report => (
                     <TableRow key={report.id}>
                       <TableCell>
-                        <div className="font-medium max-w-[200px] truncate">
+                        <div className="max-w-[200px] truncate font-medium">
                           {report.template_title}
                         </div>
                         <div className="text-xs text-gray-500">
@@ -157,7 +169,9 @@ export default function AdminReportsPage() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <div className="font-medium">{report.reporter_username}</div>
+                        <div className="font-medium">
+                          {report.reporter_username}
+                        </div>
                         <div className="text-xs text-gray-500">
                           ID: {report.reporter_id}
                         </div>
@@ -187,7 +201,12 @@ export default function AdminReportsPage() {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => setActionReport({ report, action: 'resolved' })}
+                                onClick={() =>
+                                  setActionReport({
+                                    report,
+                                    action: 'resolved',
+                                  })
+                                }
                                 className="text-green-600 hover:text-green-700"
                               >
                                 <CheckCircle className="h-4 w-4" />
@@ -195,7 +214,12 @@ export default function AdminReportsPage() {
                               <Button
                                 variant="outline"
                                 size="sm"
-                                onClick={() => setActionReport({ report, action: 'rejected' })}
+                                onClick={() =>
+                                  setActionReport({
+                                    report,
+                                    action: 'rejected',
+                                  })
+                                }
                                 className="text-red-600 hover:text-red-700"
                               >
                                 <XCircle className="h-4 w-4" />
@@ -213,13 +237,14 @@ export default function AdminReportsPage() {
               {data.pagination.totalPages > 1 && (
                 <div className="mt-4 flex items-center justify-between">
                   <p className="text-sm text-gray-600">
-                    Showing {data.reports.length} of {data.pagination.total} reports
+                    Showing {data.reports.length} of {data.pagination.total}{' '}
+                    reports
                   </p>
                   <div className="flex gap-2">
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                      onClick={() => setPage(p => Math.max(1, p - 1))}
                       disabled={page === 1}
                     >
                       Previous
@@ -227,7 +252,7 @@ export default function AdminReportsPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setPage((p) => p + 1)}
+                      onClick={() => setPage(p => p + 1)}
                       disabled={page === data.pagination.totalPages}
                     >
                       Next
@@ -241,7 +266,10 @@ export default function AdminReportsPage() {
       </Card>
 
       {/* View Report Details Modal */}
-      <Dialog open={!!selectedReport} onOpenChange={() => setSelectedReport(null)}>
+      <Dialog
+        open={!!selectedReport}
+        onOpenChange={() => setSelectedReport(null)}
+      >
         <DialogContent className="max-w-2xl">
           <DialogHeader>
             <DialogTitle>Report Details</DialogTitle>
@@ -249,27 +277,45 @@ export default function AdminReportsPage() {
           {selectedReport && (
             <div className="space-y-4 py-4">
               <div>
-                <label className="text-sm font-medium text-gray-500">Template</label>
-                <p className="text-base font-medium">{selectedReport.template_title}</p>
-                <p className="text-sm text-gray-500">Template ID: {selectedReport.template_id}</p>
+                <label className="text-sm font-medium text-gray-500">
+                  Template
+                </label>
+                <p className="text-base font-medium">
+                  {selectedReport.template_title}
+                </p>
+                <p className="text-sm text-gray-500">
+                  Template ID: {selectedReport.template_id}
+                </p>
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-500">Reported By</label>
-                <p className="text-base font-medium">{selectedReport.reporter_username}</p>
-                <p className="text-sm text-gray-500">User ID: {selectedReport.reporter_id}</p>
+                <label className="text-sm font-medium text-gray-500">
+                  Reported By
+                </label>
+                <p className="text-base font-medium">
+                  {selectedReport.reporter_username}
+                </p>
+                <p className="text-sm text-gray-500">
+                  User ID: {selectedReport.reporter_id}
+                </p>
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-500">Reason</label>
+                <label className="text-sm font-medium text-gray-500">
+                  Reason
+                </label>
                 <p className="text-base">{selectedReport.reason}</p>
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-500">Status</label>
+                <label className="text-sm font-medium text-gray-500">
+                  Status
+                </label>
                 <div className="mt-1">
                   <StatusBadge status={selectedReport.status} />
                 </div>
               </div>
               <div>
-                <label className="text-sm font-medium text-gray-500">Reported On</label>
+                <label className="text-sm font-medium text-gray-500">
+                  Reported On
+                </label>
                 <p className="text-base">
                   {new Date(selectedReport.created_at).toLocaleString()}
                 </p>
@@ -285,7 +331,10 @@ export default function AdminReportsPage() {
                 <Button
                   variant="outline"
                   onClick={() => {
-                    setActionReport({ report: selectedReport, action: 'resolved' });
+                    setActionReport({
+                      report: selectedReport,
+                      action: 'resolved',
+                    });
                     setSelectedReport(null);
                   }}
                   className="text-green-600 hover:text-green-700"
@@ -295,7 +344,10 @@ export default function AdminReportsPage() {
                 <Button
                   variant="outline"
                   onClick={() => {
-                    setActionReport({ report: selectedReport, action: 'rejected' });
+                    setActionReport({
+                      report: selectedReport,
+                      action: 'rejected',
+                    });
                     setSelectedReport(null);
                   }}
                   className="text-red-600 hover:text-red-700"
@@ -313,11 +365,14 @@ export default function AdminReportsPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>
-              {actionReport?.action === 'resolved' ? 'Resolve Report' : 'Reject Report'}
+              {actionReport?.action === 'resolved'
+                ? 'Resolve Report'
+                : 'Reject Report'}
             </DialogTitle>
             <DialogDescription>
-              Are you sure you want to {actionReport?.action === 'resolved' ? 'resolve' : 'reject'} this report
-              for "{actionReport?.report.template_title}"?
+              Are you sure you want to{' '}
+              {actionReport?.action === 'resolved' ? 'resolve' : 'reject'} this
+              report for "{actionReport?.report.template_title}"?
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
@@ -325,15 +380,17 @@ export default function AdminReportsPage() {
               Cancel
             </Button>
             <Button
-              variant={actionReport?.action === 'resolved' ? 'default' : 'destructive'}
+              variant={
+                actionReport?.action === 'resolved' ? 'default' : 'destructive'
+              }
               onClick={handleUpdateStatus}
               disabled={updateStatusMutation.isPending}
             >
               {updateStatusMutation.isPending
                 ? 'Processing...'
                 : actionReport?.action === 'resolved'
-                ? 'Resolve'
-                : 'Reject'}
+                  ? 'Resolve'
+                  : 'Reject'}
             </Button>
           </DialogFooter>
         </DialogContent>

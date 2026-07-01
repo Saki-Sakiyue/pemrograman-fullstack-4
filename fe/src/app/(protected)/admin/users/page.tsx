@@ -5,7 +5,11 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
 import { useHydration } from '@/hooks/common/useHydration';
 import { useDebounce } from '@/hooks/common/useDebounce';
-import { useAdminUsers, useUpdateUserRole, useDeleteUser } from '@/hooks/queries/admin-user.queries';
+import {
+  useAdminUsers,
+  useUpdateUserRole,
+  useDeleteUser,
+} from '@/hooks/queries/admin-user.queries';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -77,7 +81,7 @@ export default function AdminUsersPage() {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="text-center">
-          <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent mx-auto mb-4"></div>
+          <div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
           <p className="text-gray-600">Checking permissions...</p>
         </div>
       </div>
@@ -109,7 +113,7 @@ export default function AdminUsersPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-3xl font-bold tracking-tight">User Management</h1>
-        <p className="text-gray-500 mt-2">
+        <p className="mt-2 text-gray-500">
           Manage platform users, roles, and permissions
         </p>
       </div>
@@ -121,18 +125,20 @@ export default function AdminUsersPage() {
         <CardContent>
           {/* Filters */}
           <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+            <div className="relative max-w-sm flex-1">
+              <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 text-gray-400" />
               <Input
                 placeholder="Search by username or email..."
                 value={search}
-                onChange={(e) => setSearch(e.target.value)}
+                onChange={e => setSearch(e.target.value)}
                 className="pl-9"
               />
             </div>
             <Select
               value={roleFilter}
-              onValueChange={(value: 'admin' | 'user' | 'all') => setRoleFilter(value)}
+              onValueChange={(value: 'admin' | 'user' | 'all') =>
+                setRoleFilter(value)
+              }
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Filter by role" />
@@ -151,11 +157,11 @@ export default function AdminUsersPage() {
               <div className="h-8 w-8 animate-spin rounded-full border-4 border-blue-600 border-t-transparent"></div>
             </div>
           ) : error ? (
-            <div className="text-center py-8 text-red-600">
+            <div className="py-8 text-center text-red-600">
               Failed to load users. Please try again.
             </div>
           ) : !data?.users || data.users.length === 0 ? (
-            <div className="text-center py-8 text-gray-500">
+            <div className="py-8 text-center text-gray-500">
               No users found.
             </div>
           ) : (
@@ -171,7 +177,7 @@ export default function AdminUsersPage() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {data.users.map((user) => (
+                  {data.users.map(user => (
                     <TableRow key={user.id}>
                       <TableCell>
                         <div className="flex items-center gap-3">
@@ -187,10 +193,14 @@ export default function AdminUsersPage() {
                           <span className="font-medium">{user.username}</span>
                         </div>
                       </TableCell>
-                      <TableCell className="text-gray-600">{user.email}</TableCell>
+                      <TableCell className="text-gray-600">
+                        {user.email}
+                      </TableCell>
                       <TableCell>
                         <Badge
-                          variant={user.role === 'admin' ? 'default' : 'secondary'}
+                          variant={
+                            user.role === 'admin' ? 'default' : 'secondary'
+                          }
                           className={
                             user.role === 'admin'
                               ? 'bg-red-100 text-red-800 hover:bg-red-100'
@@ -247,7 +257,7 @@ export default function AdminUsersPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setPage((p) => Math.max(1, p - 1))}
+                      onClick={() => setPage(p => Math.max(1, p - 1))}
                       disabled={page === 1}
                     >
                       Previous
@@ -255,7 +265,7 @@ export default function AdminUsersPage() {
                     <Button
                       variant="outline"
                       size="sm"
-                      onClick={() => setPage((p) => p + 1)}
+                      onClick={() => setPage(p => p + 1)}
                       disabled={page === data.pagination.totalPages}
                     >
                       Next
@@ -311,8 +321,8 @@ export default function AdminUsersPage() {
           <DialogHeader>
             <DialogTitle>Delete User</DialogTitle>
             <DialogDescription>
-              Are you sure you want to delete {deleteUser?.username}? This action
-              cannot be undone.
+              Are you sure you want to delete {deleteUser?.username}? This
+              action cannot be undone.
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>

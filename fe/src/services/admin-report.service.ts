@@ -36,7 +36,9 @@ export const adminReportService = {
   /**
    * Get all reports with pagination and filters
    */
-  async getReports(params: AdminReportsParams = {}): Promise<AdminReportsResponse> {
+  async getReports(
+    params: AdminReportsParams = {}
+  ): Promise<AdminReportsResponse> {
     const response = await apiClient.get('/admin/reports', { params });
     return response.data.data;
   },

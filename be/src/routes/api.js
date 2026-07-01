@@ -60,11 +60,26 @@ router.put('/api/admin/users/:id', verifyToken, verifyAdmin, AdminUserController
 router.delete('/api/admin/users/:id', verifyToken, verifyAdmin, AdminUserController.destroy);
 
 router.get('/api/admin/templates', verifyToken, verifyAdmin, AdminTemplateController.index);
-router.patch('/api/admin/templates/:id/status', verifyToken, verifyAdmin, AdminTemplateController.updateStatus);
-router.delete('/api/admin/templates/:id', verifyToken, verifyAdmin, AdminTemplateController.softDelete);
+router.patch(
+  '/api/admin/templates/:id/status',
+  verifyToken,
+  verifyAdmin,
+  AdminTemplateController.updateStatus
+);
+router.delete(
+  '/api/admin/templates/:id',
+  verifyToken,
+  verifyAdmin,
+  AdminTemplateController.softDelete
+);
 
 router.get('/api/admin/reports', verifyToken, verifyAdmin, AdminReportController.index);
-router.patch('/api/admin/reports/:id', verifyToken, verifyAdmin, AdminReportController.updateStatus);
+router.patch(
+  '/api/admin/reports/:id',
+  verifyToken,
+  verifyAdmin,
+  AdminReportController.updateStatus
+);
 
 // TODO: CRUD Categories
 // TODO: CRUD Comments

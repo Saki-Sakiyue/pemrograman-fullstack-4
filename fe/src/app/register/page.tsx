@@ -1,415 +1,415 @@
-'use client'
+'use client';
 
-import { authService } from "@/services/auth.service";
-import { useAuthStore } from "@/store/useAuthStore";
-import { setCookie } from "cookies-next";
-import { AnimatePresence, motion, Variants } from "framer-motion";
+import { authService } from '@/services/auth.service';
+import { useAuthStore } from '@/store/useAuthStore';
+import { setCookie } from 'cookies-next';
+import { AnimatePresence, motion, Variants } from 'framer-motion';
 import {
-    ArrowRight,
-    Beaker,
-    Download,
-    Eye,
-    EyeOff,
-    Heart,
-    LayoutDashboard,
-    Loader2,
-    Lock,
-    Mail,
-    User,
-} from "lucide-react";
-import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, useCallback, useEffect, useRef, useState } from "react";
-import { toast } from "sonner";
-
-
+  ArrowRight,
+  Beaker,
+  Download,
+  Eye,
+  EyeOff,
+  Heart,
+  LayoutDashboard,
+  Loader2,
+  Lock,
+  Mail,
+  User,
+} from 'lucide-react';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { FormEvent, useCallback, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 interface RippleItem {
-    id: number;
-    x: number;
-    y: number;
-    size: number;
+  id: number;
+  x: number;
+  y: number;
+  size: number;
 }
 
 // ─── Hook: Count-Up Animation ─────────────────────────────────────────────────
 function useCountUp(target: number, duration = 1500, startDelay = 400) {
-    const [value, setValue] = useState(0);
+  const [value, setValue] = useState(0);
 
-    useEffect(() => {
-        let raf: number;
-        const timeout = setTimeout(() => {
-            const startTime = performance.now();
-            const animate = (now: number) => {
-                const elapsed = now - startTime;
-                const progress = Math.min(elapsed / duration, 1);
-                // Ease-out cubic
-                const eased = 1 - Math.pow(1 - progress, 3);
-                setValue(Math.round(eased * target));
-                if (progress < 1) raf = requestAnimationFrame(animate);
-            };
-            raf = requestAnimationFrame(animate);
-        }, startDelay);
+  useEffect(() => {
+    let raf: number;
+    const timeout = setTimeout(() => {
+      const startTime = performance.now();
+      const animate = (now: number) => {
+        const elapsed = now - startTime;
+        const progress = Math.min(elapsed / duration, 1);
+        // Ease-out cubic
+        const eased = 1 - Math.pow(1 - progress, 3);
+        setValue(Math.round(eased * target));
+        if (progress < 1) raf = requestAnimationFrame(animate);
+      };
+      raf = requestAnimationFrame(animate);
+    }, startDelay);
 
-        return () => {
-            clearTimeout(timeout);
-            cancelAnimationFrame(raf);
-        };
-    }, [target, duration, startDelay]);
+    return () => {
+      clearTimeout(timeout);
+      cancelAnimationFrame(raf);
+    };
+  }, [target, duration, startDelay]);
 
-    return value;
+  return value;
 }
 
 // ─── Main Page ────────────────────────────────────────────────────────────────
 export default function RegisterPage() {
-    const router = useRouter();
-    const searchParams = useSearchParams();
-    const callbackUrl = searchParams.get('redirect') || '/dashboard';
-    const setUser = useAuthStore(state => state.setUser);
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('redirect') || '/dashboard';
+  const setUser = useAuthStore(state => state.setUser);
 
-    // Form state
-    const [username, setUsername] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [passwordConfirm, setPasswordConfirm] = useState('');
-    const [isLoading, setIsLoading] = useState(false);
-    const [showPassword, setShowPassword] = useState(false);
-    const [showConfirm, setShowConfirmPassword] = useState(false);
+  // Form state
+  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirm, setShowConfirmPassword] = useState(false);
 
-    // Feature 9: Ripple
-    const [ripples, setRipples] = useState<RippleItem[]>([]);
-    const rippleId = useRef(0);
+  // Feature 9: Ripple
+  const [ripples, setRipples] = useState<RippleItem[]>([]);
+  const rippleId = useRef(0);
 
-    // Feature 6: Parallax
-    const leftPanelRef = useRef<HTMLDivElement>(null);
-    const [mouse, setMouse] = useState({ x: 0, y: 0 });
+  // Feature 6: Parallax
+  const leftPanelRef = useRef<HTMLDivElement>(null);
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
 
-    // Feature 5: Count-up
-    const templateCount = useCountUp(12, 1200, 500);
-    const upvoteCount = useCountUp(450, 1400, 600);
-    const downloadCount = useCountUp(1284, 1600, 700);
+  // Feature 5: Count-up
+  const templateCount = useCountUp(12, 1200, 500);
+  const upvoteCount = useCountUp(450, 1400, 600);
+  const downloadCount = useCountUp(1284, 1600, 700);
 
-    // ── Parallax mouse handler ─────────────────────────────────────────────────
-    const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-        const rect = leftPanelRef.current?.getBoundingClientRect();
-        if (!rect) return;
-        const cx = rect.width / 2;
-        const cy = rect.height / 2;
-        setMouse({
-            x: (e.clientX - rect.left - cx) / cx,
-            y: (e.clientY - rect.top - cy) / cy,
-        });
-    }, []);
-
-    const handleMouseLeave = useCallback(() => {
-        setMouse({ x: 0, y: 0 });
-    }, []);
-
-    // ── Ripple handler ─────────────────────────────────────────────────────────
-    const handleButtonClick = useCallback(
-        (e: React.MouseEvent<HTMLButtonElement>) => {
-            const rect = e.currentTarget.getBoundingClientRect();
-            const size = Math.max(rect.width, rect.height) * 2.2;
-            const id = rippleId.current++;
-            setRipples(prev => [
-                ...prev,
-                { id, x: e.clientX - rect.left, y: e.clientY - rect.top, size },
-            ]);
-            setTimeout(() => setRipples(prev => prev.filter(r => r.id !== id)), 600);
-        },
-        []
-    );
-
-    // ── Register logic ──────────────────────────────────────────────────────────
-    const handleRegister = async (e: FormEvent) => {
-        e.preventDefault();
-        if (password !== passwordConfirm) {
-            toast.error('Password dan konfirmasi password tidak cocok.');
-            return;
-        }
-        setIsLoading(true);
-        try {
-            const response = await authService.register({
-                username,
-                email,
-                password,
-                passwordConfirm,
-            });
-
-            toast.success('Registrasi berhasil! Silakan login.');
-            router.push('/login');
-            
-            if (response.data) {
-                // Bug Fix Sprint 11 #4:
-                // `httpOnly: true` tidak bisa di-set via JavaScript di browser (itu hak eksklusif server).
-                // Flag tersebut diabaikan oleh cookies-next di sisi client, sehingga dihapus.
-                // Cookie ini diakses oleh middleware.ts (server-side) untuk cek auth guard.
-                setCookie('templas_token', response.data.token, {
-                    path: '/',
-                    maxAge: 60 * 60 * 24, // 1 hari (sesuai JWT_EXPIRES_IN)
-                    secure: process.env.NODE_ENV === 'production',
-                    sameSite: 'lax',
-                });
-                setUser(response.data.user);
-                toast.success('Registrasi berhasil! Selamat datang.');
-                router.push(callbackUrl);
-            }
-        } catch (error) {
-            console.error('Register error:', error);
-            // Extract message from API response if available, otherwise use default
-            const errorMessage = (error as any)?.response?.data?.message || 'Gagal registrasi. Email mungkin sudah digunakan.';
-            toast.error(errorMessage);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    // ── Framer Motion variants ─────────────────────────────────────────────────
-    const formContainer = {
-        hidden: { opacity: 0 },
-        show: {
-            opacity: 1,
-            transition: { staggerChildren: 0.1, delayChildren: 0.2 },
-        },
-    };
-
-    const formItem: Variants = {
-        hidden: { opacity: 0, y: 20 },
-        show: {
-            opacity: 1,
-            y: 0,
-            transition: {
-                type: 'spring',
-                stiffness: 150,
-                damping: 18,
-            },
-        },
-    };
-
-    const panelVariant = {
-        hidden: { opacity: 0, x: -30 },
-        visible: (custom: number) => ({
-            opacity: 1,
-            x: 0,
-            transition: {
-                delay: custom * 0.1,
-                type: 'spring',
-                stiffness: 100,
-                damping: 15,
-            },
-        }),
-    };
-
-    // ── Parallax text variant ─────────────────────────────────────────────────
-    const parallaxText = (offset: number): Variants => ({
-        rest: {
-            x: 0,
-            y: 0,
-            opacity: 0.8,
-        },
-        hover: {
-            x: offset * 20,
-            y: offset * 20,
-            opacity: 1,
-            transition: {
-                type: 'spring',
-                stiffness: 50,
-                damping: 15,
-                duration: 0.3,
-                ease: 'easeOut',
-            },
-        },
+  // ── Parallax mouse handler ─────────────────────────────────────────────────
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
+    const rect = leftPanelRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    const cx = rect.width / 2;
+    const cy = rect.height / 2;
+    setMouse({
+      x: (e.clientX - rect.left - cx) / cx,
+      y: (e.clientY - rect.top - cy) / cy,
     });
+  }, []);
 
-    // ── Render ────────────────────────────────────────────────────────────────
-   return (
+  const handleMouseLeave = useCallback(() => {
+    setMouse({ x: 0, y: 0 });
+  }, []);
+
+  // ── Ripple handler ─────────────────────────────────────────────────────────
+  const handleButtonClick = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      const rect = e.currentTarget.getBoundingClientRect();
+      const size = Math.max(rect.width, rect.height) * 2.2;
+      const id = rippleId.current++;
+      setRipples(prev => [
+        ...prev,
+        { id, x: e.clientX - rect.left, y: e.clientY - rect.top, size },
+      ]);
+      setTimeout(() => setRipples(prev => prev.filter(r => r.id !== id)), 600);
+    },
+    []
+  );
+
+  // ── Register logic ──────────────────────────────────────────────────────────
+  const handleRegister = async (e: FormEvent) => {
+    e.preventDefault();
+    if (password !== passwordConfirm) {
+      toast.error('Password dan konfirmasi password tidak cocok.');
+      return;
+    }
+    setIsLoading(true);
+    try {
+      const response = await authService.register({
+        username,
+        email,
+        password,
+        passwordConfirm,
+      });
+
+      toast.success('Registrasi berhasil! Silakan login.');
+      router.push('/login');
+
+      if (response.data) {
+        // Bug Fix Sprint 11 #4:
+        // `httpOnly: true` tidak bisa di-set via JavaScript di browser (itu hak eksklusif server).
+        // Flag tersebut diabaikan oleh cookies-next di sisi client, sehingga dihapus.
+        // Cookie ini diakses oleh middleware.ts (server-side) untuk cek auth guard.
+        setCookie('templas_token', response.data.token, {
+          path: '/',
+          maxAge: 60 * 60 * 24, // 1 hari (sesuai JWT_EXPIRES_IN)
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'lax',
+        });
+        setUser(response.data.user);
+        toast.success('Registrasi berhasil! Selamat datang.');
+        router.push(callbackUrl);
+      }
+    } catch (error) {
+      console.error('Register error:', error);
+      // Extract message from API response if available, otherwise use default
+      const errorMessage =
+        (error as any)?.response?.data?.message ||
+        'Gagal registrasi. Email mungkin sudah digunakan.';
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // ── Framer Motion variants ─────────────────────────────────────────────────
+  const formContainer = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.2 },
+    },
+  };
+
+  const formItem: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    show: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: 'spring',
+        stiffness: 150,
+        damping: 18,
+      },
+    },
+  };
+
+  const panelVariant = {
+    hidden: { opacity: 0, x: -30 },
+    visible: (custom: number) => ({
+      opacity: 1,
+      x: 0,
+      transition: {
+        delay: custom * 0.1,
+        type: 'spring',
+        stiffness: 100,
+        damping: 15,
+      },
+    }),
+  };
+
+  // ── Parallax text variant ─────────────────────────────────────────────────
+  const parallaxText = (offset: number): Variants => ({
+    rest: {
+      x: 0,
+      y: 0,
+      opacity: 0.8,
+    },
+    hover: {
+      x: offset * 20,
+      y: offset * 20,
+      opacity: 1,
+      transition: {
+        type: 'spring',
+        stiffness: 50,
+        damping: 15,
+        duration: 0.3,
+        ease: 'easeOut',
+      },
+    },
+  });
+
+  // ── Render ────────────────────────────────────────────────────────────────
+  return (
     <>
-        {/* ── Main Layout ───────────────────────────────────────────────────── */}
-        <div className="flex min-h-screen w-full bg-white font-sans">
-          {/* ── Left Panel ──────────────────────────────────────────────────── */}
+      {/* ── Main Layout ───────────────────────────────────────────────────── */}
+      <div className="flex min-h-screen w-full bg-white font-sans">
+        {/* ── Left Panel ──────────────────────────────────────────────────── */}
+        <div
+          ref={leftPanelRef}
+          className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-slate-950 p-12 lg:flex"
+          onMouseMove={handleMouseMove}
+          onMouseLeave={handleMouseLeave}
+        >
+          {/* Glow blobs — parallax layer 1 */}
           <div
-            ref={leftPanelRef}
-            className="relative hidden w-1/2 flex-col justify-between overflow-hidden bg-slate-950 p-12 lg:flex"
-            onMouseMove={handleMouseMove}
-            onMouseLeave={handleMouseLeave}
-          >
-            {/* Glow blobs — parallax layer 1 */}
-            <div
-              className="pointer-events-none absolute -top-20 -left-20 h-72 w-72 rounded-full bg-blue-600/20 blur-[80px]"
-              style={{
-                transform: `translate(${mouse.x * 18}px, ${mouse.y * 18}px)`,
-                transition: 'transform 0.12s ease-out',
-              }}
-            />
-            <div
-              className="pointer-events-none absolute -right-20 -bottom-20 h-72 w-72 rounded-full bg-indigo-600/20 blur-[80px]"
-              style={{
-                transform: `translate(${-mouse.x * 18}px, ${-mouse.y * 18}px)`,
-                transition: 'transform 0.12s ease-out',
-              }}
-            />
+            className="pointer-events-none absolute -top-20 -left-20 h-72 w-72 rounded-full bg-blue-600/20 blur-[80px]"
+            style={{
+              transform: `translate(${mouse.x * 18}px, ${mouse.y * 18}px)`,
+              transition: 'transform 0.12s ease-out',
+            }}
+          />
+          <div
+            className="pointer-events-none absolute -right-20 -bottom-20 h-72 w-72 rounded-full bg-indigo-600/20 blur-[80px]"
+            style={{
+              transform: `translate(${-mouse.x * 18}px, ${-mouse.y * 18}px)`,
+              transition: 'transform 0.12s ease-out',
+            }}
+          />
 
-            {/* Brand — parallax layer 2 */}
+          {/* Brand — parallax layer 2 */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5 }}
+            className="relative z-10 flex items-center text-2xl font-bold tracking-wide text-white"
+            style={{
+              transform: `translate(${mouse.x * 6}px, ${mouse.y * 6}px)`,
+              transition: 'transform 0.12s ease-out',
+            }}
+          >
+            <Beaker className="mr-3 h-8 w-8 text-blue-500" />
+            Templas
+          </motion.div>
+
+          {/* Hero + Cards — parallax layer 3 */}
+          <div
+            className="relative z-10 mx-auto w-full max-w-md"
+            style={{
+              transform: `translate(${mouse.x * 10}px, ${mouse.y * 10}px)`,
+              transition: 'transform 0.12s ease-out',
+            }}
+          >
             <motion.div
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="relative z-10 flex items-center text-2xl font-bold tracking-wide text-white"
-              style={{
-                transform: `translate(${mouse.x * 6}px, ${mouse.y * 6}px)`,
-                transition: 'transform 0.12s ease-out',
-              }}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.7 }}
+              className="mb-8"
             >
-              <Beaker className="mr-3 h-8 w-8 text-blue-500" />
-              Templas
+              <h2 className="text-4xl leading-tight font-extrabold text-white">
+                Eksplorasi & Simpan <br />
+                <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
+                  Template Terbaikmu.
+                </span>
+              </h2>
+              <p className="mt-4 text-slate-400">
+                Kelola aset, pantau unduhan, dan temukan inspirasi desain baru
+                setiap harinya.
+              </p>
             </motion.div>
 
-            {/* Hero + Cards — parallax layer 3 */}
-            <div
-              className="relative z-10 mx-auto w-full max-w-md"
-              style={{
-                transform: `translate(${mouse.x * 10}px, ${mouse.y * 10}px)`,
-                transition: 'transform 0.12s ease-out',
-              }}
-            >
+            {/* Floating stat cards */}
+            <div className="relative h-64 w-full">
+              {/* Card 1 — Total Template */}
               <motion.div
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.7 }}
-                className="mb-8"
+                animate={{ y: [0, -10, 0] }}
+                transition={{
+                  duration: 4,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                }}
+                className="absolute top-0 left-0"
+                style={{
+                  transform: `translate(${mouse.x * 14}px, ${mouse.y * 14}px)`,
+                  transition: 'transform 0.12s ease-out',
+                }}
               >
-                <h2 className="text-4xl leading-tight font-extrabold text-white">
-                  Eksplorasi & Simpan <br />
-                  <span className="bg-gradient-to-r from-blue-400 to-indigo-400 bg-clip-text text-transparent">
-                    Template Terbaikmu.
-                  </span>
-                </h2>
-                <p className="mt-4 text-slate-400">
-                  Kelola aset, pantau unduhan, dan temukan inspirasi desain baru
-                  setiap harinya.
-                </p>
+                <div className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/80 p-4 shadow-xl backdrop-blur-sm">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/20 text-blue-400">
+                    <LayoutDashboard size={20} />
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-300">
+                      Total Template
+                    </p>
+                    <p className="text-lg font-bold text-white">
+                      {templateCount} Aset
+                    </p>
+                  </div>
+                </div>
               </motion.div>
 
-              {/* Floating stat cards */}
-              <div className="relative h-64 w-full">
-                {/* Card 1 — Total Template */}
-                <motion.div
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: 'easeInOut',
-                  }}
-                  className="absolute top-0 left-0"
-                  style={{
-                    transform: `translate(${mouse.x * 14}px, ${mouse.y * 14}px)`,
-                    transition: 'transform 0.12s ease-out',
-                  }}
-                >
-                  <div className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/80 p-4 shadow-xl backdrop-blur-sm">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-500/20 text-blue-400">
-                      <LayoutDashboard size={20} />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-slate-300">
-                        Total Template
-                      </p>
-                      <p className="text-lg font-bold text-white">
-                        {templateCount} Aset
-                      </p>
-                    </div>
+              {/* Card 2 — Upvotes */}
+              <motion.div
+                animate={{ y: [0, 15, 0] }}
+                transition={{
+                  duration: 5,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                  delay: 1,
+                }}
+                className="absolute top-20 right-0"
+                style={{
+                  transform: `translate(${mouse.x * 18}px, ${mouse.y * 18}px)`,
+                  transition: 'transform 0.12s ease-out',
+                }}
+              >
+                <div className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/80 p-4 shadow-xl backdrop-blur-sm">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-500/20 text-red-400">
+                    <Heart size={20} />
                   </div>
-                </motion.div>
-
-                {/* Card 2 — Upvotes */}
-                <motion.div
-                  animate={{ y: [0, 15, 0] }}
-                  transition={{
-                    duration: 5,
-                    repeat: Infinity,
-                    ease: 'easeInOut',
-                    delay: 1,
-                  }}
-                  className="absolute top-20 right-0"
-                  style={{
-                    transform: `translate(${mouse.x * 18}px, ${mouse.y * 18}px)`,
-                    transition: 'transform 0.12s ease-out',
-                  }}
-                >
-                  <div className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/80 p-4 shadow-xl backdrop-blur-sm">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-red-500/20 text-red-400">
-                      <Heart size={20} />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-slate-300">
-                        Upvotes
-                      </p>
-                      <p className="text-lg font-bold text-white">
-                        {upvoteCount.toLocaleString('id-ID')} Suka
-                      </p>
-                    </div>
+                  <div>
+                    <p className="text-sm font-medium text-slate-300">
+                      Upvotes
+                    </p>
+                    <p className="text-lg font-bold text-white">
+                      {upvoteCount.toLocaleString('id-ID')} Suka
+                    </p>
                   </div>
-                </motion.div>
+                </div>
+              </motion.div>
 
-                {/* Card 3 — Downloads */}
-                <motion.div
-                  animate={{ y: [0, -8, 0] }}
-                  transition={{
-                    duration: 3.5,
-                    repeat: Infinity,
-                    ease: 'easeInOut',
-                    delay: 0.5,
-                  }}
-                  className="absolute bottom-0 left-10"
-                  style={{
-                    transform: `translate(${mouse.x * 22}px, ${mouse.y * 22}px)`,
-                    transition: 'transform 0.12s ease-out',
-                  }}
-                >
-                  <div className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/80 p-4 shadow-xl backdrop-blur-sm">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-500/20 text-indigo-400">
-                      <Download size={20} />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium text-slate-300">
-                        Downloads
-                      </p>
-                      <p className="text-lg font-bold text-white">
-                        {downloadCount.toLocaleString('id-ID')} Kali
-                      </p>
-                    </div>
+              {/* Card 3 — Downloads */}
+              <motion.div
+                animate={{ y: [0, -8, 0] }}
+                transition={{
+                  duration: 3.5,
+                  repeat: Infinity,
+                  ease: 'easeInOut',
+                  delay: 0.5,
+                }}
+                className="absolute bottom-0 left-10"
+                style={{
+                  transform: `translate(${mouse.x * 22}px, ${mouse.y * 22}px)`,
+                  transition: 'transform 0.12s ease-out',
+                }}
+              >
+                <div className="flex items-center gap-3 rounded-xl border border-slate-800 bg-slate-900/80 p-4 shadow-xl backdrop-blur-sm">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-500/20 text-indigo-400">
+                    <Download size={20} />
                   </div>
-                </motion.div>
-              </div>
-            </div>
-
-            <div className="relative z-10 text-sm text-slate-500">
-              © {new Date().getFullYear()} Templas V2. All rights reserved.
+                  <div>
+                    <p className="text-sm font-medium text-slate-300">
+                      Downloads
+                    </p>
+                    <p className="text-lg font-bold text-white">
+                      {downloadCount.toLocaleString('id-ID')} Kali
+                    </p>
+                  </div>
+                </div>
+              </motion.div>
             </div>
           </div>
 
-          {/* ── Right Panel (Form) ─────────────────────────────────────────── */}
-          <div className="flex w-full items-center justify-center bg-gray-50 p-8 lg:w-1/2">
-            <div className="w-full max-w-md">
-              {/* Mobile header */}
-              <div className="mb-8 flex items-center justify-center text-2xl font-bold tracking-wide text-slate-900 lg:hidden">
-                <Beaker className="mr-2 h-8 w-8 text-blue-600" />
-                Templas V2
-              </div>
+          <div className="relative z-10 text-sm text-slate-500">
+            © {new Date().getFullYear()} Templas V2. All rights reserved.
+          </div>
+        </div>
 
-              <motion.div
-                variants={formContainer}
-                initial="hidden"
-                animate="show"
-                className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm"
-              >
-                <motion.div variants={formItem} className="mb-8">
-                  <h1 className="text-2xl font-bold text-slate-900">
-                    Selamat Datang 👋
-                  </h1>
-                  <p className="mt-2 text-sm text-slate-500">
-                    Silakan masuk ke akun Anda untuk melanjutkan ke dashboard.
-                  </p>
+        {/* ── Right Panel (Form) ─────────────────────────────────────────── */}
+        <div className="flex w-full items-center justify-center bg-gray-50 p-8 lg:w-1/2">
+          <div className="w-full max-w-md">
+            {/* Mobile header */}
+            <div className="mb-8 flex items-center justify-center text-2xl font-bold tracking-wide text-slate-900 lg:hidden">
+              <Beaker className="mr-2 h-8 w-8 text-blue-600" />
+              Templas V2
+            </div>
+
+            <motion.div
+              variants={formContainer}
+              initial="hidden"
+              animate="show"
+              className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm"
+            >
+              <motion.div variants={formItem} className="mb-8">
+                <h1 className="text-2xl font-bold text-slate-900">
+                  Selamat Datang 👋
+                </h1>
+                <p className="mt-2 text-sm text-slate-500">
+                  Silakan masuk ke akun Anda untuk melanjutkan ke dashboard.
+                </p>
               </motion.div>
 
               <form onSubmit={handleRegister} className="space-y-5">
@@ -498,7 +498,7 @@ export default function RegisterPage() {
                       <Lock className="h-5 w-5" />
                     </div>
                     <input
-                      type={(showConfirm) ? 'text' : 'password'}
+                      type={showConfirm ? 'text' : 'password'}
                       value={passwordConfirm}
                       onChange={e => setPasswordConfirm(e.target.value)}
                       required

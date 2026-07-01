@@ -10,7 +10,8 @@ import {
 export const adminReportKeys = {
   all: ['admin-reports'] as const,
   lists: () => [...adminReportKeys.all, 'list'] as const,
-  list: (params: AdminReportsParams) => [...adminReportKeys.lists(), params] as const,
+  list: (params: AdminReportsParams) =>
+    [...adminReportKeys.lists(), params] as const,
 };
 
 /**
@@ -43,7 +44,9 @@ export function useUpdateReportStatus() {
       toast.success('Report status updated successfully');
     },
     onError: (error: any) => {
-      toast.error(error?.response?.data?.message || 'Failed to update report status');
+      toast.error(
+        error?.response?.data?.message || 'Failed to update report status'
+      );
     },
   });
 }

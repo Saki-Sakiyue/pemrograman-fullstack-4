@@ -1,7 +1,14 @@
 'use client';
 
 import { cn } from '@/lib/utils';
-import { Beaker, FileText, LayoutDashboard, Users, Shield, Flag } from 'lucide-react';
+import {
+  Beaker,
+  FileText,
+  LayoutDashboard,
+  Users,
+  Shield,
+  Flag,
+} from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useAuthStore } from '@/store/useAuthStore';
@@ -64,7 +71,7 @@ export default function Sidebar() {
         {isHydrated && user?.role === 'admin' && (
           <>
             <div className="my-4 border-t border-slate-700 pt-4">
-              <div className="mb-3 flex items-center px-3 text-xs font-semibold uppercase tracking-wider text-slate-500">
+              <div className="mb-3 flex items-center px-3 text-xs font-semibold tracking-wider text-slate-500 uppercase">
                 <Shield className="mr-2 h-4 w-4 text-red-500" />
                 Admin
               </div>

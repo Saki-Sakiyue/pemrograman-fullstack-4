@@ -4,7 +4,6 @@ const express = require('express');
 const cors = require('cors');
 // const pinoHttp = require('pino-http'); // Uncomment jika ingin mengaktifkan HTTP request logging
 
-
 // Import internal modules
 const db = require('./src/config/database');
 const requestId = require('./src/middleware/requestId');

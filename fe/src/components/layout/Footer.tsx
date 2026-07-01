@@ -8,7 +8,7 @@ export default function Footer() {
 
   return (
     <footer className="mt-12 border-t border-slate-200 bg-white py-6 dark:border-slate-800 dark:bg-black">
-      <div className="mx-auto flex flex-col items-center justify-between gap-4 px-4 sm:flex-row text-sm text-slate-500 dark:text-slate-400">
+      <div className="mx-auto flex flex-col items-center justify-between gap-4 px-4 text-sm text-slate-500 sm:flex-row dark:text-slate-400">
         {/* Left Section - Brand & Copyright */}
         <div className="flex items-center gap-1">
           <span className="font-semibold text-slate-800 dark:text-slate-200">
@@ -20,7 +20,7 @@ export default function Footer() {
         {/* Middle Section - Made with Love */}
         <div className="flex items-center gap-1 text-xs">
           <span>Dibuat dengan</span>
-          <Heart className="h-3.5 w-3.5 fill-red-500 text-red-500 animate-pulse" />
+          <Heart className="h-3.5 w-3.5 animate-pulse fill-red-500 text-red-500" />
           <span>oleh</span>
           <span className="font-medium text-slate-700 dark:text-slate-300">
             Kelompok 4

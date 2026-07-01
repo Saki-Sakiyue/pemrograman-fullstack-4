@@ -10,16 +10,14 @@ export interface UpdateProfilePayload {
 
 export const profileService = {
   getProfile: async () => {
-    const response = await apiClient.get<BaseResponse<UserProfile>>(
-      '/profile'
-    );
+    const response = await apiClient.get<BaseResponse<UserProfile>>('/profile');
     return response.data;
   },
 
   updateProfile: async (payload: UpdateProfilePayload) => {
     // Convert to FormData for multipart/form-data
     const formData = new FormData();
-    
+
     if (payload.username) {
       formData.append('username', payload.username);
     }

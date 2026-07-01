@@ -12,7 +12,16 @@ import {
 import ReportModal from '@/components/report/ReportModal';
 import { getFullImageUrl } from '@/lib/image';
 import { formatCompactNumber } from '@/lib/utils';
-import { ArrowLeft, Download, Eye, Layers, User, Heart, Bookmark, AlertCircle } from 'lucide-react';
+import {
+  ArrowLeft,
+  Download,
+  Eye,
+  Layers,
+  User,
+  Heart,
+  Bookmark,
+  AlertCircle,
+} from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useParams } from 'next/navigation';
@@ -21,7 +30,7 @@ import { useState } from 'react';
 export default function TemplateDetailPage() {
   const { id } = useParams();
   const { data, isLoading, error } = useTemplateDetail(id as string);
-  
+
   const downloadMutation = useDownloadTemplate();
   const upvoteMutation = useUpvoteTemplate();
   const bookmarkMutation = useBookmarkTemplate();
@@ -55,7 +64,7 @@ export default function TemplateDetailPage() {
         if (template.source_url) {
           window.open(template.source_url, '_blank');
         }
-      }
+      },
     });
   };
 
@@ -195,14 +204,14 @@ export default function TemplateDetailPage() {
                   <Eye size={20} /> Live Preview
                 </a>
               </Button>
-              <div className="grid grid-cols-2 gap-3 mt-3">
+              <div className="mt-3 grid grid-cols-2 gap-3">
                 <Button
                   variant="outline"
                   onClick={() => upvoteMutation.mutate(template.id)}
                   disabled={upvoteMutation.isPending}
                   className="gap-2 text-xs font-bold"
                 >
-                  <Heart size={16} className="text-red-500 fill-red-500" /> Like
+                  <Heart size={16} className="fill-red-500 text-red-500" /> Like
                 </Button>
                 <Button
                   variant="outline"
@@ -210,7 +219,8 @@ export default function TemplateDetailPage() {
                   disabled={bookmarkMutation.isPending}
                   className="gap-2 text-xs font-bold"
                 >
-                  <Bookmark size={16} className="text-blue-500 fill-blue-500" /> Save
+                  <Bookmark size={16} className="fill-blue-500 text-blue-500" />{' '}
+                  Save
                 </Button>
               </div>
               <Button

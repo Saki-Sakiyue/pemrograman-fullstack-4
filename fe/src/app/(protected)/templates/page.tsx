@@ -40,7 +40,9 @@ export default function TemplatesPage() {
   const [searchQuery, setSearchQuery] = useState('');
   const debouncedSearch = useDebounce(searchQuery, 500);
   const [selectedCategory, setSelectedCategory] = useState<number | null>(null);
-  const [statusFilter, setStatusFilter] = useState<'pending' | 'approved' | 'rejected' | 'all'>('all');
+  const [statusFilter, setStatusFilter] = useState<
+    'pending' | 'approved' | 'rejected' | 'all'
+  >('all');
 
   // Confirmation dialogs
   const [actionDialog, setActionDialog] = useState<{
@@ -122,9 +124,9 @@ export default function TemplatesPage() {
             <Shield className="h-4 w-4 text-red-600" />
             <Select
               value={statusFilter}
-              onValueChange={(value: 'pending' | 'approved' | 'rejected' | 'all') =>
-                setStatusFilter(value)
-              }
+              onValueChange={(
+                value: 'pending' | 'approved' | 'rejected' | 'all'
+              ) => setStatusFilter(value)}
             >
               <SelectTrigger className="w-[180px]">
                 <SelectValue placeholder="Filter by status" />
@@ -164,7 +166,7 @@ export default function TemplatesPage() {
       ) : (
         <>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-            {templates?.map((template) => (
+            {templates?.map(template => (
               <TemplateCard
                 key={template.id}
                 template={template}
@@ -249,17 +251,23 @@ export default function TemplatesPage() {
               Cancel
             </Button>
             <Button
-              variant={actionDialog?.type === 'delete' ? 'destructive' : 'default'}
+              variant={
+                actionDialog?.type === 'delete' ? 'destructive' : 'default'
+              }
               onClick={handleAdminAction}
-              disabled={updateStatusMutation.isPending || deleteTemplateMutation.isPending}
+              disabled={
+                updateStatusMutation.isPending ||
+                deleteTemplateMutation.isPending
+              }
             >
-              {updateStatusMutation.isPending || deleteTemplateMutation.isPending
+              {updateStatusMutation.isPending ||
+              deleteTemplateMutation.isPending
                 ? 'Processing...'
                 : actionDialog?.type === 'approve'
-                ? 'Approve'
-                : actionDialog?.type === 'reject'
-                ? 'Reject'
-                : 'Delete'}
+                  ? 'Approve'
+                  : actionDialog?.type === 'reject'
+                    ? 'Reject'
+                    : 'Delete'}
             </Button>
           </DialogFooter>
         </DialogContent>

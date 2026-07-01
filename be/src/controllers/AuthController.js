@@ -105,7 +105,7 @@ class AuthController {
         });
       }
 
-      const { username, email, password} = req.body;
+      const { username, email, password } = req.body;
       const trimmedUsername = username.trim();
       const trimmedEmail = email.trim();
 

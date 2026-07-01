@@ -11,9 +11,9 @@ const stats = [
 
 export default function StatsSection() {
   return (
-    <section className="py-20 px-6 bg-slate-900">
-      <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+    <section className="bg-slate-900 px-6 py-20">
+      <div className="mx-auto max-w-7xl">
+        <div className="grid grid-cols-2 gap-8 text-center md:grid-cols-4">
           {stats.map((stat, idx) => (
             <motion.div
               key={idx}
@@ -22,10 +22,10 @@ export default function StatsSection() {
               viewport={{ once: true }}
               transition={{ delay: idx * 0.1 }}
             >
-              <p className="text-4xl md:text-5xl font-extrabold text-white mb-2">
+              <p className="mb-2 text-4xl font-extrabold text-white md:text-5xl">
                 {stat.number}
               </p>
-              <p className="text-slate-400 font-medium">{stat.label}</p>
+              <p className="font-medium text-slate-400">{stat.label}</p>
             </motion.div>
           ))}
         </div>

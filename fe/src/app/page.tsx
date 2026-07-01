@@ -10,7 +10,8 @@ import Footer from '@/components/landing/Footer';
 // Metadata untuk SEO
 export const metadata: Metadata = {
   title: 'Templas - Temukan & Download Template Terbaik',
-  description: 'Koleksi template profesional untuk website, presentasi, UI/UX, dan desain grafis. Hemat waktu dan tingkatkan produktivitasmu.',
+  description:
+    'Koleksi template profesional untuk website, presentasi, UI/UX, dan desain grafis. Hemat waktu dan tingkatkan produktivitasmu.',
   keywords: ['template', 'desain', 'ui/ux', 'download template', 'templas'],
 };
 

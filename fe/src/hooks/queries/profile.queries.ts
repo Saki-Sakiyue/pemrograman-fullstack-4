@@ -1,4 +1,7 @@
-import { profileService, UpdateProfilePayload } from '@/services/profile.service';
+import {
+  profileService,
+  UpdateProfilePayload,
+} from '@/services/profile.service';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 
@@ -18,7 +21,7 @@ export const useUpdateProfile = () => {
   return useMutation({
     mutationFn: (payload: UpdateProfilePayload) =>
       profileService.updateProfile(payload),
-    onSuccess: (data) => {
+    onSuccess: data => {
       queryClient.invalidateQueries({ queryKey: ['profile'] });
       toast.success('Profil berhasil diperbarui!');
     },

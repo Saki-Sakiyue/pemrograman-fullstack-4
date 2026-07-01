@@ -1,5 +1,8 @@
 import apiClient from '@/api/axiosInstance';
-import { TemplateQueryParams, TemplateResponseData } from '@/types/template.types';
+import {
+  TemplateQueryParams,
+  TemplateResponseData,
+} from '@/types/template.types';
 import { BaseResponse } from '@/types/api';
 
 // ============================================

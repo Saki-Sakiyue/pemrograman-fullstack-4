@@ -6,5 +6,7 @@ export const getFullImageUrl = (path: string | null | undefined): string => {
 
 export const isSvgImage = (url: string | null | undefined): boolean => {
   if (!url) return false;
-  return url.toLowerCase().endsWith('.svg') || url.toLowerCase().includes('svg');
+  return (
+    url.toLowerCase().endsWith('.svg') || url.toLowerCase().includes('svg')
+  );
 };

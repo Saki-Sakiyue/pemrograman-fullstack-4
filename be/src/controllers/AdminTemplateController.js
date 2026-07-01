@@ -110,7 +110,8 @@ class AdminTemplateController {
       }
 
       // Check if template exists
-      const checkSql = 'SELECT id, title, status FROM templates WHERE id = ? AND deleted_at IS NULL';
+      const checkSql =
+        'SELECT id, title, status FROM templates WHERE id = ? AND deleted_at IS NULL';
       const [templates] = await db.query(checkSql, [id]);
 
       if (templates.length === 0) {
