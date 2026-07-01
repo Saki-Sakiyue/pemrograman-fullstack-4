@@ -8,29 +8,16 @@ const crypto = require('crypto');
 class TemplateController {
   async index(req, res) {
     try {
-      const isAdmin = req.user?.role === 'admin';
       const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
       const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 10, 1), 100);
       const offset = (page - 1) * limit;
 
       const search = (req.query.search || '').trim();
       const categoryId = req.query.category_id;
-      const statusParam = req.query.status;
-      console.log('statusParam :>> ', statusParam);
 
-      // Dynamic Where Clause
-      let whereClause = 'WHERE t.deleted_at IS NULL';
+      // Public endpoint - always show approved templates only
+      let whereClause = "WHERE t.deleted_at IS NULL AND t.status = 'approved'";
       const whereParams = [];
-
-      if (isAdmin) {
-        if (statusParam) {
-          whereClause += ' AND t.status = ?';
-          whereParams.push(statusParam);
-        }
-      } else {
-        whereClause += ' AND t.status = ?';
-        whereParams.push('approved');
-      }
 
       if (search) {
         whereClause += ' AND (t.title LIKE ? OR t.description LIKE ?)';
@@ -43,27 +30,27 @@ class TemplateController {
       }
 
       const sql = `
-            SELECT 
-                t.id, t.title, t.description, t.upload_type, 
-                t.source_url, t.demo_url, t.download_count, 
-                t.popularity_score, t.created_at,
-                c.name AS category_name, 
-                u.username AS author,
-                t.status, t.is_active,
-                (SELECT image_url FROM template_images WHERE template_id = t.id AND is_primary LIMIT 1) AS thumbnail_url
-            FROM templates t
-            INNER JOIN categories c ON c.id = t.category_id
-            INNER JOIN users u ON u.id = t.user_id
-            ${whereClause}
-            ORDER BY t.created_at DESC
-            LIMIT ? OFFSET ?
-        `;
+        SELECT 
+          t.id, t.title, t.description, t.upload_type, 
+          t.source_url, t.demo_url, t.download_count, 
+          t.popularity_score, t.created_at,
+          c.name AS category_name, 
+          u.username AS author,
+          t.status, t.is_active,
+          (SELECT image_url FROM template_images WHERE template_id = t.id AND is_primary LIMIT 1) AS thumbnail_url
+        FROM templates t
+        INNER JOIN categories c ON c.id = t.category_id
+        INNER JOIN users u ON u.id = t.user_id
+        ${whereClause}
+        ORDER BY t.created_at DESC
+        LIMIT ? OFFSET ?
+      `;
 
       const countSql = `
-            SELECT COUNT(*) AS total FROM templates t
-            INNER JOIN categories c ON c.id = t.category_id
-            INNER JOIN users u ON u.id = t.user_id
-            ${whereClause}
+        SELECT COUNT(*) AS total FROM templates t
+        INNER JOIN categories c ON c.id = t.category_id
+        INNER JOIN users u ON u.id = t.user_id
+        ${whereClause}
       `;
 
       const [[rows], [countRows]] = await Promise.all([
@@ -74,7 +61,6 @@ class TemplateController {
       const total = countRows[0]?.total || 0;
       const totalPages = Math.ceil(total / limit);
 
-      // Gunakan responseHandler agar format JSON konsisten
       return responseHandler(res, {
         status: 200,
         messageDev: 'Templates fetched successfully',
@@ -99,22 +85,16 @@ class TemplateController {
     try {
       const { id } = req.params;
 
-      // Role-based status filtering:
-      // - Admin can view any template regardless of status
-      // - Regular users can only view approved templates
-      const isAdmin = req.user?.role === 'admin';
-      const statusCondition = isAdmin ? '' : "AND t.status = 'approved'";
-
-      // 1. Ambil Data Utama
+      // Public endpoint - only show approved templates
       const sql = `
-          SELECT 
-              t.*, 
-              c.name AS category_name, c.slug AS category_slug,
-              u.username AS author, u.avatar_url
-          FROM templates t
-          INNER JOIN categories c ON c.id = t.category_id
-          INNER JOIN users u ON u.id = t.user_id
-          WHERE t.id = ? AND t.deleted_at IS NULL ${statusCondition}
+        SELECT 
+          t.*, 
+          c.name AS category_name, c.slug AS category_slug,
+          u.username AS author, u.avatar_url
+        FROM templates t
+        INNER JOIN categories c ON c.id = t.category_id
+        INNER JOIN users u ON u.id = t.user_id
+        WHERE t.id = ? AND t.deleted_at IS NULL AND t.status = 'approved'
       `;
       const [templateRows] = await db.execute(sql, [id]);
 
@@ -122,26 +102,24 @@ class TemplateController {
         return responseHandler(res, {
           status: 404,
           code: 'ERR_NOT_FOUND',
-          messageDev: 'Template not found or inactive',
-          messageUser: 'Template yang kamu cari tidak ditemukan atau sudah ditarik.',
+          messageDev: 'Template not found or not approved',
+          messageUser: 'Template yang kamu cari tidak ditemukan atau belum disetujui.',
         });
       }
 
       const template = templateRows[0];
 
-      // 2. Ambil Relasi Stacks (Teknologi)
+      // Fetch relations
       const [stacksRows, imagesRows] = await Promise.all([
         db.query(
-          `
-        SELECT s.name, s.icon_url FROM stacks s
-        JOIN template_stacks ts ON s.id = ts.stack_id
-        WHERE ts.template_id = ?`,
+          `SELECT s.name, s.icon_url FROM stacks s
+           JOIN template_stacks ts ON s.id = ts.stack_id
+           WHERE ts.template_id = ?`,
           [id]
         ),
         db.query(
-          `
-        SELECT image_url, is_primary FROM template_images 
-        WHERE template_id = ?`,
+          `SELECT image_url, is_primary FROM template_images 
+           WHERE template_id = ?`,
           [id]
         ),
       ]);
@@ -156,7 +134,7 @@ class TemplateController {
         data: template,
       });
     } catch (error) {
-      logger.error({ err: error.message, stack: error.stack }, 'Error fetching template detail');
+      logger.error({ err: error }, 'Error fetching template detail');
       return responseHandler(res, {
         status: 500,
         code: 'ERR_INTERNAL_SERVER',

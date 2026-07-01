@@ -1,13 +1,23 @@
 import { templateService } from '@/services/template.service';
 import { TemplateQueryParams } from '@/types/template.types';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  UseQueryOptions,
+} from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { BaseResponse } from '@/types/api';
+import { TemplateResponseData } from '@/types/template.types';
+import { useAuthStore } from '@/store/useAuthStore';
+import { useAdminTemplates } from './admin-template.queries';
 
 // Query Keys for cache management
 export const templateKeys = {
   all: ['templates'] as const,
   lists: () => [...templateKeys.all, 'list'] as const,
-  list: (params: TemplateQueryParams) => [...templateKeys.lists(), params] as const,
+  list: (params: TemplateQueryParams) =>
+    [...templateKeys.lists(), params] as const,
   details: () => [...templateKeys.all, 'detail'] as const,
   detail: (id: string) => [...templateKeys.details(), id] as const,
 };
@@ -16,7 +26,11 @@ export const useTemplates = (
   params: TemplateQueryParams = {
     limit: 1,
     page: 1,
-  }
+  },
+  options?: Omit<
+    UseQueryOptions<TemplateResponseData | null>,
+    'queryKey' | 'queryFn'
+  >
 ) => {
   return useQuery({
     queryKey: templateKeys.list(params),
@@ -25,7 +39,28 @@ export const useTemplates = (
       return response.data;
     },
     placeholderData: previousData => previousData,
+    ...options,
   });
+};
+
+/**
+ * Wrapper hook that automatically selects the appropriate query based on user role
+ * Admin users fetch from /admin/templates with status filtering
+ * Regular users fetch from /templates (approved only)
+ */
+export const useTemplatesForRole = (
+  params: TemplateQueryParams = {
+    limit: 10,
+    page: 1,
+  }
+) => {
+  const user = useAuthStore(state => state.user);
+  const isAdmin = user?.role === 'admin';
+
+  const userQuery = useTemplates(params, { enabled: !isAdmin });
+  const adminQuery = useAdminTemplates(params, { enabled: isAdmin });
+
+  return isAdmin ? adminQuery : userQuery;
 };
 
 export const useTemplateDetail = (id: number | string) => {

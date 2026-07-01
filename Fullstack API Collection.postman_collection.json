@@ -18,12 +18,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/api",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["api"]
             }
           },
           "response": []
@@ -75,14 +71,8 @@
             },
             "url": {
               "raw": "{{base_url}}/api/auth/login",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "auth",
-                "login"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
             }
           },
           "response": []
@@ -104,14 +94,8 @@
             },
             "url": {
               "raw": "{{base_url}}/api/auth/register",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "auth",
-                "register"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "register"]
             }
           },
           "response": []
@@ -129,17 +113,80 @@
             ],
             "url": {
               "raw": "{{base_url}}/api/auth/logout",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "auth",
-                "logout"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "logout"]
             }
           },
           "response": []
+        },
+        {
+          "name": "Login as Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set('adminToken', response.data.token);",
+                  "    console.log('Admin token saved:', response.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"abdul@templas.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        },
+        {
+          "name": "Login as User",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const response = pm.response.json();",
+                  "    pm.environment.set('userToken', response.data.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identifier\": \"raffi@gmail.com\",\n  \"password\": \"password123\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/api/auth/login",
+              "host": ["{{base_url}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
         }
       ]
     },
@@ -169,13 +216,8 @@
             ],
             "url": {
               "raw": "{{base_url}}/api/profile",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "profile"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["api", "profile"]
             }
           },
           "response": []
@@ -193,9 +235,7 @@
             ],
             "url": {
               "raw": "{{base_url}}/uploads/avatars/1777730273430_dfdc903a-568a-4335-8146-9013c9db34a8.png",
-              "host": [
-                "{{base_url}}"
-              ],
+              "host": ["{{base_url}}"],
               "path": [
                 "uploads",
                 "avatars",
@@ -264,13 +304,8 @@
             },
             "url": {
               "raw": "{{base_url}}/api/profile",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "profile"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["api", "profile"]
             }
           },
           "response": []
@@ -301,13 +336,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/api/templates?page=1&limit=10",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "templates"
-              ],
+              "host": ["{{base_url}}"],
+              "path": ["api", "templates"],
               "query": [
                 {
                   "key": "page",
@@ -329,13 +359,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/api/templates?search={{search_term}}&page=1&limit=10",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "templates"
-              ],
+              "host": ["{{base_url}}"],
+              "path": ["api", "templates"],
               "query": [
                 {
                   "key": "search",
@@ -386,13 +411,8 @@
             },
             "url": {
               "raw": "{{base_url}}/api/templates",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "templates"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["api", "templates"]
             }
           },
           "response": []
@@ -429,14 +449,8 @@
             },
             "url": {
               "raw": "{{base_url}}/api/templates/{{template_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "templates",
-                "{{template_id}}"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["api", "templates", "{{template_id}}"]
             }
           },
           "response": []
@@ -454,14 +468,8 @@
             ],
             "url": {
               "raw": "{{base_url}}/api/templates/{{template_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "templates",
-                "{{template_id}}"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["api", "templates", "{{template_id}}"]
             }
           },
           "response": []
@@ -489,15 +497,8 @@
             ],
             "url": {
               "raw": "{{base_url}}/api/templates/{{template_id}}/download",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "templates",
-                "{{template_id}}",
-                "download"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["api", "templates", "{{template_id}}", "download"]
             }
           },
           "response": []
@@ -525,15 +526,8 @@
             ],
             "url": {
               "raw": "{{base_url}}/api/templates/{{template_id}}/upvote",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "templates",
-                "{{template_id}}",
-                "upvote"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["api", "templates", "{{template_id}}", "upvote"]
             }
           },
           "response": []
@@ -561,15 +555,8 @@
             ],
             "url": {
               "raw": "{{base_url}}/api/templates/{{template_id}}/bookmark",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "templates",
-                "{{template_id}}",
-                "bookmark"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["api", "templates", "{{template_id}}", "bookmark"]
             }
           },
           "response": []
@@ -611,16 +598,309 @@
             },
             "url": {
               "raw": "{{base_url}}/api/reports",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "api",
-                "reports"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["api", "reports"]
             }
           },
           "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin - Users",
+      "item": [
+        {
+          "name": "List All Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users?page=1&limit=10",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "10" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Search Users",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users?search=raffi&role=user",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users"],
+              "query": [
+                { "key": "search", "value": "raffi" },
+                { "key": "role", "value": "user" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Update User Role",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"role\": \"admin\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "2"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete User",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/users/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "users", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "5"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Templates",
+      "item": [
+        {
+          "name": "List All Templates",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/templates?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "templates"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filter Templates - Pending",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/templates?status=pending",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "templates"],
+              "query": [{ "key": "status", "value": "pending" }]
+            }
+          }
+        },
+        {
+          "name": "Filter Templates - Approved",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/templates?status=approved",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "templates"],
+              "query": [{ "key": "status", "value": "approved" }]
+            }
+          }
+        },
+        {
+          "name": "Approve Template",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"approved\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/templates/:id/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "templates", ":id", "status"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Reject Template",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"rejected\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/templates/:id/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "templates", ":id", "status"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "2"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Delete Template",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"action\": \"delete\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/templates/:id/status",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "templates", ":id", "status"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "3"
+                }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Reports",
+      "item": [
+        {
+          "name": "List All Reports",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/reports?page=1&limit=20",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "reports"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "limit", "value": "20" }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Filter Reports - Pending",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/reports?status=pending",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "reports"],
+              "query": [{ "key": "status", "value": "pending" }]
+            }
+          }
+        },
+        {
+          "name": "Resolve Report",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"resolved\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/reports/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "reports", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "1"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "name": "Reject Report",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"rejected\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/reports/:id",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "reports", ":id"],
+              "variable": [
+                {
+                  "key": "id",
+                  "value": "3"
+                }
+              ]
+            }
+          }
         }
       ]
     }
