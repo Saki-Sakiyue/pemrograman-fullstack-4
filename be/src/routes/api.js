@@ -13,19 +13,20 @@ const { uploadAvatar, uploadTemplateImages } = require('../middleware/uploadMidd
 
 const router = express.Router();
 
+// API Root
 router.get('/api', (req, res) => {
   res.json({ message: 'Welcome to the API' });
 });
 
-// Auth routes
-router.post('/api/auth/login', AuthController.login);
+// ========== AUTH ROUTES ==========
 router.post('/api/auth/register', AuthController.register);
+router.post('/api/auth/login', AuthController.login);
 router.post('/api/auth/logout', AuthController.logout);
 
-// Category routes (public)
+// ========== MASTER DATA ROUTES ==========
 router.get('/api/categories', CategoryController.index);
 
-// Template routes
+// ========== TEMPLATE ROUTES ==========
 router.get('/api/templates', optionalAuth, TemplateController.index);
 router.get('/api/templates/:id', optionalAuth, TemplateController.show);
 router.post(
@@ -35,15 +36,17 @@ router.post(
   TemplateController.create
 );
 router.put('/api/templates/:id', verifyToken, TemplateController.update);
-router.delete('/api/templates/:id', verifyToken, TemplateController.destroy); // Ganti dari delete ke destroy
-// Custom Actions (Interactions)
+router.delete('/api/templates/:id', verifyToken, TemplateController.destroy);
+
+// Template Interactions
 router.patch('/api/templates/:id/download', verifyToken, TemplateController.download);
 router.post('/api/templates/:id/upvote', verifyToken, TemplateController.upvote);
 router.post('/api/templates/:id/bookmark', verifyToken, TemplateController.bookmark);
 
+// ========== REPORT ROUTES ==========
 router.post('/api/reports', verifyToken, ReportController.post);
 
-// Profile route
+// ========== PROFILE ROUTES ==========
 router.get('/api/profile', verifyToken, ProfileController.getProfile);
 router.patch(
   '/api/profile',
@@ -54,11 +57,13 @@ router.patch(
 router.get('/api/profile/bookmarks', verifyToken, ProfileController.getBookmarks);
 router.get('/api/profile/templates', verifyToken, ProfileController.getMyTemplates);
 
-// Admin routes (protected with verifyToken + verifyAdmin)
+// ========== ADMIN ROUTES ==========
+// Admin - Users
 router.get('/api/admin/users', verifyToken, verifyAdmin, AdminUserController.index);
 router.put('/api/admin/users/:id', verifyToken, verifyAdmin, AdminUserController.updateRole);
 router.delete('/api/admin/users/:id', verifyToken, verifyAdmin, AdminUserController.destroy);
 
+// Admin - Templates
 router.get('/api/admin/templates', verifyToken, verifyAdmin, AdminTemplateController.index);
 router.patch(
   '/api/admin/templates/:id/status',
@@ -73,6 +78,7 @@ router.delete(
   AdminTemplateController.softDelete
 );
 
+// Admin - Reports
 router.get('/api/admin/reports', verifyToken, verifyAdmin, AdminReportController.index);
 router.patch(
   '/api/admin/reports/:id',
@@ -80,10 +86,5 @@ router.patch(
   verifyAdmin,
   AdminReportController.updateStatus
 );
-
-// TODO: CRUD Categories
-// TODO: CRUD Comments
-// TODO: CRUD Stacks
-// TODO: CRUD Tags
 
 module.exports = router;
