@@ -1,12 +1,22 @@
 import apiClient from '@/api/axiosInstance';
+import { TemplateQueryParams, TemplateResponseData } from '@/types/template.types';
+import { BaseResponse } from '@/types/api';
 
 // ============================================
-// Admin Templates API - Mutations Only
+// Admin Templates API
 // ============================================
-// Note: Template fetching now uses regular template.service.ts
-// with status parameter for role-based filtering
 
 export const adminTemplateService = {
+  /**
+   * Get all templates with admin filtering (pending, approved, rejected)
+   */
+  async getAll(params?: TemplateQueryParams) {
+    const response = await apiClient.get<BaseResponse<TemplateResponseData>>(
+      '/admin/templates',
+      { params }
+    );
+    return response.data;
+  },
   /**
    * Update template status (approve/reject)
    */

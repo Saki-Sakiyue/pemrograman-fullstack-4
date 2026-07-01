@@ -22,7 +22,7 @@ import {
 } from '@/components/ui/dialog';
 import { useDebounce } from '@/hooks/common/useDebounce';
 import { useHydration } from '@/hooks/common/useHydration';
-import { useTemplates } from '@/hooks/queries/template.queries';
+import { useTemplatesForRole } from '@/hooks/queries/template.queries';
 import {
   useUpdateTemplateStatus,
   useDeleteTemplate,
@@ -49,13 +49,12 @@ export default function TemplatesPage() {
     templateTitle: string;
   } | null>(null);
 
-  // Single unified query - backend handles role-based filtering
-  const { data, isLoading, isError } = useTemplates({
+  // Wrapper hook automatically selects correct endpoint based on role
+  const { data, isLoading, isError } = useTemplatesForRole({
     page,
     limit: 8,
     search: debouncedSearch,
     category_id: selectedCategory,
-    // Only send status if admin and not "all"
     status: isAdmin && statusFilter !== 'all' ? statusFilter : undefined,
   });
 
