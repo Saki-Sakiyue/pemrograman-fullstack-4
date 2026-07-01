@@ -184,17 +184,34 @@ class ProfileController {
   async getBookmarks(req, res) {
     try {
       const userId = req.user.id;
-      const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 12;
+      const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+      const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 12, 1), 100);
       const offset = (page - 1) * limit;
+      const search = (req.query.search || '').trim();
+      const categoryId = req.query.category_id;
+
+      const whereClauses = ['b.user_id = ?', 't.deleted_at IS NULL', 't.is_active = 1'];
+      const whereValues = [userId];
+
+      if (search) {
+        whereClauses.push('(t.title LIKE ? OR t.description LIKE ?)');
+        whereValues.push(`%${search}%`, `%${search}%`);
+      }
+
+      if (categoryId) {
+        whereClauses.push('t.category_id = ?');
+        whereValues.push(Number(categoryId));
+      }
+
+      const whereSql = whereClauses.join(' AND ');
 
       // Query total count
       const [countRows] = await db.query(
         `SELECT COUNT(*) as total 
          FROM bookmarks b
          INNER JOIN templates t ON b.template_id = t.id
-         WHERE b.user_id = ? AND t.deleted_at IS NULL AND t.is_active = 1`,
-        [userId]
+         WHERE ${whereSql}`,
+        whereValues
       );
       const total = countRows[0].total;
 
@@ -219,12 +236,12 @@ class ProfileController {
         INNER JOIN templates t ON b.template_id = t.id
         INNER JOIN categories c ON t.category_id = c.id
         INNER JOIN users u ON t.user_id = u.id
-        WHERE b.user_id = ? AND t.deleted_at IS NULL AND t.is_active = 1
+        WHERE ${whereSql}
         ORDER BY b.created_at DESC
         LIMIT ? OFFSET ?
       `;
 
-      const [templates] = await db.query(sql, [userId, limit, offset]);
+      const [templates] = await db.query(sql, [...whereValues, limit, offset]);
 
       return responseHandler(res, {
         status: 200,
@@ -254,16 +271,31 @@ class ProfileController {
   async getMyTemplates(req, res) {
     try {
       const userId = req.user.id;
-      const page = parseInt(req.query.page) || 1;
-      const limit = parseInt(req.query.limit) || 12;
+      const page = Math.max(parseInt(req.query.page, 10) || 1, 1);
+      const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 12, 1), 100);
       const offset = (page - 1) * limit;
+      const search = (req.query.search || '').trim();
+      const categoryId = req.query.category_id;
+
+      const whereClauses = ['t.user_id = ?', 't.deleted_at IS NULL'];
+      const whereValues = [userId];
+
+      if (search) {
+        whereClauses.push('(t.title LIKE ? OR t.description LIKE ?)');
+        whereValues.push(`%${search}%`, `%${search}%`);
+      }
+
+      if (categoryId) {
+        whereClauses.push('t.category_id = ?');
+        whereValues.push(Number(categoryId));
+      }
+
+      const whereSql = whereClauses.join(' AND ');
 
       // Query total count
       const [countRows] = await db.query(
-        `SELECT COUNT(*) as total 
-         FROM templates 
-         WHERE user_id = ? AND deleted_at IS NULL`,
-        [userId]
+        `SELECT COUNT(*) as total FROM templates t WHERE ${whereSql}`,
+        whereValues
       );
       const total = countRows[0].total;
 
@@ -287,12 +319,12 @@ class ProfileController {
           (SELECT ti.image_url FROM template_images ti WHERE ti.template_id = t.id AND ti.is_primary = 1 LIMIT 1) as thumbnail_url
         FROM templates t
         INNER JOIN categories c ON t.category_id = c.id
-        WHERE t.user_id = ? AND t.deleted_at IS NULL
+        WHERE ${whereSql}
         ORDER BY t.created_at DESC
         LIMIT ? OFFSET ?
       `;
 
-      const [templates] = await db.query(sql, [userId, limit, offset]);
+      const [templates] = await db.query(sql, [...whereValues, limit, offset]);
 
       return responseHandler(res, {
         status: 200,

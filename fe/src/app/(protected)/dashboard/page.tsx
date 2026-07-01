@@ -14,7 +14,7 @@ export default function DashboardPage() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-slate-900">
-          Halo, {user?.username || 'User'}! 👋
+          Halo, {user?.username || 'User'}! 
         </h1>
         <p className="text-slate-500">
           Berikut adalah ringkasan aset Templas kamu bulan ini.

@@ -344,8 +344,8 @@ export default function LoginPage() {
               className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm"
             >
               <motion.div variants={formItem} className="mb-8">
-                <h1 className="text-2xl font-bold text-slate-900">
-                  Selamat Datang 👋
+                <h1 className="text-2xl font-bold text-slate-900 text-center">
+                  Selamat Datang
                 </h1>
                 <p className="mt-2 text-sm text-slate-500">
                   Silakan masuk ke akun Anda untuk melanjutkan ke dashboard.
