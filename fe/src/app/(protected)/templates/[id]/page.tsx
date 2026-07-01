@@ -21,6 +21,9 @@ import {
   Heart,
   Bookmark,
   AlertCircle,
+  X,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -39,6 +42,13 @@ export default function TemplateDetailPage() {
   const [userSelectedImage, setUserSelectedImage] = useState<string | null>(
     null
   );
+  // State untuk popup preview gambar
+  const [selectedImageForModal, setSelectedImageForModal] = useState<
+    string | null
+  >(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(
+    null
+  );
   // State untuk report modal
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
@@ -51,10 +61,40 @@ export default function TemplateDetailPage() {
     template?.images?.[0]?.image_url;
 
   const displayImage = userSelectedImage || primaryImage || null;
+  const imageUrls = template?.images?.map(img => img.image_url) ?? [];
 
   // Fungsi untuk handle klik thumbnail
+  const openImagePreview = (url: string, index?: number) => {
+    setSelectedImageForModal(url);
+    setSelectedImageIndex(index ?? null);
+  };
+
   const handleThumbnailClick = (url: string) => {
     setUserSelectedImage(url);
+  };
+
+  const handlePreviewClick = () => {
+    if (displayImage) {
+      const index = imageUrls.findIndex(url => url === displayImage);
+      openImagePreview(displayImage, index >= 0 ? index : 0);
+    }
+  };
+
+  const handleNextImage = () => {
+    if (!template?.images?.length || selectedImageIndex === null) return;
+
+    const nextIndex = (selectedImageIndex + 1) % template.images.length;
+    setSelectedImageForModal(template.images[nextIndex].image_url);
+    setSelectedImageIndex(nextIndex);
+  };
+
+  const handlePreviousImage = () => {
+    if (!template?.images?.length || selectedImageIndex === null) return;
+
+    const prevIndex =
+      selectedImageIndex === 0 ? template.images.length - 1 : selectedImageIndex - 1;
+    setSelectedImageForModal(template.images[prevIndex].image_url);
+    setSelectedImageIndex(prevIndex);
   };
 
   const handleDownload = () => {
@@ -86,7 +126,10 @@ export default function TemplateDetailPage() {
         {/* === KIRI: VISUAL & DESKRIPSI (Col 8) === */}
         <div className="space-y-6 lg:col-span-8">
           {/* Main Preview (Gambar Besar) */}
-          <div className="relative aspect-video overflow-hidden rounded-2xl border bg-slate-100 shadow-sm">
+          <div
+            className="relative aspect-video cursor-zoom-in overflow-hidden rounded-2xl border bg-slate-100 shadow-sm"
+            onClick={handlePreviewClick}
+          >
             {displayImage ? (
               <Image
                 src={getFullImageUrl(displayImage)}
@@ -283,6 +326,56 @@ export default function TemplateDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Popup Preview Gambar */}
+      {selectedImageForModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4"
+          onClick={() => setSelectedImageForModal(null)}
+        >
+          <div
+            className="relative w-full max-w-5xl"
+            onClick={e => e.stopPropagation()}
+          >
+            <button
+              onClick={() => setSelectedImageForModal(null)}
+              className="absolute top-3 right-3 z-10 rounded-full bg-black/60 p-2 text-white transition hover:bg-black/80"
+              aria-label="Tutup preview"
+            >
+              <X size={20} />
+            </button>
+            <div className="relative aspect-video overflow-hidden rounded-2xl border border-white/10 bg-slate-950">
+              {template.images.length > 1 && (
+                <>
+                  <button
+                    onClick={handlePreviousImage}
+                    className="absolute left-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/60 p-2 text-white transition hover:bg-black/80"
+                    aria-label="Gambar sebelumnya"
+                  >
+                    <ChevronLeft size={20} />
+                  </button>
+                  <button
+                    onClick={handleNextImage}
+                    className="absolute right-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-black/60 p-2 text-white transition hover:bg-black/80"
+                    aria-label="Gambar berikutnya"
+                  >
+                    <ChevronRight size={20} />
+                  </button>
+                </>
+              )}
+              <Image
+                src={getFullImageUrl(selectedImageForModal)}
+                alt={template.title}
+                fill
+                priority
+                sizes="(max-width: 1024px) 100vw, 90vw"
+                className="object-contain"
+                unoptimized
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Report Modal */}
       <ReportModal

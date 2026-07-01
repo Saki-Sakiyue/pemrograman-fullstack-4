@@ -34,36 +34,38 @@ export default function TemplateCard({
   return (
     <Card className="group overflow-hidden border-slate-200 transition-all duration-300 hover:shadow-lg">
       {/* Thumbnail Area */}
-      <div className="relative aspect-video overflow-hidden bg-slate-100">
-        {template.thumbnail_url ? (
-          <Image
-            src={getFullImageUrl(template.thumbnail_url)}
-            alt={template.title}
-            fill
-            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
-            className="object-cover transition-transform duration-500 group-hover:scale-105"
-            unoptimized
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center text-slate-400">
-            No Preview
-          </div>
-        )}
-        <div className="absolute top-2 left-2 flex gap-2">
-          <Badge className="bg-white/90 text-slate-900 hover:bg-white">
-            {template.category_name || 'Uncategorized'}
-          </Badge>
-          {/* Show status badge for admin */}
-          {isAdmin && template.status && (
-            <StatusBadge status={template.status} />
+      <Link href={`/templates/${template.id}`} className="block">
+        <div className="relative aspect-video overflow-hidden bg-slate-100">
+          {template.thumbnail_url ? (
+            <Image
+              src={getFullImageUrl(template.thumbnail_url)}
+              alt={template.title}
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
+              className="object-cover transition-transform duration-500 group-hover:scale-105"
+              unoptimized
+            />
+          ) : (
+            <div className="flex h-full items-center justify-center text-slate-400">
+              No Preview
+            </div>
           )}
         </div>
+      </Link>
+      <div className="absolute top-2 left-2 flex gap-2">
+        <Badge className="bg-white/90 text-slate-900 hover:bg-white">
+          {template.category_name || 'Uncategorized'}
+        </Badge>
+        {/* Show status badge for admin */}
+        {isAdmin && template.status && <StatusBadge status={template.status} />}
       </div>
 
       <CardContent className="p-4">
-        <h3 className="line-clamp-1 text-lg font-bold text-slate-900">
-          {template.title}
-        </h3>
+        <Link href={`/templates/${template.id}`} className="block">
+          <h3 className="line-clamp-1 text-lg font-bold text-slate-900 transition-colors hover:text-blue-600">
+            {template.title}
+          </h3>
+        </Link>
         <p className="mt-1 line-clamp-2 min-h-[40px] text-sm text-slate-500">
           {template.description}
         </p>
