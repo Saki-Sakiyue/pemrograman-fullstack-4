@@ -69,6 +69,7 @@ export interface CreateTemplatePayload {
   title: string;
   description: string;
   category_id: number;
+  upload_type?: string;
   source_url?: string;
   demo_url?: string;
 }
