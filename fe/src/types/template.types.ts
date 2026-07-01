@@ -68,9 +68,10 @@ export interface TemplateQueryParams {
 export interface CreateTemplatePayload {
   title: string;
   description: string;
-  demo_url: string;
   category_id: number;
-  thumbnail_url?: string;
+  upload_type?: string;
+  source_url?: string;
+  demo_url?: string;
 }
 
 export type UpdateTemplatePayload = Partial<CreateTemplatePayload>;
