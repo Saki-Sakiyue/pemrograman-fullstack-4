@@ -1,3 +1,6 @@
+import { Tag } from './tag.types';
+import { Stack } from './stack.types';
+
 //> Entitas Utama
 export interface Template {
   id: number;
@@ -23,10 +26,6 @@ export interface PaginationMeta {
   totalPages: number;
 }
 
-interface TemplateStacks {
-  name: string;
-  icon_url: string;
-}
 interface TemplateImages {
   image_url: string;
   is_primary: number;
@@ -51,8 +50,9 @@ export interface TemplateDetail {
   category_slug: string;
   author: string;
   avatar_url: string;
-  stacks: TemplateStacks[];
+  stacks: Stack[];
   images: TemplateImages[];
+  tags: Tag[];
 }
 
 //> Params
@@ -62,6 +62,8 @@ export interface TemplateQueryParams {
   search?: string;
   category_id?: number | null; // Filter berdasarkan ID kategori
   status?: 'pending' | 'approved' | 'rejected'; // Admin can filter by status
+  tag_id?: number[] | number | null;
+  stack_id?: number[] | number | null;
 }
 
 //> Payload
@@ -72,6 +74,8 @@ export interface CreateTemplatePayload {
   upload_type?: string;
   source_url?: string;
   demo_url?: string;
+  tag_ids?: number[];
+  stack_ids?: number[];
 }
 
 export type UpdateTemplatePayload = Partial<CreateTemplatePayload>;
